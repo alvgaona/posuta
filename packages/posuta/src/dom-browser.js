@@ -2,3 +2,4 @@
 export const dom = () => document;
 /** KaTeX loads on demand in the browser (see plotLive), so pages without chart math skip it. */
 export const katex = null;
+export const loadKatex = async () => (await import("katex")).default;

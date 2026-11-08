@@ -1,7 +1,7 @@
 // Observable Plot → SVG markup, with posuta's defaults (theme font, transparent background) and
 // $…$ in any text rendered with KaTeX.
 import * as Plot from "@observablehq/plot";
-import { dom, katex as buildKatex } from "#dom";
+import { dom, katex as buildKatex, loadKatex } from "#dom";
 import { MATH, esc, tex } from "./tex.js";
 
 let katex = buildKatex; // null in the browser until plotLive needs it
@@ -66,7 +66,7 @@ export function plot(options) {
 export async function plotLive(options) {
   const el = plot(options);
   if (!katex && MATH.test(el.textContent)) {
-    katex = (await import("katex")).default;
+    katex = await loadKatex();
     mathify(el, katex);
   }
   return el;
