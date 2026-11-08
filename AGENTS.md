@@ -20,9 +20,18 @@ starter poster that `create-posuta` copies; `pnpm dev` / `pnpm build` run it). P
   Other chart libraries may live in islands, but each must define a static frame for print.
 - **Math: KaTeX at build time.**
 - **Islands: React** for interactive figures.
+- **Tools first, components unstyled.** Any author must be able to build any poster. A feature
+  lands as a function or CLI first; a component, if any, is a thin wrapper. Components output
+  semantic markup with `posuta-*` class hooks, accept `class`, and carry no colour, font, border
+  or spacing: only the CSS they need to work (`base.css`). The look lives in the opt-in
+  `posuta/theme.css` and in the template, whose layout and sections the author owns.
+- **Unstyled must stay legible**: generated SVG defaults to `currentColor` and no fill.
+- **MDX without imports**: posuta's components and the poster's `src/components/` are available
+  in MDX without import lines.
 
 ## Plan
-The roadmap, with what "done" means for each step, is in `.agents/plans/roadmap.md`.
+The roadmap, with what "done" means for each step, is in `.agents/plans/roadmap.md`. The move to
+tools and unstyled components is planned in `.agents/plans/primitives.md`.
 
 ## Rules
 - Conventional Commits, `type(scope): subject`.
