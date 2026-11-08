@@ -8,8 +8,8 @@ import { test } from "node:test";
 
 const cli = new URL("../bin/posuta.mjs", import.meta.url).pathname;
 const page = (height) => `<!doctype html><style>@media print{@page{size:100mm 100mm;margin:0}
-:root{--paper-w:100mm;--paper-h:100mm}} .poster{height:100mm;overflow:hidden;padding:5mm}</style>
-<div class="poster"><section class="posuta-section"><h2>Results</h2><div style="height:${height}"></div></section></div>`;
+:root{--paper-w:100mm;--paper-h:100mm}} .posuta-canvas{height:100mm;overflow:hidden;padding:5mm}</style>
+<div class="posuta-canvas"><section class="posuta-section"><h2>Results</h2><div style="height:${height}"></div></section></div>`;
 
 function run(html) {
   const dist = mkdtempSync(join(tmpdir(), "posuta-"));

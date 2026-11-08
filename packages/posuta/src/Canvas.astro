@@ -1,0 +1,51 @@
+---
+// The page every poster is drawn on: <html>, <head> and one canvas element, nothing visual.
+//
+//   <Canvas title="…" description="…" print="A1 landscape" theme="dark">
+//     <link slot="head" rel="icon" href="…" />
+//     …your poster…
+//   </Canvas>
+//
+// It sets the print page and type scale (base.css + `print`), link-preview tags, and theme
+// tokens or a fixed colour scheme. posuta pdf measures the canvas (.posuta-canvas) for overflow.
+import "./base.css";
+import { printCss } from "./print.js";
+
+type Print = string | { size?: string; orientation?: "portrait" | "landscape"; width?: string; height?: string };
+interface Props {
+  title: string;
+  /** For search results and link previews. */
+  description?: string;
+  /** Paper: "A0", "A1 landscape", { width: "900mm", height: "36in" }… Default A0 portrait. */
+  print?: Print;
+  /** "light" or "dark" to fix the colour scheme, or tokens such as { accent: "#0a7" }. */
+  theme?: "light" | "dark" | Record<string, string>;
+  lang?: string;
+  class?: string;
+  [attr: string]: unknown;
+}
+const { title, description, print, theme, lang = "en", class: cls, ...rest } = Astro.props;
+const pageUrl = Astro.site ? new URL(Astro.url.pathname, Astro.site).href : undefined;
+const scheme = typeof theme === "string" ? theme : undefined;
+const tokens = theme && typeof theme === "object"
+  ? `:root{${Object.entries(theme).map(([k, v]) => `--${k.replace(/^--/, "")}:${v}`).join(";")}}` : "";
+---
+<!doctype html>
+<html lang={lang} data-theme={scheme}>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{title}</title>
+  {description && <meta name="description" content={description}>}
+  <meta property="og:title" content={title}>
+  {description && <meta property="og:description" content={description}>}
+  {pageUrl && <meta property="og:url" content={pageUrl}>}
+  {pageUrl && <meta property="og:image" content={new URL("og.png", pageUrl).href}>}
+  <meta name="twitter:card" content="summary_large_image">
+  <style is:inline set:html={`@media print{${printCss(print)}}${tokens}`} />
+  <slot name="head" />
+</head>
+<body>
+  <div class:list={["posuta-canvas", cls]} {...rest}><slot /></div>
+</body>
+</html>

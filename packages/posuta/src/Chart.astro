@@ -48,7 +48,7 @@ const svg = renderPlot({ ariaLabel: alt, ...chart(rows, Plot, state) });
 <figure class="posuta-figure posuta-chart" data-chart={live ? plot : undefined} data-alt={live ? alt : undefined}
   data-interactive={interactive || undefined} data-slider={slider && JSON.stringify(slider)}>
   {slider && (
-    <label class="posuta-slider" hidden>
+    <label class="posuta-slider" data-print="hide" hidden>
       <span>{slider.label ?? slider.name}</span>
       <input type="range" min={slider.min} max={slider.max} step={slider.step ?? 1} value={slider.value} />
       <output>{slider.value}</output>

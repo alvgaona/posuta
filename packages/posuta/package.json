@@ -12,15 +12,17 @@
     "./PlotFigure": "./src/PlotFigure.jsx",
     "./theme.css": "./src/theme.css",
     "./posuta.mplstyle": "./posuta.mplstyle",
-    "./Poster.astro": "./src/Poster.astro",
-    "./Section.astro": "./src/Section.astro",
     "./Row.astro": "./src/Row.astro",
     "./Col.astro": "./src/Col.astro",
     "./Chart.astro": "./src/Chart.astro",
     "./Figure.astro": "./src/Figure.astro",
     "./Equation.astro": "./src/Equation.astro",
     "./Diagram.astro": "./src/Diagram.astro",
-    "./diagram": "./src/diagram.js"
+    "./diagram": "./src/diagram.js",
+    "./base.css": "./src/base.css",
+    "./Canvas.astro": "./src/Canvas.astro",
+    "./QR.astro": "./src/QR.astro",
+    "./qr": "./src/qr.js"
   },
   "peerDependencies": {
     "astro": "^7.4.0",

@@ -1,0 +1,13 @@
+---
+// A QR code as inline SVG: <QR /> points at this page when `site` is set, or <QR url="…" />.
+// Renders nothing when there is no URL. Hook: svg.posuta-qr. Unstyled: size it with CSS.
+import { qrSvg } from "./qr.js";
+interface Props { url?: string; class?: string; [attr: string]: unknown }
+const { url, class: cls, ...rest } = Astro.props;
+const target = url ?? (Astro.site ? new URL(Astro.url.pathname, Astro.site).href : undefined);
+const attrs = Object.entries(rest).map(([k, v]) => ` ${k}="${String(v).replace(/"/g, "&quot;")}"`).join("");
+const svg = target
+  ? (await qrSvg(target)).replace("<svg ", `<svg class="${["posuta-qr", cls].filter(Boolean).join(" ")}" role="img" aria-label="QR code: ${target}"${attrs} `)
+  : "";
+---
+<Fragment set:html={svg} />

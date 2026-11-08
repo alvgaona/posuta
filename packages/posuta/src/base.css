@@ -1,0 +1,49 @@
+/* posuta base: only what the components need to work. No colours, fonts, borders or spacing;
+   the look is in theme.css (opt-in) or yours. Everything is in @layer posuta.base, so any CSS you
+   write outside a layer wins without !important. */
+@layer posuta.base, posuta.theme;
+@import "katex/dist/katex.min.css" layer(posuta.base);
+
+@layer posuta.base {
+/* The print canvas: one page at the paper size (--paper-w/-h come from <Canvas>'s print CSS). */
+.posuta-canvas { box-sizing: border-box; }
+@media print {
+  /* The type scale: body text is 24 pt at A0, follows the paper's area, never below 12 pt.
+     Size everything in rem and the whole poster scales with the paper. */
+  :root { font-size: max(calc(24pt * var(--print-scale, 1)), 12pt); -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  body { margin: 0; }
+  .posuta-canvas { width: var(--paper-w); height: var(--paper-h); max-width: none; overflow: hidden; }
+}
+
+/* Rows and columns: weights from --span; on screen they wrap three → two → one, in print they
+   keep the columns as written. --posuta-gap sets the space between columns. */
+.posuta-row { display: flex; gap: 0 var(--posuta-gap, 2rem); align-items: flex-start; }
+.posuta-col { flex: var(--span, 1) 1 0; min-width: 0; }
+@media screen and (max-width: 1100px) {
+  .posuta-row { flex-wrap: wrap; }
+  .posuta-col { flex: 1 1 calc(50% - var(--posuta-gap, 2rem) / 2); }
+}
+@media screen and (max-width: 700px) { .posuta-col { flex-basis: 100%; } }
+
+/* Screen-only and print-only content. */
+@media screen { [data-print="only"] { display: none !important; } }
+@media print { [data-print="hide"] { display: none !important; } }
+
+/* Figures and charts scale to their container. */
+.posuta-figure > svg, .posuta-figure > img, .posuta-figure svg[viewBox], .posuta-plot svg[viewBox] {
+  display: block; width: 100%; height: auto; max-width: 100%;
+}
+.posuta-diagram svg { overflow: visible; }
+/* Plot ships an unlayered <style> forcing system-ui; a layered !important is what beats it. */
+.posuta-figure [class*="plot-"] { font-family: inherit !important; }
+
+/* Live charts: the tooltip sits above the point and never takes the pointer. */
+.posuta-plot { position: relative; }
+.posuta-tip { position: absolute; z-index: 1; pointer-events: none; white-space: nowrap; transform: translate(-50%, calc(-100% - 12px)); }
+.posuta-tip[hidden] { display: none; }
+
+/* KaTeX inside SVG text (charts) and display equations with a number. */
+.posuta-tex { display: inline-block; width: max-content; white-space: nowrap; line-height: 1; }
+.posuta-eq { display: flex; align-items: center; overflow-x: auto; overflow-y: hidden; }
+.posuta-eq .katex-display { flex: 1; }
+}

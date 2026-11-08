@@ -1,0 +1,42 @@
+---
+// This poster's layout: the header, the footer and the QR code. It is yours to change: posuta
+// only provides <Canvas> (print size, link previews) and the default look (posuta/theme.css).
+// Pages use it from frontmatter: `layout: ../layouts/Poster.astro`.
+import Canvas from "posuta/Canvas.astro";
+import QR from "posuta/QR.astro";
+import "posuta/theme.css";
+
+interface Stat { value: string; label: string; accent?: boolean }
+interface Frontmatter {
+  title: string; highlight?: string; eyebrow?: string; lede?: string; stats?: Stat[]; footer?: string;
+  print?: string | { size?: string; orientation?: "portrait" | "landscape"; width?: string; height?: string };
+  /** The QR code on the printed poster: a URL, or false. Defaults to this page's URL when `site` is set. */
+  qr?: string | false;
+  /** "light" or "dark" to fix the colour scheme, or tokens such as { accent: "#0a7" }. */
+  theme?: "light" | "dark" | Record<string, string>;
+}
+const { frontmatter } = Astro.props as { frontmatter: Frontmatter };
+const { title, highlight, eyebrow, lede, stats = [], footer, print, theme } = frontmatter;
+const qrUrl = frontmatter.qr === false ? undefined : frontmatter.qr ?? (Astro.site ? new URL(Astro.url.pathname, Astro.site).href : undefined);
+---
+<Canvas title={`${title}${highlight ? ` ${highlight}` : ""}`} description={lede} print={print} theme={theme}>
+  <header class="hero">
+    <div>
+      {eyebrow && <div class="eyebrow">{eyebrow}</div>}
+      <h1>{title}{highlight && <> <em>{highlight}</em></>}</h1>
+      {lede && <p class="lede">{lede}</p>}
+    </div>
+    {stats.length > 0 && (
+      <div class="stats">
+        {stats.map((s) => <div class="stat"><b class:list={{ acc: s.accent }}>{s.value}</b><span>{s.label}</span></div>)}
+      </div>
+    )}
+  </header>
+  <main><slot /></main>
+  {(footer || qrUrl) && (
+    <footer>
+      <span>{footer}</span>
+      {qrUrl && <a class="qr" data-print="only" href={qrUrl}><QR url={qrUrl} /><span>{qrUrl.replace(/^https?:\/\//, "")}</span></a>}
+    </footer>
+  )}
+</Canvas>

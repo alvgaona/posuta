@@ -82,7 +82,7 @@ try {
   await page.evaluate(() => document.fonts.ready);
 
   const overflow = await page.evaluate(() => {
-    const poster = document.querySelector(".poster");
+    const poster = document.querySelector(".posuta-canvas");
     const pad = getComputedStyle(poster);
     const box = poster.getBoundingClientRect();
     const limit = { bottom: box.bottom - parseFloat(pad.paddingBottom), right: box.right - parseFloat(pad.paddingRight) };

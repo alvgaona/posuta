@@ -3,11 +3,12 @@ import { unified } from "@astrojs/markdown-remark";
 import mdx from "@astrojs/mdx";
 import rehypeKatex from "rehype-katex";
 import remarkMath from "remark-math";
+import remarkAutoImport from "./remark-auto-import.js";
 import remarkCite from "./remark-cite.js";
 
 /**
- * posuta's Astro integration: one line in astro.config, and posters are MDX pages with math
- * and citations. React islands (for PlotFigure) need `astro add react`.
+ * posuta's Astro integration: one line in astro.config, and posters are MDX pages with math,
+ * citations, and components available without import lines. React islands (for PlotFigure) need `astro add react`.
  * @param {{ theme?: string }} [options] theme: a CSS file or package of :root tokens, e.g. "@my-lab/posuta-theme"
  * @returns {import("astro").AstroIntegration}
  */
@@ -16,15 +17,21 @@ export default function posuta({ theme } = {}) {
     name: "posuta",
     hooks: {
       "astro:config:setup": ({ config, updateConfig, injectScript, logger }) => {
-        // The default theme is in @layer posuta, so these unlayered tokens win whatever the order.
+        // posuta's CSS is layered (posuta.base, posuta.theme), so these unlayered tokens win whatever the order.
         if (theme) injectScript("page-ssr", `import ${JSON.stringify(theme)};`);
         globalThis.__posutaRoot = fileURLToPath(config.root); // data/ lives here (see data.js)
         const has = (name) => config.integrations.some((i) => i.name === name);
         const integrations = [];
         if (!has("@astrojs/mdx")) integrations.push(mdx());
         const markdown = {};
-        if (config.markdown.processor?.name !== "satteri") logger.warn("markdown.processor is set; add remark-math, rehype-katex and posuta's remark-cite to it yourself");
-        else markdown.processor = unified({ remarkPlugins: [remarkMath, remarkCite], rehypePlugins: [rehypeKatex] });
+        if (config.markdown.processor?.name !== "satteri") logger.warn("markdown.processor is set; add remark-math, rehype-katex and posuta's remark-cite and remark-auto-import to it yourself");
+        else {
+          const components = fileURLToPath(new URL("components/", config.srcDir));
+          markdown.processor = unified({
+            remarkPlugins: [remarkMath, remarkCite, [remarkAutoImport, { components }]],
+            rehypePlugins: [rehypeKatex],
+          });
+        }
         updateConfig({ integrations, markdown });
       },
     },
