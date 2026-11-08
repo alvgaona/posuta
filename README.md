@@ -108,6 +108,11 @@ anything runs past the canvas**, naming the block, so nothing is silently cut. O
 `--print "A1 landscape"` to try another size, `--out file.pdf`, `--dist dir`, `--page /path`.
 It also writes `og.png` next to the page, the image link previews show.
 
+While you write, add `?print` to the page URL in `pnpm dev` (`http://localhost:4321/?print`):
+the page shows as it will print, at the paper size scaled to the window, light colours, with
+the same overflow check. Blocks that don't fit get a red outline and a banner says by how much.
+It updates as you edit.
+
 ### Site, QR code and previews
 
 Set `site` in `astro.config.mjs` (the template reads `SITE` and `BASE_PATH`, which the Pages
@@ -323,7 +328,8 @@ stable classes to style:
 
 `posuta pdf` measures the canvas and names the innermost block that runs past it: any element
 whose first child is a heading (`h1`–`h4`), or that has a `data-name`. If no named block
-overflows but the canvas does, it says by how much. A page without `<Canvas>` is refused.
+overflows but the canvas does, it says by how much. A page without `<Canvas>` is refused. The
+`?print` preview in dev runs the same check.
 
 
 ## 3. Tools

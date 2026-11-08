@@ -15,6 +15,7 @@ import { createServer } from "node:http";
 import { dirname, extname, join, resolve, sep } from "node:path";
 import { parseArgs } from "node:util";
 import { chromium } from "playwright";
+import { overflow } from "../src/overflow.js";
 import { printCss } from "../src/print.js";
 
 const usage = `usage: posuta pdf [--dist dist] [--page /] [--out <dist>/<page>/poster.pdf] [--print "A1 landscape"] [--base /] [--no-png]
@@ -82,36 +83,10 @@ try {
   await page.setViewportSize({ width: px(size.w), height: px(size.h) });
   await page.evaluate(() => document.fonts.ready);
 
-  const overflow = await page.evaluate(() => {
-    const canvas = document.querySelector(".posuta-canvas");
-    if (!canvas) return null;
-    const pad = getComputedStyle(canvas);
-    const box = canvas.getBoundingClientRect();
-    const limit = { bottom: box.bottom - parseFloat(pad.paddingBottom), right: box.right - parseFloat(pad.paddingRight) };
-    const toMm = (v) => Math.round((v * 25.4) / 96);
-    // A block is anything led by a heading, or marked with data-name.
-    const lead = (el) => (el.firstElementChild?.matches("h1, h2, h3, h4") ? el.firstElementChild : null);
-    const blocks = [...canvas.querySelectorAll("*")].filter((el) => el.dataset.name || lead(el));
-    const over = [];
-    for (const el of blocks) {
-      const r = el.getBoundingClientRect();
-      const name = el.dataset.name || lead(el).textContent.trim();
-      const wide = Math.max(r.right - limit.right, el.scrollWidth - el.clientWidth);
-      if (r.bottom > limit.bottom + 1) over.push({ el, msg: `"${name}" runs ${toMm(r.bottom - limit.bottom)} mm past the bottom` });
-      else if (wide > 1) over.push({ el, msg: `"${name}" is ${toMm(wide)} mm too wide` });
-    }
-    // Name the innermost block, not the column or section around it.
-    const found = over.filter((o) => !over.some((p) => p !== o && o.el.contains(p.el))).map((o) => o.msg);
-    if (found.length) return found;
-    // Nothing named overflows: check the canvas itself (its scroll size includes its end padding).
-    const down = canvas.scrollHeight - canvas.clientHeight, wide = canvas.scrollWidth - canvas.clientWidth;
-    if (down > 1) return [`the poster runs ${toMm(down)} mm past the bottom`];
-    if (wide > 1) return [`the poster is ${toMm(wide)} mm too wide`];
-    return [];
-  });
-  if (!overflow) throw new Error(`${url} is not a posuta page: wrap it in <Canvas>`);
-  if (overflow.length) {
-    throw new Error(`content does not fit on the ${size.w} × ${size.h} canvas:\n  ${overflow.join("\n  ")}\n` +
+  const found = await page.evaluate(overflow);
+  if (!found) throw new Error(`${url} is not a posuta page: wrap it in <Canvas>`);
+  if (found.length) {
+    throw new Error(`content does not fit on the ${size.w} × ${size.h} canvas:\n  ${found.join("\n  ")}\n` +
       "Shorten it, change the column spans, or pick a larger print size.");
   }
 

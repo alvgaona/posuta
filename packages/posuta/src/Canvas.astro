@@ -7,7 +7,8 @@
 //   </Canvas>
 //
 // It sets the print page and type scale (base.css + `print`), link-preview tags, and theme
-// tokens or a fixed colour scheme. posuta pdf measures the canvas (.posuta-canvas) for overflow.
+// tokens or a fixed colour scheme. posuta pdf measures the canvas (.posuta-canvas) for overflow;
+// in astro dev, ?print on the URL previews the printed page and the same check.
 import "./base.css";
 import { printCss } from "./print.js";
 
@@ -51,5 +52,10 @@ const tokens = theme && typeof theme === "object"
 </head>
 <body>
   <div class:list={["posuta-canvas", cls]} {...rest}><slot /></div>
+  {import.meta.env.DEV && <script>
+    // astro dev: add ?print to the URL to see the page as it will print, overflow marked.
+    // The DEV check here too, so the build drops preview.js instead of emitting it unused.
+    if (import.meta.env.DEV && new URLSearchParams(location.search).has("print")) import("./preview.js").then((m) => m.preview());
+  </script>}
 </body>
 </html>
