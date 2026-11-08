@@ -1,0 +1,6 @@
+---
+// <Figure.Caption>: the caption. `as` renders another element (default figcaption).
+interface Props { as?: string; class?: string; [attr: string]: unknown }
+const { as: Tag = "figcaption", class: cls, ...rest } = Astro.props;
+---
+<Tag class:list={["posuta-caption", cls]} {...rest}><slot /></Tag>

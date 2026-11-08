@@ -7,7 +7,9 @@
     "pdf": "astro build && posuta pdf"
   },
   "dependencies": {
+    "@tailwindcss/vite": "^4.3.5",
     "astro": "^7.4.7",
-    "posuta": "workspace:*"
+    "posuta": "workspace:*",
+    "tailwindcss": "^4.3.5"
   }
 }

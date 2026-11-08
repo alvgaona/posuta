@@ -1,0 +1,7 @@
+---
+// <Figure.Root>: the figure element. Put Figure.Media, Figure.Caption and anything else inside,
+// in any order. `as` renders another element (default figure).
+interface Props { as?: string; class?: string; [attr: string]: unknown }
+const { as: Tag = "figure", class: cls, ...rest } = Astro.props;
+---
+<Tag class:list={["posuta-figure", cls]} {...rest}><slot /></Tag>

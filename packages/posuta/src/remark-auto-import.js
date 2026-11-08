@@ -1,14 +1,15 @@
 // MDX without import lines: <Chart>, <Row>, <Section>… are imported for you.
-// Each capitalised JSX name a page uses, but does not import or define itself, is looked up in the
+// Each capitalised JSX name a page uses (or the first part of a dotted one, <Figure.Caption>), but does not import or define itself, is looked up in the
 // poster's src/components/ (file name = component name), then in posuta's own components.
 // An explicit import always wins.
 import { existsSync, readdirSync } from "node:fs";
 import { join, parse } from "node:path";
 
 /** posuta's components, by name. */
-export const POSUTA = Object.fromEntries(
-  ["Canvas", "QR", "Row", "Col", "Grid", "Cell", "Chart", "Figure", "Equation", "Diagram"].map((n) => [n, `posuta/${n}.astro`]),
-);
+export const POSUTA = {
+  ...Object.fromEntries(["Canvas", "QR", "Row", "Col", "Grid", "Cell", "Chart", "Equation", "Diagram"].map((n) => [n, `posuta/${n}.astro`])),
+  Figure: "posuta/Figure", // with its parts: Figure.Root, Figure.Media, Figure.Caption
+};
 const EXT = [".astro", ".tsx", ".jsx"]; // first wins when two files share a name
 
 /** The poster's own components: { Name: absolute path }, top level of src/components only. */
@@ -39,9 +40,9 @@ function defined(tree) {
 }
 
 function used(node, names = new Set()) {
-  if ((node.type === "mdxJsxFlowElement" || node.type === "mdxJsxTextElement") && /^[A-Z]\w*$/.test(node.name ?? "")) {
-    names.add(node.name);
-  }
+  // <Figure.Caption> needs Figure.
+  const name = /^([A-Z]\w*)(\.\w+)*$/.exec(node.name ?? "")?.[1];
+  if ((node.type === "mdxJsxFlowElement" || node.type === "mdxJsxTextElement") && name) names.add(name);
   node.children?.forEach((c) => used(c, names));
   return names;
 }

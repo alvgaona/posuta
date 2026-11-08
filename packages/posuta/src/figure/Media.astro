@@ -1,0 +1,22 @@
+---
+// <Figure.Media>: an image, an SVG or a video. `alt` is required.
+//   src={import("./plot.svg")}   inlined SVG: the poster's fonts, vector in print
+//   src={photo} or "/photo.jpg"  <img> at its original resolution
+//   src="/clip.mp4" poster="/clip.jpg"   a video on screen; in print, the poster frame as an image
+// class goes on the media element (and on the print frame of a video); other attributes on the
+// video or image, e.g. autoplay muted loop.
+interface Props { src: any; alt: string; poster?: any; class?: string; [attr: string]: unknown }
+const { src, alt, poster, class: cls, ...rest } = Astro.props;
+if (!alt) throw new Error("posuta <Figure.Media>: `alt` is required (what it shows, for screen readers)");
+const Svg = typeof src === "function" ? src : null; // Astro turns imported .svg files into components
+const url = (s: any) => (typeof s === "string" ? s : s?.src);
+const video = !Svg && /\.(mp4|webm|mov|m4v|ogv)(\?|#|$)/i.test(url(src) ?? "");
+if (video && !poster) throw new Error("posuta <Figure.Media>: a video needs `poster`, the frame that prints");
+const classes = ["posuta-media", cls];
+---
+{Svg ? <Svg class:list={classes} role="img" aria-label={alt} {...rest} />
+  : video ? (
+    <video class:list={classes} src={url(src)} poster={url(poster)} aria-label={alt} controls playsinline preload="metadata" data-print="hide" {...rest} />
+    <img class:list={classes} src={url(poster)} alt={alt} width={poster?.width} height={poster?.height} data-print="only" />
+  )
+  : <img class:list={classes} src={url(src)} alt={alt} width={src?.width} height={src?.height} {...rest} />}

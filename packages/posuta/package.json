@@ -18,6 +18,7 @@
     "./Cell.astro": "./src/Cell.astro",
     "./Chart.astro": "./src/Chart.astro",
     "./Figure.astro": "./src/Figure.astro",
+    "./Figure": "./src/figure/index.js",
     "./Equation.astro": "./src/Equation.astro",
     "./Diagram.astro": "./src/Diagram.astro",
     "./diagram": "./src/diagram.js",

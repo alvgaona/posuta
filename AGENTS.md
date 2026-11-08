@@ -26,6 +26,12 @@ starter poster that `create-posuta` copies; `pnpm dev` / `pnpm build` run it). P
   or spacing: only the CSS they need to work (`base.css`). The look lives in the opt-in
   `posuta/theme.css` and in the template, whose layout and sections the author owns.
 - **Unstyled must stay legible**: generated SVG defaults to `currentColor` and no fill.
+- **Parts, Base UI style**: a component with inner structure also comes as parts
+  (`Figure.Root`, `Figure.Media`, `Figure.Caption`) the author arranges in any markup; the
+  one-line form (`<Figure src alt caption />`) is a preset built from them. Parts take `class`,
+  attributes, and `as` where the element can vary.
+- **Tailwind and plain CSS both work**: `<Canvas>` declares the layer order
+  `theme, base, posuta.base, posuta.theme, components, utilities`; unlayered CSS beats all.
 - **MDX without imports**: posuta's components and the poster's `src/components/` are available
   in MDX without import lines.
 

@@ -27,6 +27,9 @@ interface Props {
 const { title, description, print, theme, lang = "en", class: cls, ...rest } = Astro.props;
 const pageUrl = Astro.site ? new URL(Astro.url.pathname, Astro.site).href : undefined;
 const scheme = typeof theme === "string" ? theme : undefined;
+// Declared first, so it holds whatever order the stylesheets load in. theme/base/components/
+// utilities are Tailwind v4's layers; they are empty without it.
+const LAYERS = "@layer theme, base, posuta.base, posuta.theme, components, utilities;";
 const tokens = theme && typeof theme === "object"
   ? `:root{${Object.entries(theme).map(([k, v]) => `--${k.replace(/^--/, "")}:${v}`).join(";")}}` : "";
 ---
@@ -42,7 +45,8 @@ const tokens = theme && typeof theme === "object"
   {pageUrl && <meta property="og:url" content={pageUrl}>}
   {pageUrl && <meta property="og:image" content={new URL("og.png", pageUrl).href}>}
   <meta name="twitter:card" content="summary_large_image">
-  <style is:inline set:html={`@media print{${printCss(print)}}${tokens}`} />
+  <!-- Layer order: resets (Tailwind's base), then posuta, then utilities. Unlayered CSS beats all. -->
+  <style is:inline set:html={`${LAYERS}@media print{${printCss(print)}}${tokens}`} />
   <slot name="head" />
 </head>
 <body>

@@ -78,7 +78,7 @@ footer { margin-top: 1.9rem; color: var(--muted); font-size: .8rem; font-family:
 /* Plot ships its own unlayered <style>; !important in this layer is what beats it. */
 .posuta-figure [class*="plot-"] { --plot-background: var(--bg) !important; }
 .posuta-figure [class*="-swatches"] { font-size: .8rem !important; }
-.posuta-figure figcaption { font-size: .87rem; color: var(--muted); margin-top: .4rem; max-width: 68ch; }
+.posuta-figure figcaption, .posuta-caption { font-size: .87rem; color: var(--muted); margin-top: .4rem; max-width: 68ch; }
 .posuta-tip { background: var(--bg); color: var(--fg); border: 1px solid var(--border); border-radius: var(--radius);
               box-shadow: 0 2px 8px rgb(0 0 0 / .12); padding: .4rem .6rem; font-size: .8rem; line-height: 1.5; }
 .posuta-tip b { font-weight: 600; color: var(--muted); }

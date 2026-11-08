@@ -1,0 +1,32 @@
+---
+layout: ../layouts/Tailwind.astro
+title: Tailwind and posuta
+print: A3 landscape
+---
+import photo from "../images/photo.png";
+
+<Grid cols={3} class="gap-y-6">
+<Cell>
+
+## Image, caption first
+
+<Figure.Root class="rounded-lg border border-emerald-700 p-3">
+  <Figure.Caption as="p" class="mb-2 font-semibold text-red-600">Caption above, as a paragraph.</Figure.Caption>
+  <a href="#full"><Figure.Media src={photo} alt="A blue frame with a white circle" class="w-1/2" /></a>
+  <p class="text-xs">Credit: test fixture</p>
+</Figure.Root>
+
+<Figure src={photo} alt="The same image through the one-line Figure" caption="One line, same parts." class="mt-6 max-w-60" />
+
+</Cell>
+<Cell span={2}>
+
+## Video
+
+<Figure.Root>
+  <Figure.Media src="/clip.mp4" poster="/clip.jpg" alt="A green frame with a white circle" muted loop class="rounded-xl" />
+  <Figure.Caption>On screen a video; in print its poster frame. <QR url="https://example.org/clip.mp4" data-print="only" class="inline-block w-16" /></Figure.Caption>
+</Figure.Root>
+
+</Cell>
+</Grid>

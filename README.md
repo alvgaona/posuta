@@ -181,7 +181,7 @@ server-rendered first, so the props you give the island are the state it prints 
 Inline `$\omega_n$` in the text, and display equations with `<Equation tex="\dot x = Ax + Bu" n={1} />`.
 KaTeX renders both at build time, with its fonts bundled.
 
-### Figures
+### Figures, images and video
 
 ```mdx
 import tilt from "../../figures/tilt.svg";
@@ -189,8 +189,30 @@ import tilt from "../../figures/tilt.svg";
 <Figure src={tilt} alt="What it shows" caption="…" />
 ```
 
-SVGs are inlined, so their text uses the poster's fonts and stays vector. For matplotlib, use the
-bundled style and save as SVG:
+`src` is an imported SVG (inlined, so its text uses the poster's fonts and stays vector), an
+imported image or a path (`<img>` at its original resolution), or a video. A video plays on screen
+and prints its `poster` frame, which is required:
+
+```mdx
+<Figure src="/flight.mp4" poster="/flight.jpg" alt="Motor 3 cut at 4 s" caption="…" muted loop />
+```
+
+To arrange it yourself, build it from its parts, in any order and with any markup between:
+
+```mdx
+<Figure.Root class="…">
+  <Figure.Caption as="p">Fig. 3, above the image.</Figure.Caption>
+  <a href="/full.png"><Figure.Media src={photo} alt="…" /></a>
+  <p class="credit">Photo: J. Doe</p>
+  <QR url="https://…/flight.mp4" data-print="only" />
+</Figure.Root>
+```
+
+`Figure.Root` is the `<figure>`, `Figure.Media` the image, SVG or video (`class` and attributes
+go on it), `Figure.Caption` the `<figcaption>`; `as` renders a different element. Plain Markdown
+images, `![alt](../images/photo.jpg)`, work too.
+
+For matplotlib, use the bundled style and save as SVG:
 
 ```python
 plt.style.use("node_modules/posuta/posuta.mplstyle")  # fonts, colours, text kept as text
@@ -284,6 +306,18 @@ No colours, fonts, borders or spacing. Everything is in `@layer posuta.base` (an
 theme in `@layer posuta.theme`), so any CSS you write outside a layer wins, no `!important`
 needed. To change the print type scale: `@media print { :root { font-size: 20pt } }`.
 
+### Tailwind
+
+Tailwind v4 works as is: `npx astro add tailwind`, then import its CSS in your layout. `<Canvas>`
+orders the layers so that Tailwind's reset sits under posuta and its utilities over it:
+
+```
+theme, base (Tailwind's reset), posuta.base, posuta.theme, components, utilities, then unlayered CSS
+```
+
+So `class="w-1/2 text-red-600"` on any component or part beats both posuta's CSS and its theme,
+and the reset doesn't undo the theme. Tailwind sees classes in `.mdx` files like any other source.
+
 ### Hooks
 
 Every component forwards `class` and other attributes to its outer element. The parts have
@@ -295,7 +329,7 @@ stable classes to style:
 | `Row`, `Col` | `div.posuta-row`, `div.posuta-col` with `--span` |
 | `Grid`, `Cell` | `div.posuta-grid` with `--cols`, `div.posuta-cell` with `--span`, `--rows` |
 | `Chart` | `figure.posuta-figure.posuta-chart` › `.posuta-plot` (the SVG), `figcaption`, `label.posuta-slider`, `.posuta-tip` |
-| `Figure` | `figure.posuta-figure` › `img` or `svg`, `figcaption` |
+| `Figure` | `Figure.Root` → `figure.posuta-figure`, `Figure.Media` → `img`, `svg` or `video` `.posuta-media` (plus the print frame `img.posuta-media`), `Figure.Caption` → `figcaption.posuta-caption` |
 | `Equation` | `div.posuta-eq` › KaTeX, `span.posuta-eq-n` |
 | `Diagram` | `figure.posuta-figure.posuta-diagram` › `svg` with `.box`, `.box-title`, `.box-sub`, `.arrow`, `.arrow-label`, `.group`, `.group-title`, and each style word (`.highlight`, `.alert`, `.dashed`, `.bus`) |
 | `References` | `ol.posuta-refs` › `li#ref-<key>` |

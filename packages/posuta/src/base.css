@@ -43,7 +43,7 @@
 @media print { [data-print="hide"] { display: none !important; } }
 
 /* Figures and charts scale to their container. */
-.posuta-figure > svg, .posuta-figure > img, .posuta-figure svg[viewBox], .posuta-plot svg[viewBox] {
+.posuta-media, .posuta-figure svg[viewBox], .posuta-plot svg[viewBox] {
   display: block; width: 100%; height: auto; max-width: 100%;
 }
 .posuta-diagram svg { overflow: visible; }
