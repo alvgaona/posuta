@@ -6,12 +6,10 @@ import remarkCite from "../src/remark-cite.js";
 
 const fixtures = fileURLToPath(new URL("fixtures/", import.meta.url));
 
-test("load reads CSV (typed), JSON and Parquet (bigint → number)", async () => {
+test("load reads CSV (typed) and JSON", async () => {
   assert.deepEqual([...await load(fixtures + "small.csv")], [{ t: 0, v: 1 }, { t: 1, v: 2 }, { t: 2, v: 3 }]);
   assert.deepEqual(await load(fixtures + "small.json"), [{ t: 0, v: 1 }, { t: 1, v: 2 }]);
-  const pq = await load(fixtures + "small.parquet");
-  assert.deepEqual(pq[2], { t: 2, v: 2.5, n: 3 });
-  await assert.rejects(load(fixtures + "refs.bib"), /use .csv, .json or .parquet/);
+  await assert.rejects(load(fixtures + "refs.bib"), /use .csv or .json/);
 });
 
 test("downsample keeps first and last rows and the requested count", () => {

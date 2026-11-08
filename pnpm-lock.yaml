@@ -204,9 +204,6 @@ importers:
       d3-dsv:
         specifier: ^3.0.2
         version: 3.0.2
-      hyparquet:
-        specifier: ^1.32.0
-        version: 1.32.0
       katex:
         specifier: ^0.19.1
         version: 0.19.1
@@ -1805,9 +1802,6 @@ packages:
 
   http-cache-semantics@4.3.0:
     resolution: {integrity: sha512-M5t5LlJpS1UHMjvwRQVdFHvPISGeLAxNcrWuJkeGh0KxsqCHZ1O3NXZU/8x7cD0BDcGW8kapxMKTvwlqrNkHkA==}
-
-  hyparquet@1.32.0:
-    resolution: {integrity: sha512-SpkvdfgQjcdCJA+MTzo0WSreLLy/aLRYs3xetk1SsuFvq8vF+J/97OaRnZhf+p5Nx3J27i9FhSC0bJ5eQZG/7Q==}
 
   iconv-lite@0.6.3:
     resolution: {integrity: sha512-4fCk79wshMdzMp2rH06qWrJE4iolqLhCUH+OiuIgU++RB0+94NlDL81atO7GX55uUKueo0txHNtvEyI6D7WdMw==}
@@ -4461,8 +4455,6 @@ snapshots:
       entities: 7.0.1
 
   http-cache-semantics@4.3.0: {}
-
-  hyparquet@1.32.0: {}
 
   iconv-lite@0.6.3:
     dependencies:

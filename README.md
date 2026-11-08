@@ -146,7 +146,7 @@ export default (d, Plot, state) => ({
 ```
 
 It is drawn to SVG at build time: it prints as vectors and needs no JavaScript. `data` is a file in
-`data/` (CSV, JSON or Parquet) or an array; series longer than 2000 rows are thinned (`max={…}`
+`data/` (CSV or JSON) or an array; series longer than 2000 rows are thinned (`max={…}`
 to change). `alt` is required. For a one-off static chart, `plot` can also be an inline function,
 `plot={(d, Plot) => ({ … })}`.
 
@@ -337,7 +337,7 @@ printCss("A1");         // "@page{size:594mm 841mm;margin:0}:root{--paper-w:…}
 
 ```js
 import { load, downsample } from "posuta/data";
-const rows = await load("flight.parquet", { max: 5000 });  // data/ file: CSV, JSON or Parquet
+const rows = await load("flight.csv", { max: 5000 });  // data/ file: CSV or JSON
 ```
 
 ### `posuta/plot`
