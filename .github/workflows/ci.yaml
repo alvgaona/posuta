@@ -50,7 +50,7 @@ jobs:
       - run: pnpm install --frozen-lockfile
       - run: pnpm --filter posuta exec playwright install --with-deps --only-shell chromium
       - run: pnpm build
-      - run: pnpm --filter posuta test
+      - run: pnpm test
       - name: Export the template to PDF
         run: pnpm --filter posuta-template exec posuta pdf
       - uses: actions/upload-artifact@v7

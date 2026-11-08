@@ -1,6 +1,6 @@
 {
   "name": "posuta",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "Research posters for the web and for print, built with Astro",
   "license": "MIT",
   "type": "module",
@@ -62,5 +62,26 @@
     "react": {
       "optional": true
     }
+  },
+  "files": [
+    "src",
+    "bin",
+    "posuta.mplstyle"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/alvgaona/posuta.git",
+    "directory": "packages/posuta"
+  },
+  "keywords": [
+    "astro-integration",
+    "poster",
+    "research",
+    "mdx",
+    "print",
+    "pdf"
+  ],
+  "engines": {
+    "node": ">=22"
   }
 }

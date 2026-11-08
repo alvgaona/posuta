@@ -1,10 +1,14 @@
 #!/usr/bin/env node
-// posuta pdf: export a built poster (dist/) to a one-page vector PDF at the paper size.
+// posuta pdf: export a built poster (dist/) to a one-page vector PDF at the paper size, plus
+// og.png, the preview image for social sharing.
 //
-//   posuta pdf [--dist dist] [--page /] [--out dist/poster.pdf] [--print "A1 landscape"] [--base /repo/]
+//   posuta pdf [--dist dist] [--page /] [--out dist/poster.pdf] [--print "A1 landscape"] [--base /repo/] [--no-png]
+//   posuta install            download the browser posuta pdf uses (Playwright's Chromium)
 //
 // Fails, naming the section, if any content runs past the printed canvas.
+import { spawnSync } from "node:child_process";
 import { createReadStream, statSync } from "node:fs";
+import { createRequire } from "node:module";
 import { mkdir } from "node:fs/promises";
 import { createServer } from "node:http";
 import { dirname, extname, join, resolve, sep } from "node:path";
@@ -12,12 +16,20 @@ import { parseArgs } from "node:util";
 import { chromium } from "playwright";
 import { printCss } from "../src/print.js";
 
-const usage = `usage: posuta pdf [--dist dist] [--page /] [--out <dist>/poster.pdf] [--print "A1 landscape"] [--base /]`;
+const usage = `usage: posuta pdf [--dist dist] [--page /] [--out <dist>/<page>/poster.pdf] [--print "A1 landscape"] [--base /] [--no-png]
+       posuta install [--with-deps]`;
 const [cmd, ...rest] = process.argv.slice(2);
+if (cmd === "install") {
+  const cli = join(dirname(createRequire(import.meta.url).resolve("playwright/package.json")), "cli.js");
+  const r = spawnSync(process.execPath, [cli, "install", "--only-shell", "chromium", ...rest], { stdio: "inherit" });
+  process.exit(r.status ?? 1);
+}
 if (cmd !== "pdf") { console.error(usage); process.exit(cmd ? 1 : 0); }
 const { values: opt } = parseArgs({
   args: rest,
+  allowNegative: true,
   options: {
+    png: { type: "boolean", default: true },
     dist: { type: "string", default: "dist" },
     page: { type: "string", default: "/" },
     out: { type: "string" },
@@ -26,7 +38,8 @@ const { values: opt } = parseArgs({
   },
 });
 const dist = resolve(opt.dist);
-const out = resolve(opt.out ?? join(dist, "poster.pdf"));
+const pageDir = join(dist, opt.page); // og.png goes next to the page, where its og:image tag points
+const out = resolve(opt.out ?? join(pageDir, "poster.pdf"));
 const base = ("/" + opt.base + "/").replace(/\/+/g, "/");
 
 const TYPES = { ".html": "text/html", ".css": "text/css", ".js": "text/javascript", ".mjs": "text/javascript",
@@ -92,6 +105,15 @@ try {
   await mkdir(dirname(out), { recursive: true });
   await page.pdf({ path: out, preferCSSPageSize: true, printBackground: true });
   console.log(`${out}: ${size.w} × ${size.h}`);
+
+  if (opt.png) {
+    // The screen layout's first 1200 × 630 px: the size link previews use.
+    const png = join(pageDir, "og.png");
+    await page.emulateMedia({ media: "screen" });
+    await page.setViewportSize({ width: 1200, height: 630 });
+    await page.screenshot({ path: png });
+    console.log(png);
+  }
 } catch (e) {
   console.error(`posuta pdf: ${e.message}`);
   process.exitCode = 1;

@@ -10,23 +10,41 @@ import "@fontsource/ibm-plex-mono/400.css";
 import "@fontsource/ibm-plex-mono/500.css";
 import "katex/dist/katex.min.css";
 import "./theme.css";
+import QRCode from "qrcode";
 import { printCss } from "./print.js";
 
 interface Stat { value: string; label: string; accent?: boolean }
 interface Frontmatter {
   title: string; highlight?: string; eyebrow?: string; lede?: string; stats?: Stat[]; footer?: string;
   print?: string | { size?: string; orientation?: "portrait" | "landscape"; width?: string; height?: string };
+  /** The QR code on the printed poster: a URL, or false. Defaults to this page's URL when `site` is set. */
+  qr?: string | false;
+  /** "light" or "dark" to fix the colour scheme, or token overrides such as { accent: "#0a7" }. */
+  theme?: "light" | "dark" | Record<string, string>;
 }
 const { frontmatter } = Astro.props as { frontmatter: Frontmatter };
-const { title, highlight, eyebrow, lede, stats = [], footer, print } = frontmatter;
+const { title, highlight, eyebrow, lede, stats = [], footer, print, theme } = frontmatter;
+const pageUrl = Astro.site ? new URL(Astro.url.pathname, Astro.site).href : undefined;
+const qrUrl = frontmatter.qr === false ? undefined : frontmatter.qr ?? pageUrl;
+const qr = qrUrl ? await QRCode.toString(qrUrl, { type: "svg", margin: 0, errorCorrectionLevel: "M" }) : "";
+const scheme = typeof theme === "string" ? theme : undefined;
+const tokens = theme && typeof theme === "object"
+  ? `:root{${Object.entries(theme).map(([k, v]) => `--${k.replace(/^--/, "")}:${v}`).join(";")}}` : "";
+const fullTitle = `${title}${highlight ? ` ${highlight}` : ""}`;
 ---
 <!doctype html>
-<html lang="en">
+<html lang="en" data-theme={scheme}>
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>{title}{highlight ? ` ${highlight}` : ""}</title>
-  <style is:inline set:html={`@media print{${printCss(print)}}`} />
+  <title>{fullTitle}</title>
+  {lede && <meta name="description" content={lede}>}
+  <meta property="og:title" content={fullTitle}>
+  {lede && <meta property="og:description" content={lede}>}
+  {pageUrl && <meta property="og:url" content={pageUrl}>}
+  {pageUrl && <meta property="og:image" content={new URL("og.png", pageUrl).href}>}
+  <meta name="twitter:card" content="summary_large_image">
+  <style is:inline set:html={`@media print{${printCss(print)}}${tokens}`} />
 </head>
 <body>
   <div class="poster">
@@ -43,7 +61,12 @@ const { title, highlight, eyebrow, lede, stats = [], footer, print } = frontmatt
       )}
     </header>
     <main><slot /></main>
-    {footer && <footer><span>{footer}</span></footer>}
+    {(footer || qr) && (
+      <footer>
+        <span>{footer}</span>
+        {qr && <a class="posuta-qr" href={qrUrl}><Fragment set:html={qr} /><span>{qrUrl!.replace(/^https?:\/\//, "")}</span></a>}
+      </footer>
+    )}
   </div>
 </body>
 </html>

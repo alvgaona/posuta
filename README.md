@@ -7,7 +7,18 @@ Write a poster in MDX, deploy it as a static site on any free host, and export a
 whatever size the conference asks for.
 
 
-## Try it
+## Start a poster
+
+```sh
+pnpm create posuta my-poster
+cd my-poster && pnpm install && pnpm dev
+```
+
+Push it to GitHub and turn on Pages (Settings → Pages → Source: GitHub Actions): every push
+publishes the page and `poster.pdf` next to it. The template also has Open in StackBlitz /
+Codespaces buttons for editing with nothing installed.
+
+## Work on posuta
 
 ```sh
 pnpm install
@@ -16,7 +27,7 @@ pnpm build   # static site in template/dist
 pnpm pdf     # build, then template/dist/poster.pdf at the paper size
 ```
 
-`posuta pdf` uses Playwright's Chromium; install it once with `pnpm exec playwright install chromium`.
+`posuta pdf` uses Playwright's Chromium; install it once with `pnpm exec posuta install`.
 
 ## Write a poster
 
@@ -64,6 +75,28 @@ Type is designed at A0 (body text 24 pt) and scales with the paper's area, never
 `posuta pdf` writes one vector page at the exact size with the fonts embedded, and **fails if
 anything runs past the canvas**, naming the section, so nothing is silently cut. Options:
 `--print "A1 landscape"` to try another size, `--out file.pdf`, `--dist dir`, `--page /path`.
+It also writes `og.png` next to the page, the image link previews show.
+
+### Site, QR code and previews
+
+Set `site` in `astro.config.mjs` (the template reads `SITE` and `BASE_PATH`, which the Pages
+workflow fills in). The printed poster then carries a QR code to its live page, and the page gets
+link-preview tags. `qr: https://…` in frontmatter points it elsewhere; `qr: false` removes it.
+
+### Themes
+
+All colours and fonts are CSS custom properties on `:root`, light and dark. Override a few in
+frontmatter, or fix the scheme:
+
+```yaml
+theme: { accent: "#0a7d55", font-display: "Georgia, serif" }
+theme: light
+```
+
+A lab can publish its branding as a package holding one CSS file of `:root` tokens (no selectors
+needed beyond `:root` and the dark-mode media query), and use it with
+`posuta({ theme: "@my-lab/posuta-theme" })`. The default theme sits in a cascade layer, so the
+package's tokens win whatever the load order.
 
 ### Charts
 
@@ -160,7 +193,11 @@ draw.io still go through `<Figure>`.
 ## Layout
 
 - `packages/posuta`: the Astro integration, layout, components and theme
-- `template`: the starter poster that `create-posuta` will copy; also what `pnpm dev` runs
+- `packages/create-posuta`: `pnpm create posuta`; bundles `template/` when packed
+- `template`: the starter poster that `create-posuta` copies; also what `pnpm dev` runs
+
+Release: keep `posuta` and `create-posuta` at the same version (a new poster depends on
+`^<create-posuta's version>`), then `pnpm -r publish --access public`.
 
 ## License
 

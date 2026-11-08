@@ -6,7 +6,7 @@
     "dev": "pnpm --filter posuta-template dev",
     "build": "pnpm --filter posuta-template build",
     "pdf": "pnpm --filter posuta-template pdf",
-    "test": "pnpm --filter posuta test"
+    "test": "pnpm -r test"
   },
   "devDependencies": {
     "@commitlint/cli": "21.2.4",
