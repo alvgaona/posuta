@@ -1,0 +1,14 @@
+---
+// A block diagram from a spec (see diagram.js), drawn to SVG at build time.
+//   import arch from "../../diagrams/arch.yaml?raw";
+//   <Diagram spec={arch} alt="…" caption="…" />
+import { renderDiagram } from "./diagram.js";
+interface Props { spec: string | object; alt: string; caption?: string }
+const { spec, alt, caption } = Astro.props;
+if (!alt) throw new Error("posuta <Diagram>: `alt` is required (what the diagram shows, for screen readers)");
+const svg = renderDiagram(spec);
+---
+<figure class="posuta-figure posuta-diagram" role="img" aria-label={alt}>
+  <Fragment set:html={svg} />
+  {caption && <figcaption>{caption}</figcaption>}
+</figure>

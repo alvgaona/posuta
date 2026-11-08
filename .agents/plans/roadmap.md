@@ -1,6 +1,6 @@
 # posuta roadmap
 
-Status: steps 0–2 done; next is step 3.
+Status: steps 0–3 done; next is step 4.
 Steps run in order: each one sets rules the next ones build on. Decisions behind this plan are in
 `AGENTS.md`.
 

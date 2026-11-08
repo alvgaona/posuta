@@ -124,6 +124,39 @@ Put `bibliography: refs.bib` (BibTeX, next to the page) in the frontmatter, cite
 `[@a; @b]`, and place `<References />` where the list goes. Citations are numbered in order of
 first use, and the list links each DOI. An unknown key fails the build.
 
+### Diagrams
+
+Block diagrams from a short YAML spec on a coarse grid, drawn to SVG at build time in the theme's
+colours (light and dark):
+
+```yaml
+# diagrams/loop.yaml
+grid: [40, 70]                     # cell width and row height, px
+boxes:
+  ref:   { at: [0, 0], title: Reference }
+  ctl:   { at: [5, 0], w: 4, title: Controller, sub: "PID · 200 Hz", style: highlight }
+  plant: { at: [11, 0], title: Vehicle }
+groups:
+  - { title: Flight controller, boxes: [ctl] }
+arrows:
+  - ref -> ctl: $p_{ref}$
+  - ctl -> plant: $\omega_i$
+  - { from: plant, to: ctl, route: under, label: attitude, style: dashed }
+```
+
+```mdx
+import Diagram from "posuta/Diagram.astro";
+import loop from "../../diagrams/loop.yaml?raw";
+
+<Diagram spec={loop} alt="What the diagram shows" />
+```
+
+Arrows route themselves: straight when two boxes share a row or column, an elbow otherwise, or
+around the top/bottom with `route: over|under`. `x: <col>` pins a vertical arrow, `side: left`
+moves its label. Box styles: `highlight`, `dashed`, `bus`; arrow styles: `highlight`, `alert`,
+`dashed`. Labels can hold `$math$`. Quote values that contain commas. SVGs from Excalidraw or
+draw.io still go through `<Figure>`.
+
 ## Layout
 
 - `packages/posuta`: the Astro integration, layout, components and theme

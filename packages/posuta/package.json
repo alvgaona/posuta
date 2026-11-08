@@ -18,7 +18,9 @@
     "./Col.astro": "./src/Col.astro",
     "./Chart.astro": "./src/Chart.astro",
     "./Figure.astro": "./src/Figure.astro",
-    "./Equation.astro": "./src/Equation.astro"
+    "./Equation.astro": "./src/Equation.astro",
+    "./Diagram.astro": "./src/Diagram.astro",
+    "./diagram": "./src/diagram.js"
   },
   "peerDependencies": {
     "astro": "^7.4.0",
