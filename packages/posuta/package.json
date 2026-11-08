@@ -9,7 +9,6 @@
     "./print": "./src/print.js",
     "./data": "./src/data.js",
     "./plot": "./src/plot.js",
-    "./PlotFigure": "./src/PlotFigure.jsx",
     "./theme.css": "./src/theme.css",
     "./posuta.mplstyle": "./posuta.mplstyle",
     "./Row.astro": "./src/Row.astro",
@@ -28,8 +27,7 @@
     "./cite": "./src/remark-cite.js"
   },
   "peerDependencies": {
-    "astro": "^7.4.0",
-    "react": ">=18"
+    "astro": "^7.4.0"
   },
   "dependencies": {
     "@astrojs/markdown-remark": "^7.3.6",
@@ -60,11 +58,6 @@
     "#dom": {
       "browser": "./src/dom-browser.js",
       "default": "./src/dom-server.js"
-    }
-  },
-  "peerDependenciesMeta": {
-    "react": {
-      "optional": true
     }
   },
   "files": [

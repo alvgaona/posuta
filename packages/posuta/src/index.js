@@ -8,7 +8,7 @@ import remarkCite from "./remark-cite.js";
 
 /**
  * posuta's Astro integration: one line in astro.config, and posters are MDX pages with math,
- * citations, and components available without import lines. React islands (for PlotFigure) need `astro add react`.
+ * citations, and components available without import lines.
  * @param {{ theme?: string, citationStyle?: string, remarkPlugins?: any[], rehypePlugins?: any[] }} [options]
  *   theme: a CSS file or package of :root tokens, e.g. "@my-lab/posuta-theme"
  *   citationStyle: vancouver (default), apa, harvard1, or a .csl file relative to the project root

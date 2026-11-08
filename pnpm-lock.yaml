@@ -228,9 +228,6 @@ importers:
       qrcode:
         specifier: ^1.5.4
         version: 1.5.4
-      react:
-        specifier: '>=18'
-        version: 19.3.1
       rehype-katex:
         specifier: ^7.0.1
         version: 7.0.1
@@ -2385,10 +2382,6 @@ packages:
 
   radix3@1.1.2:
     resolution: {integrity: sha512-b484I/7b8rDEdSDKckSSBA8knMpcdsXudlE/LNL639wFoHKwLbEkQFZHWEYwDC0wa0FKUcCY+GAF73Z7wxNVFA==}
-
-  react@19.3.1:
-    resolution: {integrity: sha512-QNhWdt7nrgVWWQG58QuGsAR3jv3Hbe4mb4vz7w2csnHavciZJgda1CPNaldF6eVxv90ud3jUXpKlHL69gO38yw==}
-    engines: {node: '>=0.10.0'}
 
   readdirp@5.1.1:
     resolution: {integrity: sha512-Kko+Y5XQ6fM+Ce3dq3m9YGxnacYZYl9cA1wZjaF3Vbry2L3i1qVg8+CAgNPsXRArPMUMCaOR7oa9Nqntc43JKA==}
@@ -5267,8 +5260,6 @@ snapshots:
       yargs: 15.4.1
 
   radix3@1.1.2: {}
-
-  react@19.3.1: {}
 
   readdirp@5.1.1: {}
 

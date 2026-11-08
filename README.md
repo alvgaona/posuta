@@ -172,9 +172,9 @@ The browser redraws the chart from the same file and the rows embedded in the pa
 static charts ship no JavaScript. With JavaScript off, and in print, the chart is the build-time
 SVG and the slider is hidden.
 
-For anything else, write a React island (`npx astro add react`) and draw with `PlotFigure`
-(`import PlotFigure from "posuta/PlotFigure"`) or with the [plot tools](#posutaplot). It is
-server-rendered first, so the props you give the island are the state it prints in.
+For anything else, write your own island (a `<script>`, or any framework Astro supports) and draw
+with the [plot tools](#posutaplot). Give it a static frame for print: render the chart at build
+time with `renderPlot`, then redraw it in the browser.
 
 ### Maths
 

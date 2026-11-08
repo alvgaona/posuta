@@ -19,7 +19,8 @@ starter poster that `create-posuta` copies; `pnpm dev` / `pnpm build` run it). P
   made interactive in the browser where needed. Matplotlib SVGs are accepted through `<Figure>`.
   Other chart libraries may live in islands, but each must define a static frame for print.
 - **Math: KaTeX at build time.**
-- **Islands: React** for interactive figures.
+- **Interactivity without a framework**: chart files (`interactive`, `slider`) redraw in the
+  browser with plain JS. Authors may add any Astro island, built on `posuta/plot`.
 - **Tools first, components unstyled.** Any author must be able to build any poster. A feature
   lands as a function or CLI first; a component, if any, is a thin wrapper. Components output
   semantic markup with `posuta-*` class hooks, accept `class`, and carry no colour, font, border
