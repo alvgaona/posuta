@@ -11,6 +11,8 @@ Replace `OWNER/REPO` in the two links above with this repository's.
 ## Edit
 
 - Text, sections and frontmatter: `src/pages/index.mdx`
+- Header, footer and QR code: `src/layouts/Poster.astro`; the look: `posuta/theme.css`, or your own CSS
+- Your components: `src/components/` (used in the MDX without import lines, like `<Section>`)
 - References: `src/pages/refs.bib`
 - Charts: `charts/` (one file per chart), their data in `data/`
 

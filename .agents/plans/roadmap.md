@@ -1,7 +1,7 @@
 # posuta roadmap
 
 Status: steps 0–4 done, except publishing to npm (packages are ready; needs a maintainer to run it).
-Next: tools first and unstyled components, in `primitives.md`.
+Then: tools first and unstyled components, done (`primitives.md`).
 Steps run in order: each one sets rules the next ones build on. Decisions behind this plan are in
 `AGENTS.md`.
 
