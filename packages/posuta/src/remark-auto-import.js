@@ -9,6 +9,7 @@ import { join, parse } from "node:path";
 export const POSUTA = {
   ...Object.fromEntries(["Canvas", "QR", "Row", "Col", "Grid", "Cell", "Chart", "Equation"].map((n) => [n, `posuta/${n}.astro`])),
   Figure: "posuta/Figure", // with its parts: Figure.Root, Figure.Media, Figure.Caption
+  References: "posuta/References", // parts only: <References /> itself is replaced by remark-cite
 };
 const EXT = [".astro", ".tsx", ".jsx"]; // first wins when two files share a name
 

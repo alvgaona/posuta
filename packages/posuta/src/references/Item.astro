@@ -1,0 +1,13 @@
+---
+// <References.Item entry={e} />: one cited entry, e from frontmatter.references
+// ({ key, n, text, doi }). Its id is the target of the [n] links in the text. With children, they
+// replace the default content (the formatted reference and its DOI link).
+interface Props {
+  entry: { key: string; n: number; text: string; doi?: string };
+  as?: string; class?: string; [attr: string]: unknown;
+}
+const { entry, as: Tag = "li", class: cls, ...rest } = Astro.props;
+---
+<Tag id={`ref-${entry.key}`} class:list={["posuta-ref", cls]} {...rest}>{Astro.slots.has("default") ? <slot /> : <>
+  {entry.text}{entry.doi && <> <a href={`https://doi.org/${entry.doi}`}>doi:{entry.doi}</a></>}
+</>}</Tag>

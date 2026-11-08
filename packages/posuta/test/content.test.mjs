@@ -22,9 +22,9 @@ test("downsample keeps first and last rows and the requested count", () => {
 });
 
 const text = (value) => ({ type: "text", value });
-const run = (children, bibliography = "refs.bib") => {
+const run = (children, bibliography = "refs.bib", frontmatter = { bibliography }) => {
   const tree = { type: "root", children };
-  remarkCite()(tree, { path: fixtures + "poster.mdx", data: { astro: { frontmatter: { bibliography } } } });
+  remarkCite()(tree, { path: fixtures + "poster.mdx", data: { astro: { frontmatter } } });
   return tree;
 };
 const refs = { type: "mdxJsxFlowElement", name: "References", children: [] };
@@ -47,6 +47,15 @@ test("citations are numbered by first use and listed with DOI links", () => {
 test("an unknown key or a missing <References /> fails the build", () => {
   assert.throws(() => run([{ type: "paragraph", children: [text("[@nope]")] }, refs]), /\[@nope\] is not in the bibliography/);
   assert.throws(() => run([{ type: "paragraph", children: [text("[@knuth1984tex]")] }]), /add <References \/>/);
+});
+
+test("References parts get the cited entries on frontmatter.references", () => {
+  const fm = { bibliography: "refs.bib" };
+  const root = { type: "mdxJsxFlowElement", name: "References.Root", children: [] };
+  const tree = run([{ type: "paragraph", children: [text("[@bostock2011d3]")] }, root], undefined, fm);
+  assert.equal(tree.children[1], root); // parts are left for the page to render
+  assert.deepEqual(fm.references.map(({ key, n, doi }) => [key, n, doi]), [["bostock2011d3", 1, "10.1109/TVCG.2011.185"]]);
+  assert.match(fm.references[0].text, /^Bostock M/);
 });
 
 test("withPointer adds a crosshair and a pointer dot; tipRows labels values from the scales", async () => {

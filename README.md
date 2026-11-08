@@ -229,6 +229,18 @@ The list is Vancouver by default. Pick another CSL style with
 `posuta({ citationStyle: "apa" })` (`vancouver`, `apa`, `harvard1`), or your venue's own:
 `citationStyle: "./ieee.csl"`. In-text citations stay numbered.
 
+To lay the list out yourself, use the parts. The entries cited on the page are on
+`frontmatter.references`, in order, each `{ key, n, text, doi }`:
+
+```mdx
+<References.Root as="ul" class="refs">
+  {frontmatter.references.map((e) => <References.Item entry={e}><b>[{e.n}]</b> {e.text}</References.Item>)}
+</References.Root>
+```
+
+`References.Item` keeps the `id` the `[n]` links point to. Without children it shows the
+formatted reference and its DOI link.
+
 ### Diagrams
 
 posuta has no diagram builder. Draw in any tool that exports SVG and place it with `<Figure>`:
@@ -303,7 +315,7 @@ stable classes to style:
 | `Chart` | `figure.posuta-figure.posuta-chart` › `.posuta-plot` (the SVG), `figcaption`, `label.posuta-slider`, `.posuta-tip` |
 | `Figure` | `Figure.Root` → `figure.posuta-figure`, `Figure.Media` → `img`, `svg` or `video` `.posuta-media` (plus the print frame `img.posuta-media`), `Figure.Caption` → `figcaption.posuta-caption` |
 | `Equation` | `div.posuta-eq` › KaTeX, `span.posuta-eq-n` |
-| `References` | `ol.posuta-refs` › `li#ref-<key>` |
+| `References` | `ol.posuta-refs` › `li#ref-<key>`; parts: `References.Root` → `ol.posuta-refs`, `References.Item` → `li.posuta-ref#ref-<key>` |
 | `QR` | `svg.posuta-qr` |
 
 

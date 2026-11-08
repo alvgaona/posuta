@@ -1,5 +1,6 @@
 // Citations: `bibliography: refs.bib` in frontmatter, `[@key]` or `[@a; @b]` in the text, and
 // `<References />` where the list goes. Numbered in order of first citation, with DOI links.
+// The cited entries are also on frontmatter.references, in order, for References.Root/Item.
 // The list is formatted with a CSL style: vancouver (default), apa, harvard1, or a .csl file.
 // shortcut: in-text citations are always numbers [1]; add author-date markers if a style needs them.
 import { readFileSync } from "node:fs";
@@ -39,6 +40,7 @@ export default function remarkCite({ style = "vancouver" } = {}) {
   return (tree, file) => {
     const order = [];
     let refsNode = null;
+    let hasParts = false;
     let entries = null;
     const bib = () => {
       if (entries) return entries;
@@ -52,8 +54,9 @@ export default function remarkCite({ style = "vancouver" } = {}) {
       if (!node.children) return;
       for (let i = 0; i < node.children.length; i++) {
         const child = node.children[i];
-        if ((child.type === "mdxJsxFlowElement" || child.type === "mdxJsxTextElement") && child.name === "References") {
-          refsNode = { parent: node, child };
+        if ((child.type === "mdxJsxFlowElement" || child.type === "mdxJsxTextElement") && /^References(\.|$)/.test(child.name ?? "")) {
+          if (child.name === "References") refsNode = { parent: node, child };
+          else { hasParts = true; walk(child); }
           continue;
         }
         if (child.type !== "text" || !HAS_CITE.test(child.value)) { walk(child); continue; }
@@ -79,14 +82,20 @@ export default function remarkCite({ style = "vancouver" } = {}) {
     };
     walk(tree);
 
-    if (!order.length && !refsNode) return;
-    if (!refsNode) throw new Error(`${file.path}: add <References /> where the reference list should go`);
+    if (!order.length && !refsNode && !hasParts) return;
+    if (!refsNode && !hasParts) throw new Error(`${file.path}: add <References /> where the reference list should go`);
+    const refs = order.map((key, i) => {
+      const e = bib().get(key);
+      return { key, n: i + 1, text: formatReference(e, style), ...(e.DOI && { doi: e.DOI }) };
+    });
+    const fm = file.data.astro?.frontmatter;
+    if (fm) fm.references = refs;
+    if (!refsNode) return;
     const list = {
       type: "list", ordered: true, spread: false, data: { hProperties: { className: ["posuta-refs"] } },
-      children: order.map((key) => {
-        const e = bib().get(key);
-        const children = [{ type: "text", value: formatReference(e, style) + (e.DOI ? " " : "") }];
-        if (e.DOI) children.push({ type: "link", url: `https://doi.org/${e.DOI}`, children: [{ type: "text", value: `doi:${e.DOI}` }] });
+      children: refs.map(({ key, text, doi }) => {
+        const children = [{ type: "text", value: text + (doi ? " " : "") }];
+        if (doi) children.push({ type: "link", url: `https://doi.org/${doi}`, children: [{ type: "text", value: `doi:${doi}` }] });
         return { type: "listItem", spread: false, data: { hProperties: { id: `ref-${key}` } }, children: [{ type: "paragraph", children }] };
       }),
     };

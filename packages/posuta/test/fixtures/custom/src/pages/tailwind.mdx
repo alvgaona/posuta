@@ -2,6 +2,7 @@
 layout: ../layouts/Tailwind.astro
 title: Tailwind and posuta
 print: A3 landscape
+bibliography: refs.bib
 ---
 import photo from "../images/photo.png";
 
@@ -25,8 +26,12 @@ import photo from "../images/photo.png";
 
 <Figure.Root>
   <Figure.Media src="/clip.mp4" poster="/clip.jpg" alt="A green frame with a white circle" muted loop class="rounded-xl" />
-  <Figure.Caption>On screen a video; in print its poster frame. <QR url="https://example.org/clip.mp4" data-print="only" class="inline-block w-16" /></Figure.Caption>
+  <Figure.Caption>On screen a video [@bostock2011d3]; in print its poster frame. <QR url="https://example.org/clip.mp4" data-print="only" class="inline-block w-16" /></Figure.Caption>
 </Figure.Root>
 
 </Cell>
 </Grid>
+
+<References.Root as="ul" class="mt-4 list-none text-xs">
+  {frontmatter.references.map((e) => <References.Item entry={e} class="text-sky-700"><b>[{e.n}]</b> {e.text}</References.Item>)}
+</References.Root>

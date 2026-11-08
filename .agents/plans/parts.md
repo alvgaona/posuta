@@ -1,6 +1,6 @@
 # Parts, Base UI style
 
-Status: in progress (Figure done).
+Status: in progress (Figure and References done).
 
 A component fixes its markup, and CSS can't move a caption or wrap an image in a link. So every
 component with inner structure also comes as parts the author arranges, as in Base UI:
@@ -16,8 +16,9 @@ AGENTS.md), and the test fixture's `/tailwind/` page checks it.
 
 1. **Figure** (done): Root, Media (image, SVG, video with a print frame), Caption. Dotted names
    auto-import. Tailwind page in `test/fixtures/custom`.
-2. **References**: Root and Item, from the entries cited on the page, in order, so a page can lay
-   out its list its own way. `<References />` stays as the preset.
+2. **References** (done): Root and Item. The citation plugin puts the cited entries on
+   `frontmatter.references`; the page maps them to Items. `<References />` stays as the preset.
+   Tailwind page in `test/fixtures/custom`.
 3. **Equation**: Root, Math, Number.
 4. **Chart**: Root, Plot, Slider, Caption, Tooltip. The slider and tooltip find their plot inside
    Root in the browser; the build-time state comes from the slider's `value`.

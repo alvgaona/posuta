@@ -1,0 +1,7 @@
+---
+// <References.Root>: the reference list element. Put References.Item inside, one per entry of
+// frontmatter.references. `as` renders another element (default ol).
+interface Props { as?: string; class?: string; [attr: string]: unknown }
+const { as: Tag = "ol", class: cls, ...rest } = Astro.props;
+---
+<Tag class:list={["posuta-refs", cls]} {...rest}><slot /></Tag>

@@ -55,12 +55,15 @@ test("Tailwind: its reset sits under posuta, its utilities over it", async () =>
         caption: css("p.posuta-caption").color,                 // text-red-600 over the theme's muted colour
         half: Math.round(img.getBoundingClientRect().width / img.parentElement.parentElement.clientWidth * 10), // w-1/2 over base.css's 100%
         still: css("img[data-print=only]").display,             // a video's print frame is hidden on screen
+        ref: [document.querySelector("ul.posuta-refs > li#ref-bostock2011d3")?.textContent.slice(0, 11),
+          document.querySelector("a[href='#ref-bostock2011d3']")?.textContent], // References parts, in a list of our own
       };
     });
     assert.equal(got.h2, "22.05px");
     assert.match(got.caption, /^oklch\(0\.577/);
     assert.ok(got.half >= 4 && got.half <= 5, `image is ${got.half}/10 of the figure`);
     assert.equal(got.still, "none");
+    assert.deepEqual(got.ref, ["[1] Bostock", "1"]);
   } finally {
     await browser.close();
     server.close();

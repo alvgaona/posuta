@@ -23,7 +23,8 @@
     "./QR.astro": "./src/QR.astro",
     "./qr": "./src/qr.js",
     "./tex": "./src/tex.js",
-    "./cite": "./src/remark-cite.js"
+    "./cite": "./src/remark-cite.js",
+    "./References": "./src/references/index.js"
   },
   "peerDependencies": {
     "astro": "^7.4.0"
