@@ -49,6 +49,30 @@ Because the PDF is inside `dist/`, it is published with the page. If the poster 
 `https://you.github.io/my-poster/`, the PDF is at `https://you.github.io/my-poster/poster.pdf`.
 Link to it from the poster if you like.
 
+### A poster inside a larger repository
+
+GitHub only runs workflows from `.github/workflows/` at the root of the repository. If the poster
+sits in a folder, such as `poster/` next to a paper or code, move the workflow to the root and
+point it at that folder. Commands run in the folder, but the upload paths start from the root.
+
+```yaml title=".github/workflows/deploy.yaml"
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    defaults: # [!code highlight]
+      run: # [!code highlight]
+        working-directory: poster # [!code highlight]
+    steps:
+      # …
+      - uses: actions/upload-artifact@v7
+        with:
+          name: poster
+          path: poster/dist/poster.pdf # [!code highlight]
+      - uses: actions/upload-pages-artifact@v5
+        with:
+          path: poster/dist # [!code highlight]
+```
+
 If the overflow check fails, so does the workflow, and nothing is published. The run's log names
 the block that doesn't fit (see [the overflow check](/docs/print/pdf#the-overflow-check)).
 

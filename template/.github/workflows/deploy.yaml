@@ -1,5 +1,7 @@
 # Build the poster, export the PDF, and publish both to GitHub Pages.
 # Turn Pages on once: Settings → Pages → Source: GitHub Actions.
+# A poster in a subfolder of a bigger repo: move this file to the repo root and see
+# "A poster inside a larger repository" in the Publish docs.
 name: deploy
 
 on:
