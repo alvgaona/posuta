@@ -6,7 +6,7 @@
     "dev": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
-    "pdf": "astro build && posuta pdf"
+    "pdf": "astro build && posuta pdf --handout"
   },
   "dependencies": {
     "@fontsource/ibm-plex-mono": "^5.3.0",

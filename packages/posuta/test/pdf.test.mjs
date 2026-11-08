@@ -13,11 +13,11 @@ const canvas = (body) => `<!doctype html><style>@media print{@page{size:100mm 10
 <div class="posuta-canvas">${body}</div>`;
 const page = (height) => canvas(`<section><h2>Results</h2><div style="height:${height}"></div></section>`);
 
-function run(html) {
+function run(html, ...args) {
   const dist = mkdtempSync(join(tmpdir(), "posuta-"));
   writeFileSync(join(dist, "index.html"), html);
-  const r = spawnSync(process.execPath, [cli, "pdf", "--dist", dist], { encoding: "utf8" });
-  return { ...r, pdf: join(dist, "poster.pdf") };
+  const r = spawnSync(process.execPath, [cli, "pdf", "--dist", dist, ...args], { encoding: "utf8" });
+  return { ...r, pdf: join(dist, "poster.pdf"), handout: join(dist, "handout.pdf") };
 }
 
 test("a poster that fits exports one PDF, tagged, with its headings as an outline", () => {
@@ -26,6 +26,15 @@ test("a poster that fits exports one PDF, tagged, with its headings as an outlin
   const pdf = readFileSync(r.pdf, "latin1");
   assert.match(pdf, /\/StructTreeRoot/);
   assert.match(pdf, /\/Outlines/);
+  assert.ok(!existsSync(r.handout));
+});
+
+test("--handout adds the page shrunk onto one A4 sheet", () => {
+  const r = run(page("20mm"), "--handout");
+  assert.equal(r.status, 0, r.stderr);
+  const pdf = readFileSync(r.handout, "latin1");
+  assert.match(pdf, /\/MediaBox \[0 0 595\.\d+ 841\.\d+\]/);
+  assert.equal(pdf.match(/\/Type\s*\/Page\b/g).length, 1);
 });
 
 test("an overflowing section fails the export and is named", () => {

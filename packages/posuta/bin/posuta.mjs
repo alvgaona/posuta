@@ -1,8 +1,9 @@
 #!/usr/bin/env node
 // posuta pdf: export a built poster (dist/) to a one-page vector PDF at the paper size, plus
-// og.png, the preview image for social sharing.
+// og.png, the preview image for social sharing, and with --handout, handout.pdf: the same page
+// shrunk onto A4, for readers to take away.
 //
-//   posuta pdf [--dist dist] [--page /] [--out dist/poster.pdf] [--print "A1 landscape"] [--base /repo/] [--no-png]
+//   posuta pdf [--dist dist] [--page /] [--out dist/poster.pdf] [--print "A1 landscape"] [--base /repo/] [--no-png] [--handout]
 //   posuta install            download the browser posuta pdf uses (Playwright's Chromium)
 //
 // Fails if content runs past the printed canvas, naming the innermost block that does: an element
@@ -18,7 +19,7 @@ import { chromium } from "playwright";
 import { overflow } from "../src/overflow.js";
 import { printCss } from "../src/print.js";
 
-const usage = `usage: posuta pdf [--dist dist] [--page /] [--out <dist>/<page>/poster.pdf] [--print "A1 landscape"] [--base /] [--no-png]
+const usage = `usage: posuta pdf [--dist dist] [--page /] [--out <dist>/<page>/poster.pdf] [--print "A1 landscape"] [--base /] [--no-png] [--handout]
        posuta install [--with-deps]`;
 const [cmd, ...rest] = process.argv.slice(2);
 if (cmd === "install") {
@@ -32,6 +33,7 @@ const { values: opt } = parseArgs({
   allowNegative: true,
   options: {
     png: { type: "boolean", default: true },
+    handout: { type: "boolean", default: false },
     dist: { type: "string", default: "dist" },
     page: { type: "string", default: "/" },
     out: { type: "string" },
@@ -94,6 +96,16 @@ try {
   // tagged: readable by screen readers and text extraction; outline: the headings as bookmarks.
   await page.pdf({ path: out, preferCSSPageSize: true, printBackground: true, tagged: true, outline: true });
   console.log(`${out}: ${size.w} × ${size.h}`);
+
+  if (opt.handout) {
+    // shortcut: A4 only; add a paper option if a conference wants US letter.
+    const [w, h] = mm(size.w) <= mm(size.h) ? [210, 297] : [297, 210];
+    // Chromium shrinks the poster's page box (@page size) onto the sheet and centres it.
+    const handout = join(dirname(out), "handout.pdf");
+    await page.pdf({ path: handout, width: `${w}mm`, height: `${h}mm`, margin: { top: 0, right: 0, bottom: 0, left: 0 },
+      pageRanges: "1", printBackground: true, tagged: true, outline: true });
+    console.log(`${handout}: A4`);
+  }
 
   if (opt.png) {
     // The screen layout's first 1200 × 630 px: the size link previews use.
