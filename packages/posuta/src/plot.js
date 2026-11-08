@@ -2,13 +2,10 @@
 // $…$ in any text rendered with KaTeX.
 import * as Plot from "@observablehq/plot";
 import { dom, katex as buildKatex } from "#dom";
+import { MATH, esc, tex } from "./tex.js";
 
 let katex = buildKatex; // null in the browser until plotLive needs it
-const MATH = /\$[^$]+\$/;
 const SVG = "http://www.w3.org/2000/svg";
-const esc = (s) => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
-const tex = (k, s) => s.split(/(\$[^$]+\$)/).map((p) => (p.length > 2 && p.startsWith("$") && p.endsWith("$")
-  ? k.renderToString(p.slice(1, -1), { throwOnError: true, output: "html" }) : esc(p))).join("");
 const inherited = (el, name) => el.closest(`[${name}]`)?.getAttribute(name);
 
 /**
@@ -33,7 +30,7 @@ export function mathify(root, k) {
     fo.setAttribute("height", "1");
     fo.setAttribute("overflow", "visible");
     const color = fill && fill !== "currentColor" ? `color:${fill};` : "";
-    fo.innerHTML = `<div xmlns="http://www.w3.org/1999/xhtml" class="posuta-tex" style="${color}transform:translate(${tx},${ty})">${tex(k, t.textContent)}</div>`;
+    fo.innerHTML = `<div xmlns="http://www.w3.org/1999/xhtml" class="posuta-tex" style="${color}transform:translate(${tx},${ty})">${tex(t.textContent, k)}</div>`;
     t.replaceWith(fo);
     n++;
   }
@@ -42,7 +39,7 @@ export function mathify(root, k) {
     for (const node of [...el.childNodes]) {
       if (node.nodeType !== 3 || !MATH.test(node.textContent)) continue;
       const span = el.ownerDocument.createElement("span");
-      span.innerHTML = tex(k, node.textContent);
+      span.innerHTML = tex(node.textContent, k);
       node.replaceWith(span);
       n++;
     }
@@ -125,7 +122,7 @@ export function attachTip(el, options, box) {
   const svg = el.matches("svg") ? el : el.querySelector("svg[viewBox]");
   const tip = Object.assign(document.createElement("div"), { className: "posuta-tip", hidden: true });
   box.append(tip);
-  const html = (s) => (katex ? tex(katex, s) : esc(s));
+  const html = (s) => (katex ? tex(s, katex) : esc(s));
   const { ch } = pointerOf(options) ?? {};
   el.addEventListener("input", () => {
     const d = el.value;

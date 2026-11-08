@@ -9,10 +9,12 @@ import remarkCite from "./remark-cite.js";
 /**
  * posuta's Astro integration: one line in astro.config, and posters are MDX pages with math,
  * citations, and components available without import lines. React islands (for PlotFigure) need `astro add react`.
- * @param {{ theme?: string }} [options] theme: a CSS file or package of :root tokens, e.g. "@my-lab/posuta-theme"
+ * @param {{ theme?: string, citationStyle?: string }} [options]
+ *   theme: a CSS file or package of :root tokens, e.g. "@my-lab/posuta-theme"
+ *   citationStyle: vancouver (default), apa, harvard1, or a .csl file relative to the project root
  * @returns {import("astro").AstroIntegration}
  */
-export default function posuta({ theme } = {}) {
+export default function posuta({ theme, citationStyle = "vancouver" } = {}) {
   return {
     name: "posuta",
     hooks: {
@@ -27,8 +29,9 @@ export default function posuta({ theme } = {}) {
         if (config.markdown.processor?.name !== "satteri") logger.warn("markdown.processor is set; add remark-math, rehype-katex and posuta's remark-cite and remark-auto-import to it yourself");
         else {
           const components = fileURLToPath(new URL("components/", config.srcDir));
+          const style = citationStyle.endsWith(".csl") ? fileURLToPath(new URL(citationStyle, config.root)) : citationStyle;
           markdown.processor = unified({
-            remarkPlugins: [remarkMath, remarkCite, [remarkAutoImport, { components }]],
+            remarkPlugins: [remarkMath, [remarkCite, { style }], [remarkAutoImport, { components }]],
             rehypePlugins: [rehypeKatex],
           });
         }

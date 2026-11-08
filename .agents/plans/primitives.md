@@ -1,6 +1,6 @@
 # Primitives first, components unstyled
 
-Status: agreed, in progress (steps 1–6 done). Follows the roadmap.
+Status: agreed, in progress (steps 1–7 done). Follows the roadmap.
 
 ## Why
 

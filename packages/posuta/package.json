@@ -22,7 +22,9 @@
     "./base.css": "./src/base.css",
     "./Canvas.astro": "./src/Canvas.astro",
     "./QR.astro": "./src/QR.astro",
-    "./qr": "./src/qr.js"
+    "./qr": "./src/qr.js",
+    "./tex": "./src/tex.js",
+    "./cite": "./src/remark-cite.js"
   },
   "peerDependencies": {
     "astro": "^7.4.0",

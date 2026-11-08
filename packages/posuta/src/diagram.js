@@ -14,38 +14,22 @@
 // Unstyled it draws in currentColor with no fill. Hooks for CSS: .box, .box-title, .box-sub, .arrow,
 // .arrow-label, .group, .group-title, plus each style word as a class (.highlight, .alert…).
 // Arrowheads take their arrow's stroke colour.
-import katex from "katex";
 import { parse as parseYaml } from "yaml";
+import { texSvg } from "./tex.js";
 
 const ROUTE_GAP = 22; // how far an over/under route clears the boxes, px
-const esc = (s) => String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
 const words = (style) => (style ? String(style).split(/\s+/) : []);
 const cls = (base, style) => [base, ...words(style)].join(" ");
 // Unstyled defaults as presentation attributes: any CSS overrides them.
 const LINE = `fill="none" stroke="currentColor"`;
 const dash = (style) => (words(style).includes("dashed") ? ` stroke-dasharray="5 3"` : "");
 const SIZE = { "box-title": 14, "box-sub": 11.5, "arrow-label": 11.5, "group-title": 11 };
+const label = (text, x, y, anchor, klass) => texSvg(text ?? "", x, y, { anchor, class: klass, size: SIZE[klass.split(" ")[0]] });
 
 function hash(s) {
   let h = 0;
   for (const c of s) h = (Math.imul(h, 31) + c.charCodeAt(0)) | 0;
   return (h >>> 0).toString(36);
-}
-
-/** A label: SVG text, or KaTeX in a foreignObject when it has $math$. */
-function label(text, x, y, anchor, klass) {
-  if (!/\$[^$]+\$/.test(text)) {
-    const size = SIZE[klass.split(" ")[0]];
-    return `<text class="${klass}" x="${x}" y="${y}" text-anchor="${anchor}" fill="currentColor" font-size="${size}">${esc(text)}</text>`;
-  }
-  const html = String(text).split(/(\$[^$]+\$)/).map((part) =>
-    part.startsWith("$") && part.endsWith("$") && part.length > 2
-      ? katex.renderToString(part.slice(1, -1), { throwOnError: true, strict: "error" })
-      : esc(part)).join("");
-  const w = 240, h = 26;
-  const fx = anchor === "middle" ? x - w / 2 : anchor === "end" ? x - w : x;
-  const justify = anchor === "middle" ? "center" : anchor === "end" ? "flex-end" : "flex-start";
-  return `<foreignObject x="${fx}" y="${y - h + 6}" width="${w}" height="${h}"><div xmlns="http://www.w3.org/1999/xhtml" class="${klass}" style="justify-content:${justify}">${html}</div></foreignObject>`;
 }
 
 /** Parse "a -> b" shorthand. */
@@ -98,83 +82,100 @@ export function route(a, b, { route: via, x, pos = 0.5 } = {}) {
   return { pts: [[x0, cy(a)], [xm, cy(a)], [xm, cy(b)], [x1, cy(b)]], seg: 1 };
 }
 
-/** Spec (object or YAML text) → SVG markup. */
-export function renderDiagram(input) {
+/**
+ * Spec (object or YAML text) → geometry, in px: where each box, group, arrow and label goes.
+ * Change it, then draw() it, to adjust a diagram without forking the renderer.
+ * @returns {{ boxes: object[], groups: object[], arrows: object[], viewBox: number[] }}
+ */
+export function layout(input) {
   const spec = typeof input === "string" ? parseYaml(input) : input;
   const [cw, rh] = spec.grid ?? [40, 70];
-  const id = "pd" + hash(JSON.stringify(spec));
   const boxes = new Map();
   for (const [name, b] of Object.entries(spec.boxes ?? {})) {
     if (!Array.isArray(b.at)) throw new Error(`posuta <Diagram>: box "${name}" needs at: [col, row]`);
-    boxes.set(name, { ...b, x: b.at[0] * cw, y: b.at[1] * rh, w: (b.w ?? 3) * cw, h: (b.h ?? 0.8) * rh });
+    boxes.set(name, { name, ...b, x: b.at[0] * cw, y: b.at[1] * rh, w: (b.w ?? 3) * cw, h: (b.h ?? 0.8) * rh });
   }
   const box = (n) => {
     if (!boxes.has(n)) throw new Error(`posuta <Diagram>: no box named "${n}"`);
     return boxes.get(n);
   };
-  const out = [];
   const ext = { x0: Infinity, y0: Infinity, x1: -Infinity, y1: -Infinity };
   const grow = (x, y) => { ext.x0 = Math.min(ext.x0, x); ext.y0 = Math.min(ext.y0, y); ext.x1 = Math.max(ext.x1, x); ext.y1 = Math.max(ext.y1, y); };
 
   // Arrows between the same two boxes share the overlap evenly instead of stacking.
-  const arrows = (spec.arrows ?? []).map(arrowOf);
+  const specArrows = (spec.arrows ?? []).map(arrowOf);
   const pairKey = (a) => [a.from, a.to].sort().join("\u0000");
   const pairs = new Map();
-  for (const a of arrows) if (!a.route && a.x == null) pairs.set(pairKey(a), (pairs.get(pairKey(a)) ?? 0) + 1);
+  for (const a of specArrows) if (!a.route && a.x == null) pairs.set(pairKey(a), (pairs.get(pairKey(a)) ?? 0) + 1);
   const seen = new Map();
-  const drawn = arrows.map((a) => {
+  const arrows = specArrows.map((a) => {
     const k = pairKey(a), n = pairs.get(k) ?? 1, i = seen.get(k) ?? 0;
     if (!a.route && a.x == null) seen.set(k, i + 1);
     const { pts, seg } = route(box(a.from), box(a.to), { ...a, x: a.x != null ? a.x * cw : undefined, pos: (i + 1) / (n + 1) });
-    const style = String(a.style ?? "");
-    const svg = [`<path class="${cls("arrow", a.style)}" d="M${pts.map((p) => p.join(",")).join(" L")}" ${LINE}${dash(a.style)} marker-end="url(#${id}-ah)"/>`];
     const marks = [...pts];
+    let labelAt = null;
     if (a.label) {
       const [[x0, y0], [x1, y1]] = [pts[seg], pts[seg + 1]];
-      const lk = cls("arrow-label", words(style).includes("alert") ? "alert" : "");
       if (y0 === y1) {
-        svg.push(label(a.label, (x0 + x1) / 2, y0 - 7, "middle", lk));
+        labelAt = { x: (x0 + x1) / 2, y: y0 - 7, anchor: "middle" };
         marks.push([(x0 + x1) / 2, y0 - 19]);
       } else {
         const left = a.side === "left";
-        svg.push(label(a.label, x0 + (left ? -7 : 7), (y0 + y1) / 2 + 4, left ? "end" : "start", lk));
+        labelAt = { x: x0 + (left ? -7 : 7), y: (y0 + y1) / 2 + 4, anchor: left ? "end" : "start" };
       }
     }
-    return { a, svg: svg.join(""), marks };
+    return { from: a.from, to: a.to, label: a.label, style: a.style, pts, labelAt, marks };
   });
 
   // A group wraps its boxes and the arrows that run between them, with room for its title.
-  for (const g of spec.groups ?? []) {
+  const groups = (spec.groups ?? []).map((g) => {
     const inside = new Set(g.boxes);
     const xs = [], ys = [];
     for (const b of g.boxes.map(box)) xs.push(b.x, b.x + b.w), ys.push(b.y, b.y + b.h);
-    for (const d of drawn) if (inside.has(d.a.from) && inside.has(d.a.to)) d.marks.forEach(([x, y]) => (xs.push(x), ys.push(y)));
+    for (const a of arrows) if (inside.has(a.from) && inside.has(a.to)) a.marks.forEach(([x, y]) => (xs.push(x), ys.push(y)));
     const bottom = g.titleAt === "bottom";
     const x = Math.min(...xs) - 14, x1 = Math.max(...xs) + 14;
     const y = Math.min(...ys) - (bottom ? 14 : 34), y1 = Math.max(...ys) + (bottom ? 34 : 14);
-    out.push(`<rect class="${cls("group", g.style)}" x="${x}" y="${y}" width="${x1 - x}" height="${y1 - y}" rx="10" ${LINE} stroke-dasharray="5 4"/>`);
-    if (g.title) out.push(bottom
-      ? label(g.title, x1 - 12, y1 - 11, "end", "group-title")
-      : label(g.title, x + 12, y + 21, "start", "group-title"));
     grow(x, y); grow(x1, y1);
-  }
-
-  for (const b of boxes.values()) {
-    const cx = b.x + b.w / 2, cy = b.y + b.h / 2;
-    out.push(`<rect class="${cls("box", b.style)}" x="${b.x}" y="${b.y}" width="${b.w}" height="${b.h}" rx="6" ${LINE}${dash(b.style)}/>`);
-    if (b.sub) out.push(label(b.title ?? "", cx, cy - 3, "middle", "box-title"), label(b.sub, cx, cy + 15, "middle", "box-sub"));
-    else out.push(label(b.title ?? "", cx, cy + 5, "middle", words(b.style).includes("bus") ? "box-sub" : "box-title"));
-    grow(b.x, b.y); grow(b.x + b.w, b.y + b.h);
-  }
-
-  for (const d of drawn) {
-    out.push(d.svg);
-    d.marks.forEach(([x, y]) => grow(x, y));
-  }
+    return { ...g, x, y, w: x1 - x, h: y1 - y };
+  });
+  for (const b of boxes.values()) { grow(b.x, b.y); grow(b.x + b.w, b.y + b.h); }
+  for (const a of arrows) a.marks.forEach(([x, y]) => grow(x, y));
 
   const m = 8;
-  const [vx, vy, vw, vh] = [ext.x0 - m, ext.y0 - m, ext.x1 - ext.x0 + 2 * m, ext.y1 - ext.y0 + 2 * m];
+  return {
+    boxes: [...boxes.values()], groups,
+    arrows: arrows.map(({ marks, ...a }) => a),
+    viewBox: [ext.x0 - m, ext.y0 - m, ext.x1 - ext.x0 + 2 * m, ext.y1 - ext.y0 + 2 * m],
+  };
+}
+
+/** Geometry from layout() → SVG markup. */
+export function draw({ boxes, groups, arrows, viewBox }) {
+  const id = "pd" + hash(JSON.stringify({ boxes, groups, arrows }));
+  const out = [];
+  for (const g of groups) {
+    out.push(`<rect class="${cls("group", g.style)}" x="${g.x}" y="${g.y}" width="${g.w}" height="${g.h}" rx="10" ${LINE} stroke-dasharray="5 4"/>`);
+    if (g.title) out.push(g.titleAt === "bottom"
+      ? label(g.title, g.x + g.w - 12, g.y + g.h - 11, "end", "group-title")
+      : label(g.title, g.x + 12, g.y + 21, "start", "group-title"));
+  }
+  for (const b of boxes) {
+    const cx = b.x + b.w / 2, cy = b.y + b.h / 2;
+    out.push(`<rect class="${cls("box", b.style)}" x="${b.x}" y="${b.y}" width="${b.w}" height="${b.h}" rx="6" ${LINE}${dash(b.style)}/>`);
+    if (b.sub) out.push(label(b.title, cx, cy - 3, "middle", "box-title"), label(b.sub, cx, cy + 15, "middle", "box-sub"));
+    else out.push(label(b.title, cx, cy + 5, "middle", words(b.style).includes("bus") ? "box-sub" : "box-title"));
+  }
+  for (const a of arrows) {
+    out.push(`<path class="${cls("arrow", a.style)}" d="M${a.pts.map((p) => p.join(",")).join(" L")}" ${LINE}${dash(a.style)} marker-end="url(#${id}-ah)"/>`);
+    if (a.labelAt) out.push(label(a.label, a.labelAt.x, a.labelAt.y, a.labelAt.anchor, cls("arrow-label", words(a.style).includes("alert") ? "alert" : "")));
+  }
+  const [, , vw, vh] = viewBox;
   // context-stroke: the head takes the colour of the arrow that uses it.
   const marker = `<marker id="${id}-ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,1 L10,5 L0,9 z" fill="context-stroke"/></marker>`;
-  return `<svg viewBox="${vx} ${vy} ${vw} ${vh}" width="${vw}" height="${vh}"><defs>${marker}</defs>${out.join("")}</svg>`;
+  // font-size: the size of $math$ labels (KaTeX in a foreignObject).
+  return `<svg viewBox="${viewBox.join(" ")}" width="${vw}" height="${vh}" font-size="13"><defs>${marker}</defs>${out.join("")}</svg>`;
 }
+
+/** Spec (object or YAML text) → SVG markup. */
+export const renderDiagram = (spec) => draw(layout(spec));

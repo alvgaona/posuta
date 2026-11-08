@@ -1,21 +1,41 @@
 // Citations: `bibliography: refs.bib` in frontmatter, `[@key]` or `[@a; @b]` in the text, and
 // `<References />` where the list goes. Numbered in order of first citation, with DOI links.
+// The list is formatted with a CSL style: vancouver (default), apa, harvard1, or a .csl file.
+// shortcut: in-text citations are always numbers [1]; add author-date markers if a style needs them.
 import { readFileSync } from "node:fs";
 import { dirname, resolve } from "node:path";
-import { Cite } from "@citation-js/core";
+import { Cite, plugins } from "@citation-js/core";
 import "@citation-js/plugin-bibtex";
 import "@citation-js/plugin-csl";
 
 const CITE = /\[(@[\w:.\-/+]+(?:\s*;\s*@[\w:.\-/+]+)*)\]/g;
 const HAS_CITE = new RegExp(CITE.source); // no /g: .test() must not keep state
 
-/** Vancouver text for one CSL entry, without its number and DOI (the DOI becomes a link). */
-function format(entry) {
-  return new Cite(entry).format("bibliography", { format: "text", template: "vancouver" })
-    .trim().replace(/^\d+\.\s*/, "").replace(/\s*doi:\S+$/i, "");
+/** A CSL style name, or the path of a .csl file (registered on first use). */
+function template(style) {
+  const styles = plugins.config.get("@csl").styles;
+  if (style.endsWith(".csl")) {
+    if (!styles.has(style)) styles.add(style, readFileSync(style, "utf8"));
+  } else if (!styles.has(style)) {
+    throw new Error(`posuta: unknown citation style "${style}"; use vancouver, apa, harvard1 or a path to a .csl file`);
+  }
+  return style;
 }
 
-export default function remarkCite() {
+/**
+ * One CSL-JSON entry as plain text in a CSL style, without its list number or DOI (posuta adds
+ * the DOI as a link).
+ * @param {object} entry CSL-JSON, e.g. from new Cite(bibtex).data
+ * @param {string} [style] vancouver (default), apa, harvard1, or an absolute path to a .csl file
+ */
+export function formatReference(entry, style = "vancouver") {
+  return new Cite(entry).format("bibliography", { format: "text", template: template(style) })
+    .trim().replace(/^\[?\d+[.\]]\s*/, "").replace(/\s*(doi:\s*|https?:\/\/(dx\.)?doi\.org\/)\S+$/i, "");
+}
+
+/** @param {{ style?: string }} [options] style: as for formatReference */
+export default function remarkCite({ style = "vancouver" } = {}) {
+  template(style); // fail at startup on an unknown style
   return (tree, file) => {
     const order = [];
     let refsNode = null;
@@ -65,7 +85,7 @@ export default function remarkCite() {
       type: "list", ordered: true, spread: false, data: { hProperties: { className: ["posuta-refs"] } },
       children: order.map((key) => {
         const e = bib().get(key);
-        const children = [{ type: "text", value: format(e) + (e.DOI ? " " : "") }];
+        const children = [{ type: "text", value: formatReference(e, style) + (e.DOI ? " " : "") }];
         if (e.DOI) children.push({ type: "link", url: `https://doi.org/${e.DOI}`, children: [{ type: "text", value: `doi:${e.DOI}` }] });
         return { type: "listItem", spread: false, data: { hProperties: { id: `ref-${key}` } }, children: [{ type: "paragraph", children }] };
       }),
