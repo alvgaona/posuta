@@ -27,8 +27,11 @@ interface Props {
   interactive?: boolean;
   /** A range input that feeds `state[name]` to the chart function. */
   slider?: Slider;
+  class?: string;
+  /** Any other attribute goes on the <figure>. */
+  [attr: string]: unknown;
 }
-const { data = [], plot, alt, caption, max, interactive = false, slider } = Astro.props;
+const { data = [], plot, alt, caption, max, interactive = false, slider, class: cls, ...rest } = Astro.props;
 if (!alt) throw new Error("posuta <Chart>: `alt` is required (what the chart shows, for screen readers)");
 const live = interactive || !!slider;
 if (live && typeof plot !== "string") {
@@ -45,7 +48,7 @@ const rows = typeof data === "string" ? await load(data, { max }) : data;
 const state = slider ? { [slider.name]: slider.value } : {};
 const svg = renderPlot({ ariaLabel: alt, ...chart(rows, Plot, state) });
 ---
-<figure class="posuta-figure posuta-chart" data-chart={live ? plot : undefined} data-alt={live ? alt : undefined}
+<figure class:list={["posuta-figure posuta-chart", cls]} {...rest} data-chart={live ? plot : undefined} data-alt={live ? alt : undefined}
   data-interactive={interactive || undefined} data-slider={slider && JSON.stringify(slider)}>
   {slider && (
     <label class="posuta-slider" data-print="hide" hidden>

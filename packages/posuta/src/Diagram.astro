@@ -3,12 +3,12 @@
 //   import arch from "../../diagrams/arch.yaml?raw";
 //   <Diagram spec={arch} alt="…" caption="…" />
 import { renderDiagram } from "./diagram.js";
-interface Props { spec: string | object; alt: string; caption?: string }
-const { spec, alt, caption } = Astro.props;
+interface Props { spec: string | object; alt: string; caption?: string; class?: string; [attr: string]: unknown }
+const { spec, alt, caption, class: cls, ...rest } = Astro.props;
 if (!alt) throw new Error("posuta <Diagram>: `alt` is required (what the diagram shows, for screen readers)");
 const svg = renderDiagram(spec);
 ---
-<figure class="posuta-figure posuta-diagram" role="img" aria-label={alt}>
+<figure class:list={["posuta-figure posuta-diagram", cls]} role="img" aria-label={alt} {...rest}>
   <Fragment set:html={svg} />
   {caption && <figcaption>{caption}</figcaption>}
 </figure>

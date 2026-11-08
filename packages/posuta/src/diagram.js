@@ -9,13 +9,22 @@
 //     - ctl -> plant                    # or { from, to, label, style, route: over|under, x, side: left }
 //
 // Box styles: highlight, dashed, bus. Arrow styles: highlight, alert, dashed (combine with spaces).
-// Labels may hold $math$ (KaTeX). Colours come from the theme, so light and dark both work.
+// Labels may hold $math$ (KaTeX).
+//
+// Unstyled it draws in currentColor with no fill. Hooks for CSS: .box, .box-title, .box-sub, .arrow,
+// .arrow-label, .group, .group-title, plus each style word as a class (.highlight, .alert…).
+// Arrowheads take their arrow's stroke colour.
 import katex from "katex";
 import { parse as parseYaml } from "yaml";
 
 const ROUTE_GAP = 22; // how far an over/under route clears the boxes, px
 const esc = (s) => String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
-const cls = (base, style) => [base, ...(style ? String(style).split(/\s+/) : [])].join(" ");
+const words = (style) => (style ? String(style).split(/\s+/) : []);
+const cls = (base, style) => [base, ...words(style)].join(" ");
+// Unstyled defaults as presentation attributes: any CSS overrides them.
+const LINE = `fill="none" stroke="currentColor"`;
+const dash = (style) => (words(style).includes("dashed") ? ` stroke-dasharray="5 3"` : "");
+const SIZE = { "box-title": 14, "box-sub": 11.5, "arrow-label": 11.5, "group-title": 11 };
 
 function hash(s) {
   let h = 0;
@@ -26,7 +35,8 @@ function hash(s) {
 /** A label: SVG text, or KaTeX in a foreignObject when it has $math$. */
 function label(text, x, y, anchor, klass) {
   if (!/\$[^$]+\$/.test(text)) {
-    return `<text class="${klass}" x="${x}" y="${y}" text-anchor="${anchor}">${esc(text)}</text>`;
+    const size = SIZE[klass.split(" ")[0]];
+    return `<text class="${klass}" x="${x}" y="${y}" text-anchor="${anchor}" fill="currentColor" font-size="${size}">${esc(text)}</text>`;
   }
   const html = String(text).split(/(\$[^$]+\$)/).map((part) =>
     part.startsWith("$") && part.endsWith("$") && part.length > 2
@@ -35,7 +45,7 @@ function label(text, x, y, anchor, klass) {
   const w = 240, h = 26;
   const fx = anchor === "middle" ? x - w / 2 : anchor === "end" ? x - w : x;
   const justify = anchor === "middle" ? "center" : anchor === "end" ? "flex-end" : "flex-start";
-  return `<foreignObject x="${fx}" y="${y - h + 6}" width="${w}" height="${h}"><div xmlns="http://www.w3.org/1999/xhtml" class="${klass} fo" style="justify-content:${justify}">${html}</div></foreignObject>`;
+  return `<foreignObject x="${fx}" y="${y - h + 6}" width="${w}" height="${h}"><div xmlns="http://www.w3.org/1999/xhtml" class="${klass}" style="justify-content:${justify}">${html}</div></foreignObject>`;
 }
 
 /** Parse "a -> b" shorthand. */
@@ -117,12 +127,11 @@ export function renderDiagram(input) {
     if (!a.route && a.x == null) seen.set(k, i + 1);
     const { pts, seg } = route(box(a.from), box(a.to), { ...a, x: a.x != null ? a.x * cw : undefined, pos: (i + 1) / (n + 1) });
     const style = String(a.style ?? "");
-    const head = style.includes("alert") ? "-alert" : style.includes("highlight") ? "-hl" : "";
-    const svg = [`<path class="${cls("w", a.style)}" d="M${pts.map((p) => p.join(",")).join(" L")}" marker-end="url(#${id}-ah${head})"/>`];
+    const svg = [`<path class="${cls("arrow", a.style)}" d="M${pts.map((p) => p.join(",")).join(" L")}" ${LINE}${dash(a.style)} marker-end="url(#${id}-ah)"/>`];
     const marks = [...pts];
     if (a.label) {
       const [[x0, y0], [x1, y1]] = [pts[seg], pts[seg + 1]];
-      const lk = cls("s", style.includes("alert") ? "alert" : "");
+      const lk = cls("arrow-label", words(style).includes("alert") ? "alert" : "");
       if (y0 === y1) {
         svg.push(label(a.label, (x0 + x1) / 2, y0 - 7, "middle", lk));
         marks.push([(x0 + x1) / 2, y0 - 19]);
@@ -143,18 +152,18 @@ export function renderDiagram(input) {
     const bottom = g.titleAt === "bottom";
     const x = Math.min(...xs) - 14, x1 = Math.max(...xs) + 14;
     const y = Math.min(...ys) - (bottom ? 14 : 34), y1 = Math.max(...ys) + (bottom ? 34 : 14);
-    out.push(`<rect class="${cls("lane", g.style)}" x="${x}" y="${y}" width="${x1 - x}" height="${y1 - y}" rx="10"/>`);
+    out.push(`<rect class="${cls("group", g.style)}" x="${x}" y="${y}" width="${x1 - x}" height="${y1 - y}" rx="10" ${LINE} stroke-dasharray="5 4"/>`);
     if (g.title) out.push(bottom
-      ? `<text class="ln" x="${x1 - 12}" y="${y1 - 11}" text-anchor="end">${esc(g.title)}</text>`
-      : `<text class="ln" x="${x + 12}" y="${y + 21}">${esc(g.title)}</text>`);
+      ? label(g.title, x1 - 12, y1 - 11, "end", "group-title")
+      : label(g.title, x + 12, y + 21, "start", "group-title"));
     grow(x, y); grow(x1, y1);
   }
 
   for (const b of boxes.values()) {
     const cx = b.x + b.w / 2, cy = b.y + b.h / 2;
-    out.push(`<rect class="${cls("b", b.style)}" x="${b.x}" y="${b.y}" width="${b.w}" height="${b.h}" rx="6"/>`);
-    if (b.sub) out.push(label(b.title ?? "", cx, cy - 3, "middle", "t"), label(b.sub, cx, cy + 15, "middle", "s"));
-    else out.push(label(b.title ?? "", cx, cy + 5, "middle", /\bbus\b/.test(b.style ?? "") ? "s" : "t"));
+    out.push(`<rect class="${cls("box", b.style)}" x="${b.x}" y="${b.y}" width="${b.w}" height="${b.h}" rx="6" ${LINE}${dash(b.style)}/>`);
+    if (b.sub) out.push(label(b.title ?? "", cx, cy - 3, "middle", "box-title"), label(b.sub, cx, cy + 15, "middle", "box-sub"));
+    else out.push(label(b.title ?? "", cx, cy + 5, "middle", words(b.style).includes("bus") ? "box-sub" : "box-title"));
     grow(b.x, b.y); grow(b.x + b.w, b.y + b.h);
   }
 
@@ -165,6 +174,7 @@ export function renderDiagram(input) {
 
   const m = 8;
   const [vx, vy, vw, vh] = [ext.x0 - m, ext.y0 - m, ext.x1 - ext.x0 + 2 * m, ext.y1 - ext.y0 + 2 * m];
-  const marker = (suffix, k) => `<marker id="${id}-ah${suffix}" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="${k}" d="M0,1 L10,5 L0,9 z"/></marker>`;
-  return `<svg viewBox="${vx} ${vy} ${vw} ${vh}" width="${vw}" height="${vh}"><defs>${marker("", "ah")}${marker("-hl", "ah highlight")}${marker("-alert", "ah alert")}</defs>${out.join("")}</svg>`;
+  // context-stroke: the head takes the colour of the arrow that uses it.
+  const marker = `<marker id="${id}-ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,1 L10,5 L0,9 z" fill="context-stroke"/></marker>`;
+  return `<svg viewBox="${vx} ${vy} ${vw} ${vh}" width="${vw}" height="${vh}"><defs>${marker}</defs>${out.join("")}</svg>`;
 }

@@ -1,6 +1,6 @@
 # Primitives first, components unstyled
 
-Status: agreed, in progress (steps 1–5 done). Follows the roadmap.
+Status: agreed, in progress (steps 1–6 done). Follows the roadmap.
 
 ## Why
 
@@ -160,14 +160,15 @@ For each component: drop visual CSS, forward `class` and attributes, document it
 | `Chart` | `figure.posuta-chart` › `.posuta-plot`, `figcaption`, `.posuta-slider`, `.posuta-tip` | Plot styles its own SVG; we only set font and background tokens |
 | `Figure` | `figure.posuta-figure` › `img`/`svg`, `figcaption` | |
 | `Equation` | `.posuta-eq` › KaTeX, `.posuta-eq-n` | |
-| `Diagram` | `figure.posuta-diagram` › `svg` with `.box`, `.arrow`, `.group`, `.label`, style names as classes | see below |
+| `Diagram` | `figure.posuta-diagram` › `svg` with `.box`, `.box-title`, `.box-sub`, `.arrow`, `.arrow-label`, `.group`, `.group-title`, style names as classes | see below |
 | `References` | `ol.posuta-refs` › `li#ref-key` | |
 | `QR` | `svg.posuta-qr` | |
 
 Diagram, unstyled but legible: boxes `fill="none" stroke="currentColor"`, arrows
 `stroke="currentColor"`, arrowheads `fill="context-stroke"`, falling back to one `currentColor`
-marker if Chrome's print output disagrees. Class names become readable (`box`, `arrow`, `group`,
-`title`, `sub`, `label`); the style words (`highlight`, `alert`, `dashed`, `bus`) stay as extra
+marker if Chrome's print output disagrees. Class names become readable (`box`, `box-title`,
+`box-sub`, `arrow`, `arrow-label`, `group`, `group-title`: not bare `title`/`label`, which collide
+with page CSS); the style words (`highlight`, `alert`, `dashed`, `bus`) stay as extra
 classes for the theme to colour.
 
 **Done when** every component renders legibly with `base.css` only (screenshot per component),

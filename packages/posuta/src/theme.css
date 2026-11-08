@@ -92,22 +92,18 @@ footer { margin-top: 1.9rem; color: var(--muted); font-size: .8rem; font-family:
 .posuta-refs p { margin: .27rem 0; }
 
 .posuta-diagram svg { font-family: var(--font-body); }
-.posuta-diagram .b { fill: var(--bg); stroke: var(--muted); stroke-width: 1.2; }
-.posuta-diagram .b.highlight { fill: var(--accent-tint); stroke: var(--accent); }
-.posuta-diagram .b.dashed, .posuta-diagram .w.dashed { stroke-dasharray: 5 3; }
-.posuta-diagram .b.bus { fill: var(--surface); stroke-width: 1; }
-.posuta-diagram .lane { fill: none; stroke: var(--border); stroke-width: 1.5; stroke-dasharray: 5 4; }
-.posuta-diagram .w { fill: none; stroke: var(--muted); stroke-width: 1.4; }
-.posuta-diagram .w.highlight { stroke: var(--accent); }
-.posuta-diagram .w.alert { stroke: var(--fault); stroke-dasharray: 5 3; }
-.posuta-diagram .ah { fill: var(--muted); }
-.posuta-diagram .ah.highlight { fill: var(--accent); }
-.posuta-diagram .ah.alert { fill: var(--fault); }
-.posuta-diagram .t { fill: var(--fg); font-size: 14px; }
-.posuta-diagram .s { fill: var(--muted); font-size: 11.5px; }
-.posuta-diagram .s.alert { fill: var(--fault); color: var(--fault); }
-.posuta-diagram .ln { fill: var(--muted); font-family: var(--font-mono); font-size: 11px; letter-spacing: .05em; text-transform: uppercase; }
-.posuta-diagram .fo { display: flex; align-items: center; height: 100%; color: var(--fg); font-size: 13px; line-height: 1; white-space: nowrap; }
+.posuta-diagram .box { fill: var(--bg); stroke: var(--muted); stroke-width: 1.2; }
+.posuta-diagram .box.highlight { fill: var(--accent-tint); stroke: var(--accent); }
+.posuta-diagram .box.bus { fill: var(--surface); stroke-width: 1; }
+.posuta-diagram .group { stroke: var(--border); stroke-width: 1.5; }
+.posuta-diagram .arrow { stroke: var(--muted); stroke-width: 1.4; }
+.posuta-diagram .arrow.highlight { stroke: var(--accent); }
+.posuta-diagram .arrow.alert { stroke: var(--fault); stroke-dasharray: 5 3; }
+.posuta-diagram .box-title { fill: var(--fg); }
+.posuta-diagram .box-sub, .posuta-diagram .arrow-label { fill: var(--muted); }
+.posuta-diagram .arrow-label.alert { fill: var(--fault); color: var(--fault); }
+.posuta-diagram .group-title { fill: var(--muted); font-family: var(--font-mono); letter-spacing: .05em; text-transform: uppercase; }
+.posuta-diagram foreignObject > div { color: var(--fg); }
 
 @media screen and (max-width: 1000px) { .hero { grid-template-columns: 1fr; } }
 

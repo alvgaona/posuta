@@ -34,6 +34,6 @@ arrows:
 `);
   assert.match(svg, /<svg viewBox=/);
   assert.match(svg, /class="katex"/);
-  assert.equal((svg.match(/<path class="w"/g) ?? []).length, 2);
+  assert.equal((svg.match(/<path class="arrow"/g) ?? []).length, 2);
   assert.throws(() => renderDiagram({ boxes: {}, arrows: ["a -> b"] }), /no box named "a"/);
 });
