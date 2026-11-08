@@ -1,0 +1,14 @@
+# The control loop, for <Diagram>. Boxes sit on a grid of 40 × 70 px cells; arrows route themselves.
+grid: [40, 70]
+boxes:
+  ref:    { at: [0, 0], w: 3, title: Reference, sub: "$r(t)$" }
+  ctl:    { at: [5, 0], w: 4, title: Controller, sub: "PD · 1 kHz", style: highlight }
+  plant:  { at: [11, 0], w: 4, title: Plant, sub: "$\\zeta,\\ \\omega_n$" }
+  sensor: { at: [11, 1.6], w: 4, title: Sensor, style: dashed }
+groups:
+  - { title: Embedded computer, boxes: [ctl] }
+arrows:
+  - ref -> ctl: $e$
+  - ctl -> plant: $u$
+  - { from: plant, to: sensor, label: $y$ }
+  - { from: sensor, to: ctl, route: under, label: measured, style: highlight }

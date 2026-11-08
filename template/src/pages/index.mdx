@@ -14,6 +14,10 @@ footer: Your Name · your-lab.org
 print: { size: A0, orientation: portrait }
 bibliography: refs.bib
 ---
+import loop from "../../diagrams/loop.yaml?raw";
+import poles from "../../figures/poles.svg";
+import clip from "../media/oscillator.mp4";
+import still from "../media/oscillator.jpg";
 
 <Row>
 <Col>
@@ -22,14 +26,14 @@ bibliography: refs.bib
 
 Write in plain **Markdown**. Each section is a numbered block of the poster. Inline maths goes
 between dollar signs, $\omega_n = 4\ \mathrm{rad/s}$, and citations are `[@key]` from the
-bibliography [@bostock2011d3].
+bibliography [@ogata2010modern].
 
 </Section>
 
 <Section n={2} title="The idea" panel>
 
 Use `panel` to set a section apart, for the method or the main result. Display equations are
-rendered at build time [@knuth1984tex; @bostock2011d3]:
+rendered at build time [@knuth1984tex]:
 
 <Equation n={1} tex="\ddot y + 2\zeta\omega_n \dot y + \omega_n^2 y = \omega_n^2 u" />
 
@@ -55,6 +59,63 @@ rendered at build time [@knuth1984tex; @bostock2011d3]:
 
 </Col>
 </Row>
+
+<Grid cols={3}>
+<Cell span={2}>
+
+<Section n={4} title="The loop" sub="A block diagram from diagrams/loop.yaml: boxes on a grid, arrows that route themselves.">
+
+<Diagram
+  spec={loop}
+  alt="The control loop: the reference and the measured output feed the controller, which drives the plant; a sensor measures the plant's output."
+  caption="Labels can hold maths. Styles such as highlight and dashed become classes, which the theme colours."
+/>
+
+</Section>
+
+</Cell>
+<Cell>
+
+<Section n={5} title="See it move" sub="A video on screen; in print, its still frame.">
+
+<Figure.Root>
+  <Figure.Media src={clip} poster={still} alt="Two masses on springs: the lightly damped one overshoots the target and bounces; the damped one settles almost at once." muted loop />
+  <Figure.Caption>The two systems of Section 3, at the same time scale.</Figure.Caption>
+  <p data-print="only">Scan the QR code at the bottom to watch it.</p>
+</Figure.Root>
+
+</Section>
+
+</Cell>
+<Cell span={2}>
+
+<Section n={6} title="Make it yours" sub="Every block above is a file you can change.">
+
+- Text and frontmatter: `src/pages/index.mdx`. Charts: `charts/` and `data/`. Diagrams:
+  `diagrams/`. Figures and video: `figures/`, `src/media/`.
+- Lay blocks out with `<Row>`/`<Col>` (top) or `<Grid>`/`<Cell>` (here), which can span rows.
+- The header, footer and QR code are `src/layouts/Poster.astro`; this numbered section is
+  `src/components/Section.astro`. Any component you add there works here without an import.
+- Restyle with CSS or Tailwind: posuta's components have no look of their own beyond
+  `posuta/theme.css`, which the layout imports.
+
+</Section>
+
+</Cell>
+<Cell>
+
+<Section n={7} title="Where the poles sit" sub="A matplotlib figure, saved as SVG by figures/poles.py.">
+
+<Figure
+  src={poles}
+  alt="The s-plane: the damped system's poles sit at 45 degrees from the negative real axis, the lightly damped one's close to the imaginary axis."
+  caption="Poles on a circle of radius ωn; less damping, closer to the imaginary axis."
+/>
+
+</Section>
+
+</Cell>
+</Grid>
 
 <Section title="References">
 
