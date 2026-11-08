@@ -100,31 +100,47 @@ package's tokens win whatever the load order.
 
 ### Charts
 
+A chart lives in `charts/<name>.js` and turns rows into
+[Observable Plot](https://observablehq.com/plot/) options:
+
+```js
+// charts/step.js
+export default (d, Plot, state) => ({
+  marks: [Plot.lineY(d, { x: "t", y: "y", stroke: "system" })],
+});
+```
+
 ```mdx
 import Chart from "posuta/Chart.astro";
 
-<Chart data="step.csv" alt="What the chart shows" caption="…"
-  plot={(d, Plot) => ({ marks: [Plot.lineY(d, { x: "t", y: "y", stroke: "system" })] })} />
+<Chart data="step.csv" plot="step" alt="What the chart shows" caption="…" />
 ```
 
-[Observable Plot](https://observablehq.com/plot/), drawn to SVG at build time: it prints as vectors
-and needs no JavaScript. `data` is a file in `data/` (CSV, JSON or Parquet) or an array; series
-longer than 2000 rows are thinned (`max={…}` to change). A `title` channel gives hover tooltips with
-no JavaScript. `alt` is required.
+It is drawn to SVG at build time: it prints as vectors and needs no JavaScript. `data` is a file in
+`data/` (CSV, JSON or Parquet) or an array; series longer than 2000 rows are thinned (`max={…}`
+to change). `alt` is required. For a one-off static chart, `plot` can also be an inline function,
+`plot={(d, Plot) => ({ … })}`.
 
-For a chart that reacts to input, write a React island (`npx astro add react`) and draw with
-`PlotFigure`. It is server-rendered first, so the props you give the island are the state it
-prints in:
-
-```jsx
-import PlotFigure from "posuta/PlotFigure";
-import { Plot } from "posuta/plot";
-export default function Scrubber({ frame = 62 }) { /* useState(frame), a slider, <PlotFigure options={…} /> */ }
-```
+**Interactive, with no extra code:**
 
 ```mdx
-<Scrubber client:visible frame={62} />
+<Chart data="step.csv" plot="step" interactive alt="…" />
+<Chart data="step.csv" plot="step" alt="…"
+  slider={{ name: "t", min: 0, max: 5, step: 0.05, value: 0.8, label: "Time (s)" }} />
 ```
+
+- `interactive` adds a tooltip and a crosshair that follow the pointer.
+- `slider` adds a range input; the chart function receives its value as `state.t` and redraws as
+  the reader drags. `value` is the state the poster prints in.
+
+The browser redraws the chart from the same file and the rows embedded in the page; Plot
+(about 130 KB compressed) downloads only when a live chart scrolls into view. Pages with only
+static charts ship no JavaScript. With JavaScript off, and in print, the chart is the build-time
+SVG and the slider is hidden.
+
+For anything else, write a React island (`npx astro add react`) and draw with `PlotFigure`
+(`import PlotFigure from "posuta/PlotFigure"`, `import { Plot } from "posuta/plot"`). It is
+server-rendered first, so the props you give the island are the state it prints in.
 
 Data helpers for your own code: `import { load } from "posuta/data"`.
 

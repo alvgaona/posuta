@@ -45,19 +45,15 @@ rendered at build time [@knuth1984tex; @bostock2011d3]:
 </Col>
 <Col span={2}>
 
-<Section n={3} title="The result" sub="A line chart from data/step.csv, drawn at build time.">
+<Section n={3} title="The result" sub="A chart from data/step.csv and charts/step.js, drawn at build time.">
 
 <Chart
   data="step.csv"
+  plot="step"
+  interactive
+  slider={{ name: "t", min: 0, max: 5, step: 0.05, value: 0.8, label: "Time (s)" }}
   alt="Step response of two second-order systems: the lightly damped one overshoots to about 1.5 and rings for four seconds; the damped one settles in about 1.5 seconds with little overshoot."
-  caption="Unit step response for two damping ratios, from Eq. 2."
-  plot={(d, Plot) => ({
-    width: 760, height: 320,
-    x: { label: "time (s)" }, y: { label: "output y", grid: true },
-    color: { legend: true },
-    marks: [Plot.ruleY([1], { strokeDasharray: "4 3", stroke: "currentColor", strokeOpacity: 0.4 }),
-            Plot.lineY(d, { x: "t", y: "y", stroke: "system", strokeWidth: 2 })],
-  })}
+  caption="Unit step response for two damping ratios, from Eq. 2. Hover to read values; drag the slider to move the marker. The poster prints with the marker at 0.8 s."
 />
 
 </Section>

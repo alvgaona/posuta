@@ -50,3 +50,14 @@ test("an unknown key or a missing <References /> fails the build", () => {
   assert.throws(() => run([{ type: "paragraph", children: [text("[@nope]")] }, refs]), /\[@nope\] is not in the bibliography/);
   assert.throws(() => run([{ type: "paragraph", children: [text("[@knuth1984tex]")] }]), /add <References \/>/);
 });
+
+test("withPointer adds a crosshair and a tip from the first x/y mark, keeping its channels", async () => {
+  const { Plot, withPointer } = await import("../src/plot.js");
+  const d = [{ t: 0, y: 1, s: "a" }];
+  const rule = Plot.ruleY([1]);
+  const line = Plot.lineY(d, { x: "t", y: "y", stroke: "s" });
+  const out = withPointer({ marks: [rule, line] });
+  assert.equal(out.marks.length, 4);
+  assert.equal(out.marks[3].channels.stroke.value, "s");
+  assert.deepEqual(withPointer({ marks: [rule] }).marks, [rule]); // nothing to point at
+});

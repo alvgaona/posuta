@@ -12,7 +12,7 @@ Replace `OWNER/REPO` in the two links above with this repository's.
 
 - Text, sections and frontmatter: `src/pages/index.mdx`
 - References: `src/pages/refs.bib`
-- Data for charts: `data/`
+- Charts: `charts/` (one file per chart), their data in `data/`
 
 ```sh
 pnpm install

@@ -95,6 +95,9 @@ footer { margin-top: 1.9rem; color: var(--muted); font-size: .8rem; font-family:
 .posuta-diagram .fo { display: flex; align-items: center; height: 100%; color: var(--fg); font-size: 13px; line-height: 1; white-space: nowrap; }
 
 .posuta-qr { display: none; }
+.posuta-slider:not([hidden]) { display: flex; align-items: center; gap: .8rem; font-size: .87rem; color: var(--muted); }
+.posuta-slider input { flex: 1; max-width: 20rem; accent-color: var(--accent); }
+.posuta-slider output { font-family: var(--font-mono); min-width: 3ch; }
 
 /* Screen reflow: three columns → two → one. Print keeps the grid as written. */
 @media screen and (max-width: 1000px) { .hero { grid-template-columns: 1fr; } }
@@ -116,6 +119,7 @@ footer { margin-top: 1.9rem; color: var(--muted); font-size: .8rem; font-family:
   .lede { font-size: 1.35rem; }
   .stat b { font-size: 2.8rem; }
   a { color: inherit; }
+  .posuta-slider { display: none !important; }
   .posuta-qr { display: flex; align-items: center; gap: 1rem; color: var(--fg-2); }
   .posuta-qr svg { width: 6rem; height: 6rem; }
 }
