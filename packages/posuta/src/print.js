@@ -15,8 +15,9 @@ function mm(v) {
 }
 
 /**
- * Frontmatter `print` → paper in mm plus the type scale.
- * Accepts "A1", "A1 landscape", { size, orientation } or { width: "900mm", height: "36in" }.
+ * Frontmatter `print` → paper in mm, the type scale, and `text`, the author's own factor on it.
+ * Accepts "A1", "A1 landscape", { size, orientation } or { width: "900mm", height: "36in" };
+ * the object forms take `scale` too, e.g. { size: "A0", scale: 0.8 } for smaller text.
  */
 export function paper(print = "A0") {
   const p = typeof print === "string" ? { size: print.split(/[\s:]+/)[0], orientation: print.split(/[\s:]+/)[1] } : print;
@@ -33,13 +34,15 @@ export function paper(print = "A0") {
     throw new Error(`posuta: orientation must be portrait or landscape, not "${p.orientation}"`);
   }
   if ((p.orientation === "landscape" && w < h) || (p.orientation === "portrait" && w > h)) [w, h] = [h, w];
+  const text = p.scale ?? 1;
+  if (!(typeof text === "number" && text > 0)) throw new Error(`posuta: print scale must be a number above 0, not "${p.scale}"`);
   // Type follows the paper's area, so a sheet reads the same in either orientation.
-  return { width: w, height: h, scale: Math.sqrt((w * h) / A0_AREA) };
+  return { width: w, height: h, scale: Math.sqrt((w * h) / A0_AREA), text };
 }
 
 /** The CSS that sets the page box and the scale; the theme reads the custom properties. */
 export function printCss(print) {
-  const { width, height, scale } = paper(print);
+  const { width, height, scale, text } = paper(print);
   return `@page{size:${width}mm ${height}mm;margin:0}` +
-    `:root{--paper-w:${width}mm;--paper-h:${height}mm;--print-scale:${scale.toFixed(4)}}`;
+    `:root{--paper-w:${width}mm;--paper-h:${height}mm;--print-scale:${scale.toFixed(4)};--print-text:${text}}`;
 }

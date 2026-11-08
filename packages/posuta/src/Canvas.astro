@@ -12,12 +12,13 @@
 import "./base.css";
 import { printCss } from "./print.js";
 
-type Print = string | { size?: string; orientation?: "portrait" | "landscape"; width?: string; height?: string };
+type Print = string | { size?: string; orientation?: "portrait" | "landscape"; width?: string; height?: string; scale?: number };
 interface Props {
   title: string;
   /** For search results and link previews. */
   description?: string;
-  /** Paper: "A0", "A1 landscape", { width: "900mm", height: "36in" }… Default A0 portrait. */
+  /** Paper: "A0", "A1 landscape", { width: "900mm", height: "36in" }… Default A0 portrait.
+      `scale` multiplies the printed type size: { size: "A0", scale: 0.8 }. */
   print?: Print;
   /** "light" or "dark" to fix the colour scheme, or tokens such as { accent: "#0a7" }. */
   theme?: "light" | "dark" | Record<string, string>;

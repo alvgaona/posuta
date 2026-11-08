@@ -34,3 +34,11 @@ test("formatReference: built-in CSL styles, a .csl file, and an unknown name", (
   assert.equal(formatReference(entry, fixtures + "title-only.csl"), "D³: DATA-DRIVEN DOCUMENTS");
   assert.throws(() => formatReference(entry, "nope"), /unknown citation style "nope"/);
 });
+
+test("print scale: a factor on the type size, checked", async () => {
+  const { paper, printCss } = await import("../src/print.js");
+  assert.equal(paper("A1").text, 1);
+  assert.equal(paper({ size: "A0", scale: 0.8 }).text, 0.8);
+  assert.match(printCss({ width: "400mm", height: "800mm", scale: 0.75 }), /--print-text:0\.75/);
+  assert.throws(() => paper({ size: "A0", scale: "big" }), /print scale/);
+});

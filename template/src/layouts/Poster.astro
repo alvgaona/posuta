@@ -9,7 +9,7 @@ import "../styles/theme.css";
 interface Stat { value: string; label: string; accent?: boolean }
 interface Frontmatter {
   title: string; highlight?: string; eyebrow?: string; lede?: string; stats?: Stat[]; footer?: string;
-  print?: string | { size?: string; orientation?: "portrait" | "landscape"; width?: string; height?: string };
+  print?: string | { size?: string; orientation?: "portrait" | "landscape"; width?: string; height?: string; scale?: number };
   /** The QR code on the printed poster: a URL, or false. Defaults to this page's URL when `site` is set. */
   qr?: string | false;
   /** "light" or "dark" to fix the colour scheme, or tokens such as { accent: "#0a7" }. */

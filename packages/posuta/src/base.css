@@ -8,9 +8,10 @@
 /* The print canvas: one page at the paper size (--paper-w/-h come from <Canvas>'s print CSS). */
 .posuta-canvas { box-sizing: border-box; }
 @media print {
-  /* The type scale: body text is 24 pt at A0, follows the paper's area, never below 12 pt.
-     Size everything in rem and the whole poster scales with the paper. */
-  :root { font-size: max(calc(24pt * var(--print-scale, 1)), 12pt); -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  /* The type scale: body text is 24 pt at A0, follows the paper's area, never below 12 pt, then
+     times the author's print scale (--print-text). Size everything in rem and the whole poster
+     scales with the paper. */
+  :root { font-size: calc(max(calc(24pt * var(--print-scale, 1)), 12pt) * var(--print-text, 1)); -webkit-print-color-adjust: exact; print-color-adjust: exact; }
   body { margin: 0; }
   .posuta-canvas { width: var(--paper-w); height: var(--paper-h); max-width: none; overflow: hidden; }
 }
