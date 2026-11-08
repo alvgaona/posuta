@@ -1,6 +1,6 @@
 {
   "name": "create-posuta",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Start a posuta research poster: pnpm create posuta",
   "license": "MIT",
   "type": "module",

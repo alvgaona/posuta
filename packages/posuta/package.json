@@ -1,6 +1,6 @@
 {
   "name": "@posuta/posuta",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Research posters for the web and for print, built with Astro",
   "license": "MIT",
   "type": "module",
