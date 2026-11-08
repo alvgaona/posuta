@@ -19,6 +19,7 @@ const pdf = (...args) => spawnSync(process.execPath, [cli, "pdf", "--dist", join
 test("a poster built from the tools only builds, exports, and names an overflowing block", { timeout: 180_000 }, () => {
   const build = spawnSync(join(dir, "node_modules/.bin/astro"), ["build"], { cwd: dir, encoding: "utf8" });
   assert.equal(build.status, 0, build.stdout + build.stderr);
+  assert.match(readFileSync(join(dir, "dist/index.html"), "utf8"), /<h2[^>]*data-plugin/, "the author's rehype plugin ran");
 
   const ok = pdf("--out", join(out, "poster.pdf"));
   assert.equal(ok.status, 0, ok.stderr);
