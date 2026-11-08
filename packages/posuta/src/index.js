@@ -1,3 +1,5 @@
+import { createRequire } from "node:module";
+import { dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 import { unified } from "@astrojs/markdown-remark";
 import mdx from "@astrojs/mdx";
@@ -36,7 +38,11 @@ export default function posuta({ theme, citationStyle = "vancouver", remarkPlugi
             rehypePlugins: [rehypeKatex, ...rehypePlugins],
           });
         }
-        updateConfig({ integrations, markdown });
+        // base.css loads KaTeX's fonts from posuta's own node_modules, which can sit outside the
+        // project (a linked posuta); added after resolve so Vite keeps its default allow list.
+        const katex = dirname(createRequire(import.meta.url).resolve("katex/package.json"));
+        const allowKatex = { name: "posuta:allow-katex", configResolved: (c) => { c.server.fs.allow.push(katex); } };
+        updateConfig({ integrations, markdown, vite: { plugins: [allowKatex] } });
       },
     },
   };
