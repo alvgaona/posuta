@@ -76,7 +76,7 @@ test("Tailwind: its reset sits under posuta, its utilities over it", async () =>
 
     // A faceted chart in a display: contents figure comes alive, and its tooltip follows the
     // point in the lower facet.
-    const plot = page.locator(".posuta-chart .posuta-plot");
+    const plot = page.locator(".posuta-chart .posuta-plot").first();
     await plot.scrollIntoViewIfNeeded();
     await page.waitForSelector(".posuta-tip", { state: "attached" }); // live: attachTip has run
     const box = await plot.boundingBox();
@@ -92,6 +92,11 @@ test("Tailwind: its reset sits under posuta, its utilities over it", async () =>
         dy: Math.abs(box.top + parseFloat(t.style.top) - (dot.top + dot.height / 2)), lower: dot.top > box.top + box.height / 2 };
     });
     assert.ok(tip.dx < 1 && tip.dy < 1 && tip.lower, JSON.stringify(tip));
+
+    // In print, the live chart gives way to its build-time drawing.
+    await page.emulateMedia({ media: "print" });
+    const shown = await page.evaluate(() => [...document.querySelectorAll(".posuta-chart .posuta-plot")].map((b) => getComputedStyle(b).display));
+    assert.deepEqual(shown, ["none", "block"]);
   } finally {
     await browser.close();
     server.close();

@@ -6,7 +6,8 @@
 //   <Chart … slider={{ name: "t", min: 0, max: 5, step: 0.1, value: 1, label: "Time" }} />
 //
 // `plot` may also be an inline function, (d, Plot) => options, for a static chart.
-// The slider's `value` is the state the chart prints in.
+// The slider's `value` is the state the chart prints in: the build-time drawing is what prints,
+// whatever the slider or a script shows on screen.
 import * as Plot from "@observablehq/plot";
 import { load } from "./data.js";
 import { renderPlot } from "./plot.js";

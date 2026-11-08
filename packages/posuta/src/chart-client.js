@@ -12,6 +12,11 @@ async function hydrate(fig) {
   const input = fig.querySelector(".posuta-slider input");
   const out = fig.querySelector(".posuta-slider output");
   const box = fig.querySelector(".posuta-plot");
+  // The build-time drawing stays as the print frame, whatever the slider or a script shows on screen.
+  const still = box.cloneNode(true);
+  still.dataset.print = "only";
+  box.dataset.print = "hide";
+  box.after(still);
   let latest = 0;
   const render = async () => {
     const n = ++latest;
