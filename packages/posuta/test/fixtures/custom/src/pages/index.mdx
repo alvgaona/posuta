@@ -1,0 +1,54 @@
+---
+layout: ../layouts/Banner.astro
+title: A Poster Built From the Tools Only
+authors: A. Author · B. Author · Some Lab
+print: A2 landscape
+bibliography: refs.bib
+---
+
+<section>
+
+## Motivation
+
+No posuta theme and no Row or Col: this page has its own layout, a CSS grid, and its own
+stylesheet. Maths still works, $\dot x = f(x, u)$, and so do citations [@bostock2011d3].
+
+</section>
+
+<section class="wide">
+
+## Signal
+
+<Chart
+  data="wave.csv"
+  plot={(d, Plot) => ({ width: 900, height: 280, marks: [Plot.lineY(d, { x: "t", y: "v" })], x: { label: "time $t$ (s)" }, y: { label: "$v$ (m/s)" } })}
+  alt="A damped sine wave that decays over ten seconds."
+/>
+
+</section>
+
+<section>
+
+## Model
+
+A drawing by hand, with posuta's arrow routing and KaTeX labels:
+
+<Sketch />
+
+</section>
+
+<section class="wide">
+
+## Method
+
+Typeset with TeX [@knuth1984tex].
+
+</section>
+
+<section class="refs">
+
+## References
+
+<References />
+
+</section>

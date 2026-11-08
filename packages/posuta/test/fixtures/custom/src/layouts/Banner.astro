@@ -1,0 +1,13 @@
+---
+// A layout of its own on <Canvas>: a full-width banner and a grid. No posuta theme.
+import Canvas from "posuta/Canvas.astro";
+import "../styles/poster.css";
+const { frontmatter: fm } = Astro.props;
+---
+<Canvas title={fm.title} print={fm.print} class="sheet">
+  <header class="banner" data-name="the banner">
+    <h1>{fm.title}</h1>
+    <p>{fm.authors}</p>
+  </header>
+  <main class="grid"><slot /></main>
+</Canvas>

@@ -1,0 +1,13 @@
+{
+  "name": "posuta-fixture-custom",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "astro build",
+    "pdf": "astro build && posuta pdf"
+  },
+  "dependencies": {
+    "astro": "^7.4.7",
+    "posuta": "workspace:*"
+  }
+}
