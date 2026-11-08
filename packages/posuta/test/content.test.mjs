@@ -35,7 +35,8 @@ test("citations are numbered by first use and listed with DOI links", () => {
     refs,
   ]);
   const p = tree.children[0].children;
-  const nums = p.filter((n) => n.type === "link").map((n) => [n.url, n.children[0].value]);
+  assert.deepEqual(p.filter((n) => n.type === "cite").map((n) => n.data.hProperties.className), [["posuta-cite"], ["posuta-cite"]]);
+  const nums = p.flatMap((n) => n.children ?? []).filter((n) => n.type === "link").map((n) => [n.url, n.children[0].value]);
   assert.deepEqual(nums, [["#ref-knuth1984tex", "1"], ["#ref-bostock2011d3", "2"], ["#ref-knuth1984tex", "1"]]);
   const list = tree.children[1];
   assert.equal(list.type, "list");
@@ -56,6 +57,22 @@ test("References parts get the cited entries on frontmatter.references", () => {
   assert.equal(tree.children[1], root); // parts are left for the page to render
   assert.deepEqual(fm.references.map(({ key, n, doi }) => [key, n, doi]), [["bostock2011d3", 1, "10.1109/TVCG.2011.185"]]);
   assert.match(fm.references[0].text, /^Bostock M/);
+});
+
+test("frontmatter citations are numbered first; notes are added and URLs linked", async () => {
+  const fm = { bibliography: "refs.bib", lede: "Built on [@plot2021].", stats: [{ label: "as in [@knuth1984tex]" }] };
+  const tree = run([{ type: "paragraph", children: [text("[@bostock2011d3]")] }, refs], undefined, fm);
+  assert.deepEqual(fm.references.map((r) => [r.key, r.n]), [["plot2021", 1], ["knuth1984tex", 2], ["bostock2011d3", 3]]);
+  assert.match(fm.references[0].text, /https:\/\/observablehq\.com\/plot\/ \(Software\)$/);
+  const url = tree.children[1].children[0].children[0].children.find((n) => n.type === "link");
+  assert.equal(url.url, "https://observablehq.com/plot/");
+
+  const { md } = await import("../src/md.js");
+  const html = await md("**Built** on $x$ [@plot2021; @knuth1984tex].", fm.references);
+  assert.match(html, /^<strong>Built<\/strong> on <span class="katex">/);
+  assert.match(html, /<span class="posuta-cite">\[<a href="#ref-plot2021">1<\/a>, <a href="#ref-knuth1984tex">2<\/a>\]<\/span>\.$/);
+  await assert.rejects(md("[@nope]", fm.references), /\[@nope\] is not on frontmatter.references/);
+  assert.equal(await md(undefined), "");
 });
 
 test("withPointer adds a crosshair and a pointer dot; tipRows labels values from the scales", async () => {

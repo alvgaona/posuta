@@ -1,6 +1,7 @@
 // Citations: `bibliography: refs.bib` in frontmatter, `[@key]` or `[@a; @b]` in the text, and
-// `<References />` where the list goes. Numbered in order of first citation, with DOI links.
-// The cited entries are also on frontmatter.references, in order, for References.Root/Item.
+// `<References />` where the list goes. Numbered in order of first citation (frontmatter text
+// first, for md()), with DOI and URL links and the BibTeX note. In the text each citation is a
+// span.posuta-cite. The cited entries are also on frontmatter.references, for References.Root/Item.
 // The list is formatted with a CSL style: vancouver (default), apa, harvard1, or a .csl file.
 // shortcut: in-text citations are always numbers [1]; add author-date markers if a style needs them.
 import { readFileSync } from "node:fs";
@@ -9,8 +10,12 @@ import { Cite, plugins } from "@citation-js/core";
 import "@citation-js/plugin-bibtex";
 import "@citation-js/plugin-csl";
 
-const CITE = /\[(@[\w:.\-/+]+(?:\s*;\s*@[\w:.\-/+]+)*)\]/g;
+export const CITE = /\[(@[\w:.\-/+]+(?:\s*;\s*@[\w:.\-/+]+)*)\]/g;
 const HAS_CITE = new RegExp(CITE.source); // no /g: .test() must not keep state
+const URL_RE = /(https?:\/\/\S*[^\s.,;:)\]])/; // trailing punctuation stays text
+
+/** Reference text → alternating [text, url, text, …], for linking the URLs in it. */
+export const urlParts = (text) => text.split(URL_RE);
 
 /** A CSL style name, or the path of a .csl file (registered on first use). */
 function template(style) {
@@ -31,7 +36,8 @@ function template(style) {
  */
 export function formatReference(entry, style = "vancouver") {
   return new Cite(entry).format("bibliography", { format: "text", template: template(style) })
-    .trim().replace(/^\[?\d+[.\]]\s*/, "").replace(/\s*(doi:\s*|https?:\/\/(dx\.)?doi\.org\/)\S+$/i, "");
+    .trim().replace(/^\[?\d+[.\]]\s*/, "")
+    .replace(/\s*(Available (at|from):?\s*)?(doi:\s*|https?:\/\/(dx\.)?doi\.org\/)\S+$/i, "");
 }
 
 /** @param {{ style?: string }} [options] style: as for formatReference */
@@ -70,9 +76,10 @@ export default function remarkCite({ style = "vancouver" } = {}) {
             if (!order.includes(key)) order.push(key);
             return { type: "link", url: `#ref-${key}`, children: [{ type: "text", value: String(order.indexOf(key) + 1) }] };
           });
-          parts.push({ type: "text", value: "[" });
-          links.forEach((l, j) => parts.push(...(j ? [{ type: "text", value: ", " }] : []), l));
-          parts.push({ type: "text", value: "]" });
+          const inner = [{ type: "text", value: "[" }];
+          links.forEach((l, j) => inner.push(...(j ? [{ type: "text", value: ", " }] : []), l));
+          inner.push({ type: "text", value: "]" });
+          parts.push({ type: "cite", data: { hName: "span", hProperties: { className: ["posuta-cite"] } }, children: inner });
           last = m.index + m[0].length;
         }
         if (last < child.value.length) parts.push({ type: "text", value: child.value.slice(last) });
@@ -80,21 +87,32 @@ export default function remarkCite({ style = "vancouver" } = {}) {
         i += parts.length - 1;
       }
     };
+    // Frontmatter text (a lede, a stat label) comes first on the poster, so it is numbered first.
+    const fm = file.data.astro?.frontmatter;
+    const strings = (v) => (typeof v === "string" ? [v] : v && typeof v === "object" ? Object.values(v).flatMap(strings) : []);
+    for (const str of strings(fm)) for (const m of str.matchAll(CITE)) {
+      for (const key of m[1].split(";").map((k) => k.trim().slice(1))) {
+        if (!bib().has(key)) throw new Error(`${file.path}: [@${key}] in the frontmatter is not in the bibliography`);
+        if (!order.includes(key)) order.push(key);
+      }
+    }
     walk(tree);
 
     if (!order.length && !refsNode && !hasParts) return;
     if (!refsNode && !hasParts) throw new Error(`${file.path}: add <References /> where the reference list should go`);
     const refs = order.map((key, i) => {
       const e = bib().get(key);
-      return { key, n: i + 1, text: formatReference(e, style), ...(e.DOI && { doi: e.DOI }) };
+      let text = formatReference(e, style);
+      if (e.note && !text.includes(e.note)) text += ` (${e.note})`; // as BibTeX prints it
+      return { key, n: i + 1, text, ...(e.DOI && { doi: e.DOI }) };
     });
-    const fm = file.data.astro?.frontmatter;
     if (fm) fm.references = refs;
     if (!refsNode) return;
     const list = {
       type: "list", ordered: true, spread: false, data: { hProperties: { className: ["posuta-refs"] } },
       children: refs.map(({ key, text, doi }) => {
-        const children = [{ type: "text", value: text + (doi ? " " : "") }];
+        const children = urlParts(text + (doi ? " " : "")).map((p, j) => (j % 2
+          ? { type: "link", url: p, children: [{ type: "text", value: p }] } : { type: "text", value: p }));
         if (doi) children.push({ type: "link", url: `https://doi.org/${doi}`, children: [{ type: "text", value: `doi:${doi}` }] });
         return { type: "listItem", spread: false, data: { hProperties: { id: `ref-${key}` } }, children: [{ type: "paragraph", children }] };
       }),

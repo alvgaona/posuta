@@ -24,6 +24,7 @@
     "./qr": "./src/qr.js",
     "./tex": "./src/tex.js",
     "./cite": "./src/remark-cite.js",
+    "./md": "./src/md.js",
     "./References": "./src/references/index.js"
   },
   "peerDependencies": {
