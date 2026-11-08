@@ -62,6 +62,20 @@ a { color: var(--accent); text-decoration: none; }
 a:hover { text-decoration: underline; }
 footer { margin-top: 1.9rem; color: var(--muted); font-size: .8rem; font-family: var(--font-mono); display: flex; justify-content: space-between; align-items: end; gap: 1rem; }
 
+.posuta-figure { margin: 1rem 0; }
+.posuta-figure > svg, .posuta-figure > img, .posuta-figure svg[viewBox], .posuta-plot svg[viewBox] { display: block; width: 100%; height: auto; max-width: 100%; }
+.posuta-figure figure { margin: 0; }
+/* Plot ships its own unlayered <style>; !important in this layer is what beats it. */
+.posuta-figure [class*="plot-"] { font-family: var(--font-body) !important; }
+.posuta-figure [class*="-swatches"] { font-size: .8rem !important; }
+.posuta-figure figcaption { font-size: .87rem; color: var(--muted); margin-top: .4rem; max-width: 68ch; }
+.posuta-eq { display: flex; align-items: center; gap: 1rem; overflow-x: auto; overflow-y: hidden; }
+.posuta-eq .katex-display { flex: 1; margin: .8rem 0; }
+.posuta-eq-n { color: var(--muted); font-family: var(--font-mono); font-size: .87rem; }
+.katex { font-size: 1.1em; }
+.posuta-refs { font-size: .87rem; color: var(--fg-2); padding-left: 1.6rem; margin: .4rem 0; }
+.posuta-refs p { margin: .27rem 0; }
+
 /* Screen reflow: three columns → two → one. Print keeps the grid as written. */
 @media screen and (max-width: 1000px) { .hero { grid-template-columns: 1fr; } }
 @media screen and (max-width: 1100px) {

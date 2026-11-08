@@ -65,6 +65,65 @@ Type is designed at A0 (body text 24 pt) and scales with the paper's area, never
 anything runs past the canvas**, naming the section, so nothing is silently cut. Options:
 `--print "A1 landscape"` to try another size, `--out file.pdf`, `--dist dir`, `--page /path`.
 
+### Charts
+
+```mdx
+import Chart from "posuta/Chart.astro";
+
+<Chart data="step.csv" alt="What the chart shows" caption="…"
+  plot={(d, Plot) => ({ marks: [Plot.lineY(d, { x: "t", y: "y", stroke: "system" })] })} />
+```
+
+[Observable Plot](https://observablehq.com/plot/), drawn to SVG at build time: it prints as vectors
+and needs no JavaScript. `data` is a file in `data/` (CSV, JSON or Parquet) or an array; series
+longer than 2000 rows are thinned (`max={…}` to change). A `title` channel gives hover tooltips with
+no JavaScript. `alt` is required.
+
+For a chart that reacts to input, write a React island (`npx astro add react`) and draw with
+`PlotFigure`. It is server-rendered first, so the props you give the island are the state it
+prints in:
+
+```jsx
+import PlotFigure from "posuta/PlotFigure";
+import { Plot } from "posuta/plot";
+export default function Scrubber({ frame = 62 }) { /* useState(frame), a slider, <PlotFigure options={…} /> */ }
+```
+
+```mdx
+<Scrubber client:visible frame={62} />
+```
+
+Data helpers for your own code: `import { load } from "posuta/data"`.
+
+### Maths
+
+Inline `$\omega_n$` in the text, and display equations with
+`<Equation tex="\dot x = Ax + Bu" n={1} />` (`import Equation from "posuta/Equation.astro"`).
+KaTeX renders both at build time, with its fonts bundled.
+
+### Figures
+
+```mdx
+import Figure from "posuta/Figure.astro";
+import tilt from "../../figures/tilt.svg";
+
+<Figure src={tilt} alt="What it shows" caption="…" />
+```
+
+SVGs are inlined, so their text uses the poster's fonts and stays vector. For matplotlib, use the
+bundled style and save as SVG:
+
+```python
+plt.style.use("node_modules/posuta/posuta.mplstyle")  # fonts, colours, text kept as text
+plt.savefig("figures/tilt.svg")
+```
+
+### Citations
+
+Put `bibliography: refs.bib` (BibTeX, next to the page) in the frontmatter, cite with `[@key]` or
+`[@a; @b]`, and place `<References />` where the list goes. Citations are numbered in order of
+first use, and the list links each DOI. An unknown key fails the build.
+
 ## Layout
 
 - `packages/posuta`: the Astro integration, layout, components and theme

@@ -1,0 +1,28 @@
+---
+// An Observable Plot chart, drawn to SVG at build time (prints as vectors, works without JS).
+// <Chart data="run.csv" alt="…" caption="…" plot={(d, Plot) => ({ marks: [Plot.lineY(d, { x: "t", y: "v" })] })} />
+// `title` channels give hover tooltips with no JS; for more, use PlotFigure in a React island.
+import * as Plot from "@observablehq/plot";
+import { load } from "./data.js";
+import { renderPlot } from "./plot.js";
+
+interface Props {
+  /** A file under data/, or the rows themselves. */
+  data?: string | object[];
+  /** Builds the Plot options from the rows. */
+  plot: (data: any[], plot: typeof Plot) => Plot.PlotOptions;
+  /** What the chart shows, for screen readers. Required. */
+  alt: string;
+  caption?: string;
+  /** Thin series longer than this (rows). */
+  max?: number;
+}
+const { data = [], plot, alt, caption, max } = Astro.props;
+if (!alt) throw new Error("posuta <Chart>: `alt` is required (what the chart shows, for screen readers)");
+const rows = typeof data === "string" ? await load(data, { max }) : data;
+const svg = renderPlot({ ariaLabel: alt, ...plot(rows, Plot) });
+---
+<figure class="posuta-figure posuta-chart">
+  <Fragment set:html={svg} />
+  {caption && <figcaption>{caption}</figcaption>}
+</figure>

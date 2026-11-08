@@ -1,0 +1,24 @@
+# matplotlib style that matches posuta's default theme.
+#   import matplotlib.pyplot as plt; plt.style.use("node_modules/posuta/posuta.mplstyle")
+#   plt.savefig("figures/plot.svg")   # then <Figure src={...} /> in the poster
+svg.fonttype: none          # keep text as text, so it uses the poster's fonts
+font.family: IBM Plex Sans, sans-serif
+font.size: 11
+text.color: 282a30
+axes.labelcolor: 282a30
+axes.edgecolor: 6f6e77
+axes.linewidth: 0.8
+axes.spines.top: False
+axes.spines.right: False
+axes.grid: True
+grid.color: e9e8ea
+grid.linewidth: 0.8
+axes.prop_cycle: cycler('color', ['1348dc', 'c2410c', '0f766e', '7c3aed', 'a16207', '6f6e77'])
+xtick.color: 6f6e77
+ytick.color: 6f6e77
+legend.frameon: False
+lines.linewidth: 1.8
+figure.facecolor: none
+axes.facecolor: none
+savefig.facecolor: none
+savefig.bbox: tight

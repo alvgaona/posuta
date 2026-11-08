@@ -1,0 +1,14 @@
+---
+// An image or an SVG (matplotlib, Excalidraw, draw.io…), with a caption. `alt` is required.
+//   import plot from "../figures/plot.svg";  <Figure src={plot} alt="…" caption="…" />
+// Imported SVGs are inlined, so their text uses the poster's fonts and prints as vectors.
+interface Props { src: any; alt: string; caption?: string }
+const { src, alt, caption } = Astro.props;
+if (!alt) throw new Error("posuta <Figure>: `alt` is required (what the figure shows, for screen readers)");
+const Svg = typeof src === "function" ? src : null; // Astro turns imported .svg files into components
+const url = typeof src === "string" ? src : src?.src;
+---
+<figure class="posuta-figure">
+  {Svg ? <Svg role="img" aria-label={alt} /> : <img src={url} alt={alt} width={src?.width} height={src?.height} />}
+  {caption && <figcaption>{caption}</figcaption>}
+</figure>

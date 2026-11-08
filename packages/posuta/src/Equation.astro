@@ -1,0 +1,9 @@
+---
+// A display equation, rendered with KaTeX at build time: <Equation tex="E = mc^2" n={1} />
+// (Inline math is plain $…$ in the text.)
+import katex from "katex";
+interface Props { tex: string; n?: number | string }
+const { tex, n } = Astro.props;
+const html = katex.renderToString(tex, { displayMode: true, throwOnError: true, strict: "error" });
+---
+<div class="posuta-eq"><Fragment set:html={html} />{n != null && <span class="posuta-eq-n">({n})</span>}</div>

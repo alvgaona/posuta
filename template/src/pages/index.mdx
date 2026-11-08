@@ -12,29 +12,61 @@ stats:
 footer: Your Name · your-lab.org
 # A0, A1, A2, A3, 24x36in, 36x48in, 42x56in, 48x72in, or { width: 900mm, height: 1200mm }
 print: { size: A0, orientation: portrait }
+bibliography: refs.bib
 ---
 import Section from "posuta/Section.astro";
 import Row from "posuta/Row.astro";
 import Col from "posuta/Col.astro";
+import Chart from "posuta/Chart.astro";
+import Equation from "posuta/Equation.astro";
 
 <Row>
 <Col>
 
 <Section n={1} title="The problem" sub="One line of context under the heading.">
 
-Write in plain **Markdown**. Each section is a numbered block of the poster.
+Write in plain **Markdown**. Each section is a numbered block of the poster. Inline maths goes
+between dollar signs, $\omega_n = 4\ \mathrm{rad/s}$, and citations are `[@key]` from the
+bibliography [@bostock2011d3].
+
+</Section>
+
+<Section n={2} title="The idea" panel>
+
+Use `panel` to set a section apart, for the method or the main result. Display equations are
+rendered at build time [@knuth1984tex; @bostock2011d3]:
+
+<Equation n={1} tex="\ddot y + 2\zeta\omega_n \dot y + \omega_n^2 y = \omega_n^2 u" />
+
+<Equation n={2} tex="y(t) = 1 - \frac{e^{-\zeta\omega_n t}}{\sqrt{1-\zeta^2}}\,\sin\!\left(\omega_d t + \arccos\zeta\right)" />
 
 </Section>
 
 </Col>
 <Col span={2}>
 
-<Section n={2} title="The idea" panel>
+<Section n={3} title="The result" sub="A line chart from data/step.csv, drawn at build time.">
 
-Use `panel` to set a section apart, for the method or the main result. `<Col span={2}>` makes
-this column twice as wide as its neighbour.
+<Chart
+  data="step.csv"
+  alt="Step response of two second-order systems: the lightly damped one overshoots to about 1.5 and rings for four seconds; the damped one settles in about 1.5 seconds with little overshoot."
+  caption="Unit step response for two damping ratios, from Eq. 2."
+  plot={(d, Plot) => ({
+    width: 760, height: 320,
+    x: { label: "time (s)" }, y: { label: "output y", grid: true },
+    color: { legend: true },
+    marks: [Plot.ruleY([1], { strokeDasharray: "4 3", stroke: "currentColor", strokeOpacity: 0.4 }),
+            Plot.lineY(d, { x: "t", y: "y", stroke: "system", strokeWidth: 2 })],
+  })}
+/>
 
 </Section>
 
 </Col>
 </Row>
+
+<Section title="References">
+
+<References />
+
+</Section>
