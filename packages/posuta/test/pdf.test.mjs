@@ -1,7 +1,7 @@
 // posuta pdf on hand-written pages: what fits exports, what overflows fails and is named.
 import { strict as assert } from "node:assert";
 import { spawnSync } from "node:child_process";
-import { mkdtempSync, writeFileSync, existsSync } from "node:fs";
+import { mkdtempSync, readFileSync, writeFileSync, existsSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { test } from "node:test";
@@ -20,10 +20,12 @@ function run(html) {
   return { ...r, pdf: join(dist, "poster.pdf") };
 }
 
-test("a poster that fits exports one PDF", () => {
+test("a poster that fits exports one PDF, tagged, with its headings as an outline", () => {
   const r = run(page("20mm"));
   assert.equal(r.status, 0, r.stderr);
-  assert.ok(existsSync(r.pdf));
+  const pdf = readFileSync(r.pdf, "latin1");
+  assert.match(pdf, /\/StructTreeRoot/);
+  assert.match(pdf, /\/Outlines/);
 });
 
 test("an overflowing section fails the export and is named", () => {

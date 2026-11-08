@@ -91,7 +91,8 @@ try {
   }
 
   await mkdir(dirname(out), { recursive: true });
-  await page.pdf({ path: out, preferCSSPageSize: true, printBackground: true });
+  // tagged: readable by screen readers and text extraction; outline: the headings as bookmarks.
+  await page.pdf({ path: out, preferCSSPageSize: true, printBackground: true, tagged: true, outline: true });
   console.log(`${out}: ${size.w} × ${size.h}`);
 
   if (opt.png) {
