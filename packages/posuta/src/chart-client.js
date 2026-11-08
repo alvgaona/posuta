@@ -6,7 +6,7 @@ async function hydrate(fig) {
   const load = charts[`/charts/${fig.dataset.chart}.js`];
   if (!load) throw new Error(`posuta: charts/${fig.dataset.chart}.js is missing from the build`);
   // Plot downloads only once a live chart scrolls into view.
-  const [{ Plot, plotLive, withPointer }, { default: chart }] = await Promise.all([import("./plot.js"), load()]);
+  const [{ Plot, plotLive, withPointer, attachTip }, { default: chart }] = await Promise.all([import("./plot.js"), load()]);
   const rows = JSON.parse(fig.querySelector("script[type='application/json']").textContent);
   const slider = fig.dataset.slider && JSON.parse(fig.dataset.slider);
   const input = fig.querySelector(".posuta-slider input");
@@ -20,7 +20,9 @@ async function hydrate(fig) {
     let options = { ariaLabel: fig.dataset.alt, ...chart(rows, Plot, state) };
     if (fig.hasAttribute("data-interactive")) options = withPointer(options);
     const el = await plotLive(options);
-    if (n === latest) box.replaceChildren(el); // a newer slider position may have finished first
+    if (n !== latest) return; // a newer slider position finished first
+    box.replaceChildren(el);
+    if (fig.hasAttribute("data-interactive")) attachTip(el, options, box);
   };
   if (input) {
     input.closest(".posuta-slider").hidden = false;

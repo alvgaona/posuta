@@ -66,8 +66,14 @@ footer { margin-top: 1.9rem; color: var(--muted); font-size: .8rem; font-family:
 .posuta-figure > svg, .posuta-figure > img, .posuta-figure svg[viewBox], .posuta-plot svg[viewBox] { display: block; width: 100%; height: auto; max-width: 100%; }
 .posuta-figure figure { margin: 0; }
 /* Plot ships its own unlayered <style>; !important in this layer is what beats it. */
-.posuta-figure [class*="plot-"] { font-family: var(--font-body) !important; }
+.posuta-figure [class*="plot-"] { font-family: var(--font-body) !important; --plot-background: var(--bg) !important; }
 .posuta-figure [class*="-swatches"] { font-size: .8rem !important; }
+.posuta-plot { position: relative; }
+.posuta-tip { position: absolute; z-index: 1; pointer-events: none; transform: translate(-50%, calc(-100% - 12px));
+              background: var(--bg); color: var(--fg); border: 1px solid var(--border); border-radius: var(--radius);
+              box-shadow: 0 2px 8px rgb(0 0 0 / .12); padding: .4rem .6rem; font-size: .8rem; line-height: 1.5; white-space: nowrap; }
+.posuta-tip[hidden] { display: none; }
+.posuta-tip b { font-weight: 600; color: var(--muted); }
 .posuta-tex { display: inline-block; width: max-content; white-space: nowrap; line-height: 1; }
 .posuta-figure figcaption { font-size: .87rem; color: var(--muted); margin-top: .4rem; max-width: 68ch; }
 .posuta-eq { display: flex; align-items: center; gap: 1rem; overflow-x: auto; overflow-y: hidden; }

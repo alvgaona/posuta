@@ -51,15 +51,17 @@ test("an unknown key or a missing <References /> fails the build", () => {
   assert.throws(() => run([{ type: "paragraph", children: [text("[@knuth1984tex]")] }]), /add <References \/>/);
 });
 
-test("withPointer adds a crosshair and a tip from the first x/y mark, keeping its channels", async () => {
-  const { Plot, withPointer } = await import("../src/plot.js");
-  const d = [{ t: 0, y: 1, s: "a" }];
+test("withPointer adds a crosshair and a pointer dot; tipRows labels values from the scales", async () => {
+  const { Plot, withPointer, tipRows } = await import("../src/plot.js");
+  const d = [{ t: 0.123456, y: 1, s: "$\\zeta$" }];
   const rule = Plot.ruleY([1]);
   const line = Plot.lineY(d, { x: "t", y: "y", stroke: "s" });
-  const out = withPointer({ marks: [rule, line] });
+  const options = { x: { label: "time $t$ (s)" }, marks: [rule, line] };
+  const out = withPointer(options);
   assert.equal(out.marks.length, 4);
-  assert.equal(out.marks[3].channels.stroke.value, "s");
   assert.deepEqual(withPointer({ marks: [rule] }).marks, [rule]); // nothing to point at
+  // stroke and z share a field, so it is listed once; the x label keeps its maths
+  assert.deepEqual(tipRows(options, d[0]), [["s", "$\\zeta$"], ["time $t$ (s)", "0.1235"], ["y", "1"]]);
 });
 
 test("$…$ in chart text becomes KaTeX in place, at build time", async () => {
