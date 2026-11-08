@@ -25,6 +25,7 @@
     "./tex": "./src/tex.js",
     "./cite": "./src/remark-cite.js",
     "./md": "./src/md.js",
+    "./bibtex": "./src/bibtex.js",
     "./References": "./src/references/index.js"
   },
   "peerDependencies": {

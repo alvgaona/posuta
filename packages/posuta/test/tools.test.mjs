@@ -42,3 +42,14 @@ test("print scale: a factor on the type size, checked", async () => {
   assert.match(printCss({ width: "400mm", height: "800mm", scale: 0.75 }), /--print-text:0\.75/);
   assert.throws(() => paper({ size: "A0", scale: "big" }), /print scale/);
 });
+
+test("bibtex: an entry for the poster, its key from author, year and title", async () => {
+  const { bibtex } = await import("../src/bibtex.js");
+  const b = bibtex({ title: "Tilted Rotors & Faults", authors: ["Álvaro Gaona", "Giribet, Juan"], year: 2026, event: "ICRA 2026", doi: "10.5281/zenodo.1" });
+  assert.match(b, /^@misc\{gaona2026tilted,\n/);
+  assert.match(b, /author +=\ \{Álvaro Gaona and Giribet, Juan\}/);
+  assert.match(b, /title +=\ \{\{Tilted Rotors \\& Faults\}\}/);
+  assert.match(b, /howpublished = \{Poster, ICRA 2026\}/);
+  assert.match(b, /doi +=\ \{10\.5281\/zenodo\.1\}\n\}$/);
+  assert.throws(() => bibtex({ title: "x", authors: [] }), /needs title, authors and year/);
+});

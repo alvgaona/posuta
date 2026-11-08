@@ -72,6 +72,8 @@ code { font-family: var(--font-mono); font-size: .92em; }
 a { color: var(--accent); text-decoration: none; }
 a:hover { text-decoration: underline; }
 footer { margin-top: 1.9rem; color: var(--muted); font-size: .8rem; font-family: var(--font-mono); display: flex; justify-content: space-between; align-items: end; gap: 1rem; }
+.cite summary { cursor: pointer; }
+.cite pre { margin: .5rem 0 0; padding: .7rem .9rem; border: 1px solid var(--border); border-radius: var(--radius); overflow-x: auto; user-select: all; }
 
 .posuta-figure { margin: 1rem 0; }
 .posuta-figure figure { margin: 0; }
