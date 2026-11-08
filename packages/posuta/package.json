@@ -44,7 +44,13 @@
     "playwright": "^1.65.0",
     "qrcode": "^1.5.4",
     "rehype-katex": "^7.0.1",
-    "remark-math": "^6.0.0"
+    "rehype-stringify": "^10.0.1",
+    "remark-gfm": "^4.0.1",
+    "remark-math": "^6.0.0",
+    "remark-parse": "^11.0.0",
+    "remark-rehype": "^11.1.2",
+    "remark-smartypants": "^3.0.3",
+    "unified": "^11.0.5"
   },
   "bin": {
     "posuta": "./bin/posuta.mjs"

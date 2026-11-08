@@ -2,13 +2,15 @@
 // An image, an SVG or a video, with a caption: <Figure src={plot} alt="…" caption="…" />.
 // Built from Figure.Root, Figure.Media and Figure.Caption; use those to arrange it your way.
 // `poster` (a still frame) is required for a video. Other attributes go on the <figure>.
+// The caption takes inline Markdown: **bold**, $maths$ and [@key] citations.
 import Caption from "./figure/Caption.astro";
 import Media from "./figure/Media.astro";
 import Root from "./figure/Root.astro";
+import { md } from "./md.js";
 interface Props { src: any; alt: string; caption?: string; poster?: any; class?: string; [attr: string]: unknown }
 const { src, alt, caption, poster, ...rest } = Astro.props;
 ---
 <Root {...rest}>
   <Media src={src} alt={alt} poster={poster} />
-  {caption && <Caption>{caption}</Caption>}
+  {caption && <Caption><Fragment set:html={await md(caption)} /></Caption>}
 </Root>

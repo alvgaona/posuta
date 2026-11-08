@@ -1,7 +1,9 @@
-// Citations: `bibliography: refs.bib` in frontmatter, `[@key]` or `[@a; @b]` in the text, and
-// `<References />` where the list goes. Numbered in order of first citation (frontmatter text
-// first, for md()), with DOI and URL links and the BibTeX note. In the text each citation is a
-// span.posuta-cite. The cited entries are also on frontmatter.references, for References.Root/Item.
+// Citations: `bibliography: refs.bib` in frontmatter, `[@key]`, `[@a; @b]` or `[@key, §IV]` in
+// the text or in a component's string props, and `<References />` where the list goes. Numbered
+// in order of first citation (frontmatter text first, for md()), with DOI and URL links and the
+// BibTeX note. In the text each citation is a
+// span.posuta-cite. In a string prop it becomes that span as HTML, ready for md(). The cited
+// entries are also on frontmatter.references, for References.Root/Item.
 // The list is formatted with a CSL style: vancouver (default), apa, harvard1, or a .csl file.
 // shortcut: in-text citations are always numbers [1]; add author-date markers if a style needs them.
 import { readFileSync } from "node:fs";
@@ -9,10 +11,29 @@ import { dirname, resolve } from "node:path";
 import { Cite, plugins } from "@citation-js/core";
 import "@citation-js/plugin-bibtex";
 import "@citation-js/plugin-csl";
+import { esc } from "./tex.js";
 
-export const CITE = /\[(@[\w:.\-/+]+(?:\s*;\s*@[\w:.\-/+]+)*)\]/g;
+const ONE = String.raw`@[\w:.\-/+]+(?:\s*,[^;\]@]*)?`; // @key, with an optional locator after a comma
+export const CITE = new RegExp(String.raw`\[(${ONE}(?:\s*;\s*${ONE})*)\]`, "g");
 const HAS_CITE = new RegExp(CITE.source); // no /g: .test() must not keep state
 const URL_RE = /(https?:\/\/\S*[^\s.,;:)\]])/; // trailing punctuation stays text
+
+/** One citation's inner text → its parts: "@a, §IV; @b" → [{ key: "a", locator: "§IV" }, { key: "b" }]. */
+export const citeParts = (inner) => inner.split(";").map((part) => {
+  const [, key, locator] = part.trim().match(/^@([^,\s]+)\s*(?:,\s*([\s\S]*))?$/);
+  return { key, locator: locator?.trim() || undefined };
+});
+
+/**
+ * One citation as HTML, the same markup the page text gets: [1], [1, 2], [1, §IV; 2].
+ * @param {{ key: string, locator?: string }[]} parts from citeParts
+ * @param {(key: string) => number} number the key's reference number
+ */
+export function citeHtml(parts, number) {
+  const sep = parts.some((p) => p.locator) ? "; " : ", ";
+  const items = parts.map(({ key, locator }) => `<a href="#ref-${esc(key)}">${number(key)}</a>${locator ? `, ${esc(locator)}` : ""}`);
+  return `<span class="posuta-cite">[${items.join(sep)}]</span>`;
+}
 
 /** Reference text → alternating [text, url, text, …], for linking the URLs in it. */
 export const urlParts = (text) => text.split(URL_RE);
@@ -56,11 +77,24 @@ export default function remarkCite({ style = "vancouver" } = {}) {
       return (entries = new Map(data.map((e) => [e.id, e])));
     };
 
+    const number = (key) => {
+      if (!bib().has(key)) throw new Error(`${file.path}: [@${key}] is not in the bibliography`);
+      if (!order.includes(key)) order.push(key);
+      return order.indexOf(key) + 1;
+    };
+    const isJsx = (n) => n.type === "mdxJsxFlowElement" || n.type === "mdxJsxTextElement";
     const walk = (node) => {
+      // A string prop, such as sub="… [@key]", comes before the element's children on the page.
+      // alt stays as written: it is read aloud as plain text.
+      if (isJsx(node)) for (const a of node.attributes ?? []) {
+        if (a.type === "mdxJsxAttribute" && a.name !== "alt" && typeof a.value === "string" && HAS_CITE.test(a.value)) {
+          a.value = a.value.replace(CITE, (_, inner) => citeHtml(citeParts(inner), number));
+        }
+      }
       if (!node.children) return;
       for (let i = 0; i < node.children.length; i++) {
         const child = node.children[i];
-        if ((child.type === "mdxJsxFlowElement" || child.type === "mdxJsxTextElement") && /^References(\.|$)/.test(child.name ?? "")) {
+        if (isJsx(child) && /^References(\.|$)/.test(child.name ?? "")) {
           if (child.name === "References") refsNode = { parent: node, child };
           else { hasParts = true; walk(child); }
           continue;
@@ -70,14 +104,14 @@ export default function remarkCite({ style = "vancouver" } = {}) {
         let last = 0;
         for (const m of child.value.matchAll(CITE)) {
           if (m.index > last) parts.push({ type: "text", value: child.value.slice(last, m.index) });
-          const keys = m[1].split(";").map((k) => k.trim().slice(1));
-          const links = keys.map((key) => {
-            if (!bib().has(key)) throw new Error(`${file.path}: [@${key}] is not in the bibliography`);
-            if (!order.includes(key)) order.push(key);
-            return { type: "link", url: `#ref-${key}`, children: [{ type: "text", value: String(order.indexOf(key) + 1) }] };
-          });
+          const cited = citeParts(m[1]);
+          const sep = cited.some((c) => c.locator) ? "; " : ", ";
           const inner = [{ type: "text", value: "[" }];
-          links.forEach((l, j) => inner.push(...(j ? [{ type: "text", value: ", " }] : []), l));
+          cited.forEach(({ key, locator }, j) => {
+            if (j) inner.push({ type: "text", value: sep });
+            inner.push({ type: "link", url: `#ref-${key}`, children: [{ type: "text", value: String(number(key)) }] });
+            if (locator) inner.push({ type: "text", value: `, ${locator}` });
+          });
           inner.push({ type: "text", value: "]" });
           parts.push({ type: "cite", data: { hName: "span", hProperties: { className: ["posuta-cite"] } }, children: inner });
           last = m.index + m[0].length;
@@ -91,7 +125,7 @@ export default function remarkCite({ style = "vancouver" } = {}) {
     const fm = file.data.astro?.frontmatter;
     const strings = (v) => (typeof v === "string" ? [v] : v && typeof v === "object" ? Object.values(v).flatMap(strings) : []);
     for (const str of strings(fm)) for (const m of str.matchAll(CITE)) {
-      for (const key of m[1].split(";").map((k) => k.trim().slice(1))) {
+      for (const { key } of citeParts(m[1])) {
         if (!bib().has(key)) throw new Error(`${file.path}: [@${key}] in the frontmatter is not in the bibliography`);
         if (!order.includes(key)) order.push(key);
       }

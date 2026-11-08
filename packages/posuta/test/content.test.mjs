@@ -75,6 +75,26 @@ test("frontmatter citations are numbered first; notes are added and URLs linked"
   assert.equal(await md(undefined), "");
 });
 
+test("citations take locators, and string props are numbered in page order, ready for md", async () => {
+  const sec = { type: "mdxJsxFlowElement", name: "Section", attributes: [
+    { type: "mdxJsxAttribute", name: "sub", value: "As in [@plot2021, §IV]." },
+    { type: "mdxJsxAttribute", name: "alt", value: "left as written [@plot2021]" },
+  ], children: [{ type: "paragraph", children: [text("See [@knuth1984tex, p. 3; @plot2021].")] }] };
+  const fm = { bibliography: "refs.bib" };
+  const tree = run([sec, refs], undefined, fm);
+  assert.deepEqual(fm.references.map((r) => [r.key, r.n]), [["plot2021", 1], ["knuth1984tex", 2]]);
+  const sub = sec.attributes[0].value;
+  assert.equal(sub, 'As in <span class="posuta-cite">[<a href="#ref-plot2021">1</a>, §IV]</span>.');
+  assert.equal(sec.attributes[1].value, "left as written [@plot2021]");
+  const cite = tree.children[0].children[0].children.find((n) => n.type === "cite");
+  assert.equal(cite.children.map((n) => n.value ?? n.children[0].value).join(""), "[2, p. 3; 1]");
+
+  const { md } = await import("../src/md.js");
+  assert.equal(await md(sub), sub); // no references needed: the numbers are already in
+  assert.match(await md("[@knuth1984tex, Fig. 2]", fm.references), /\[<a href="#ref-knuth1984tex">2<\/a>, Fig\. 2\]/);
+  assert.throws(() => run([{ type: "mdxJsxTextElement", name: "B", attributes: [{ type: "mdxJsxAttribute", name: "x", value: "[@nope]" }], children: [] }, refs]), /\[@nope\] is not in the bibliography/);
+});
+
 test("withPointer adds a crosshair and a pointer dot; tipRows labels values from the scales", async () => {
   const { Plot, withPointer, tipRows } = await import("../src/plot.js");
   const d = [{ t: 0.123456, y: 1, s: "$\\zeta$" }];

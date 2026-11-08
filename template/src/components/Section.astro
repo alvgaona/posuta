@@ -1,10 +1,12 @@
 ---
 // A numbered poster section: <Section n={1} title="The problem" sub="One-line context">…</Section>
+// `sub` takes inline Markdown: **bold**, $maths$ and [@key] citations.
+import { md } from "@posuta/posuta/md";
 interface Props { n?: number | string; title: string; sub?: string; panel?: boolean }
 const { n, title, sub, panel = false } = Astro.props;
 ---
 <section class:list={["posuta-section", { panel }]} data-name={title}>
   <h2>{n != null && <span class="n">{n}</span>}{title}</h2>
-  {sub && <p class="sub">{sub}</p>}
+  {sub && <p class="sub" set:html={await md(sub)} />}
   <slot />
 </section>

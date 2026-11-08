@@ -74,7 +74,7 @@ them in any order, with any markup between them.
   type={{
     src: { type: 'imported file | string', description: 'An imported SVG or image, a path, or a video.', required: true },
     alt: { type: 'string', description: 'What the figure shows, for screen readers. The build stops without it.', required: true },
-    caption: { type: 'string', description: 'The caption, in a figcaption. Leave it out for none.' },
+    caption: { type: 'string', description: 'The caption, in a figcaption. Takes inline Markdown, maths and citations. Leave it out for none.' },
     poster: { type: 'imported image | string', description: 'For a video, the still frame shown in print. Required for a video.' },
     class: { type: 'string', description: 'Classes for the figure. Any other attribute goes on the figure too.' },
   }}

@@ -44,9 +44,11 @@ The path is relative to the page.
 ```mdx title="src/pages/index.mdx"
 A second-order system [@ogata2010modern] rendered with KaTeX [@knuth1984tex].
 Several at once: [@ogata2010modern; @knuth1984tex].
+A section or a page: [@ogata2010modern, §4.2] and [@ogata2010modern, p. 160; @knuth1984tex].
 ```
 
 Each citation becomes a number linked to its entry in the list, `[1]`, and `[1, 2]` for several.
+Text after a comma is a locator and stays next to the number, `[1, §4.2]` and `[1, p. 160; 2]`.
 
 </Step>
 <Step>
@@ -68,7 +70,7 @@ Each citation becomes a number linked to its entry in the list, `[1]`, and `[1, 
 
 References are numbered in the order they are first cited. Citations in the frontmatter text
 (the `lede`, stat labels, `footer`) count first, because they sit at the top of the poster, and
-then the body, top to bottom. Citing the same key again reuses its number. Entries in the BibTeX file
+then the body, top to bottom, with a component's text props counted where the component sits. Citing the same key again reuses its number. Entries in the BibTeX file
 that you never cite are left out of the list.
 
 ## What stops the build
@@ -105,6 +107,29 @@ is a `<span class="posuta-cite">`. To arrange the list differently, build it fro
 `References.Root` and `References.Item`, using the cited entries posuta puts on
 `frontmatter.references`. The parts, the entry fields and the class hooks are on
 [References](/docs/components/references).
+
+## Citations in component props
+
+Text props cite the same way as the body.
+
+```mdx title="src/pages/index.mdx"
+<Section n={2} title="The method" sub="The controller from [@ogata2010modern, §4.2].">
+```
+
+posuta numbers these citations with the rest of the page and passes the prop on with the
+citation already as HTML. The template's `Section` subtitle and the captions of `<Figure>` and
+`<Chart>` render it. In a component of your own, render the prop with `md`, which needs no
+reference list for it.
+
+```astro title="src/components/Note.astro"
+---
+import { md } from "@posuta/posuta/md";
+const { text } = Astro.props;
+---
+<p class="note" set:html={await md(text)} />
+```
+
+An `alt` prop is left as written, because screen readers read it as plain text.
 
 ## Citations in your own layout
 

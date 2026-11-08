@@ -317,6 +317,9 @@ Turns inline Markdown in frontmatter text (a lede, a stat label) into HTML, with
 `frontmatter.references`). A single paragraph comes back without its `<p>`. Returns `""` for
 `undefined`. A key not in `references` throws.
 
+A component's text prop, such as a subtitle or a caption, needs no `references`. posuta has
+already numbered its citations, so `await md(sub)` is enough.
+
 ```astro title="src/layouts/Poster.astro"
 ---
 import { md } from "@posuta/posuta/md";

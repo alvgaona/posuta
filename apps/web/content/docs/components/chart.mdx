@@ -89,7 +89,7 @@ backslash, as in `"$\\omega$"`.
 
 ### Caption
 
-`caption` adds a `<figcaption>` under the chart.
+`caption` adds a `<figcaption>` under the chart. It takes inline Markdown, `$…$` maths and `[@key]` citations.
 
 <ComponentPreview name="chart" />
 
@@ -100,7 +100,7 @@ backslash, as in `"$\\omega$"`.
     plot: { type: 'string | (d, Plot, state) => options', description: 'A chart file in `charts/`, without `.js`, or an inline function. An inline function only works for a static chart.', required: true },
     alt: { type: 'string', description: 'What the chart shows, for screen readers. Also the SVG\'s `aria-label`. The build stops without it.', required: true },
     data: { type: 'string | object[]', description: 'A `.csv` or `.json` file under `data/`, or the rows themselves. A JSON file must hold an array.', default: '[]' },
-    caption: { type: 'string', description: 'Text for a `<figcaption>` under the chart.' },
+    caption: { type: 'string', description: 'Text for a `<figcaption>` under the chart, with inline Markdown, maths and citations.' },
     max: { type: 'number', description: 'Thin a data file longer than this many rows, keeping evenly spaced rows. `0` keeps every row. Rows passed inline are never thinned.', default: '2000' },
     interactive: { type: 'boolean', description: 'Crosshair and tooltip in the browser. Needs a chart file.', default: 'false' },
     slider: { type: '{ name, min, max, value, step?, label? }', description: 'A range input that passes `state[name]` to the chart function. `value` is the starting value and the one that prints. `step` defaults to `1`, `label` to `name`. Needs a chart file.' },
