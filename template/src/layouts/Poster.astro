@@ -1,10 +1,10 @@
 ---
 // This poster's layout: the header, the footer and the QR code. It is yours to change: posuta
-// only provides <Canvas> (print size, link previews) and the default look (posuta/theme.css).
+// only provides <Canvas> (print size, link previews); the look is ../styles/theme.css.
 // Pages use it from frontmatter: `layout: ../layouts/Poster.astro`.
 import Canvas from "posuta/Canvas.astro";
 import QR from "posuta/QR.astro";
-import "posuta/theme.css";
+import "../styles/theme.css";
 
 interface Stat { value: string; label: string; accent?: boolean }
 interface Frontmatter {

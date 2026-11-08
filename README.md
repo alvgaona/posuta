@@ -66,7 +66,7 @@ Plain **Markdown** here.
 
 The header, stats, footer and QR code are in `src/layouts/Poster.astro`; the numbered section is
 `src/components/Section.astro`. Edit them like any other file in your project. The look comes from
-`posuta/theme.css`, which the layout imports.
+`src/styles/theme.css`, which the layout imports.
 
 ### Columns
 
@@ -248,7 +248,7 @@ Delete the template's layout and write your own on `<Canvas>`, the one page-leve
 ---
 // src/layouts/Mine.astro
 import Canvas from "posuta/Canvas.astro";
-import "../styles/poster.css";        // your CSS; no posuta theme
+import "../styles/poster.css";        // your CSS
 const { frontmatter: fm } = Astro.props;
 ---
 <Canvas title={fm.title} print={fm.print} class="sheet">
@@ -274,7 +274,7 @@ poster built this way: a banner, a CSS grid, a hand-drawn SVG, a chart and APA r
 - Chart and figure SVGs fill their container; the live-chart tooltip is positioned.
 - KaTeX's stylesheet.
 
-No colours, fonts, borders or spacing. Everything is in `@layer posuta.base` (and the opt-in
+No colours, fonts, borders or spacing. Everything is in `@layer posuta.base` (and the template's
 theme in `@layer posuta.theme`), so any CSS you write outside a layer wins, no `!important`
 needed. To change the print type scale: `@media print { :root { font-size: 20pt } }`.
 
@@ -287,7 +287,7 @@ orders the layers so that Tailwind's reset sits under posuta and its utilities o
 theme, base (Tailwind's reset), posuta.base, posuta.theme, components, utilities, then unlayered CSS
 ```
 
-So `class="w-1/2 text-red-600"` on any component or part beats both posuta's CSS and its theme,
+So `class="w-1/2 text-red-600"` on any component or part beats both posuta's CSS and the template's theme,
 and the reset doesn't undo the theme. Tailwind sees classes in `.mdx` files like any other source.
 
 ### Hooks
@@ -386,7 +386,7 @@ const svg = await qrSvg("https://lab.example/poster/");
 
 ## Repository
 
-- `packages/posuta`: the Astro integration, components, base CSS, theme, tools and CLI
+- `packages/posuta`: the Astro integration, components, base CSS, tools and CLI
 - `packages/create-posuta`: `pnpm create posuta`; bundles `template/` when packed
 - `template`: the starter poster that `create-posuta` copies; also what `pnpm dev` runs
 

@@ -1,0 +1,6 @@
+/* A small theme in posuta's theme layer, as the template's is: Tailwind must not reset it. */
+@layer posuta.theme {
+  @media screen { :root { font-size: 15px; } }
+  h2 { font-size: 1.47rem; font-family: Georgia, serif; }
+  .posuta-caption { color: #6f6e77; }
+}

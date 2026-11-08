@@ -1,6 +1,6 @@
-/* posuta default theme (opt-in): the look of the template. Tokens first, so a lab theme package
-   (plain :root tokens, unlayered) overrides them whatever the load order. Everything here is in
-   @layer posuta.theme, after posuta.base; your own unlayered CSS beats both.
+/* This poster's look: yours to change. Tokens first, so a lab theme package (plain :root tokens,
+   unlayered) overrides them whatever the load order. Everything here is in @layer posuta.theme,
+   after posuta.base and Tailwind's reset; your own unlayered CSS and Tailwind utilities beat it.
    Palette and type follow aerostack2.dev, as in the first two posters. */
 @layer posuta.base, posuta.theme;
 @import "@fontsource/ibm-plex-sans/400.css" layer(posuta.theme);

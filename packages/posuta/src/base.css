@@ -1,5 +1,5 @@
 /* posuta base: only what the components need to work. No colours, fonts, borders or spacing;
-   the look is in theme.css (opt-in) or yours. Everything is in @layer posuta.base, so any CSS you
+   the look is yours (the template's is in its src/styles/theme.css). Everything is in @layer posuta.base, so any CSS you
    write outside a layer wins without !important. */
 @layer posuta.base, posuta.theme;
 @import "katex/dist/katex.min.css" layer(posuta.base);

@@ -24,8 +24,8 @@ starter poster that `create-posuta` copies; `pnpm dev` / `pnpm build` run it). P
 - **Tools first, components unstyled.** Any author must be able to build any poster. A feature
   lands as a function or CLI first; a component, if any, is a thin wrapper. Components output
   semantic markup with `posuta-*` class hooks, accept `class`, and carry no colour, font, border
-  or spacing: only the CSS they need to work (`base.css`). The look lives in the opt-in
-  `posuta/theme.css` and in the template, whose layout and sections the author owns.
+  or spacing: only the CSS they need to work (`base.css`). The look lives in the
+  template (`src/styles/theme.css`, the layout and sections), which the author owns.
 - **Unstyled must stay legible**: generated SVG defaults to `currentColor` and no fill.
 - **Parts, Base UI style**: a component with inner structure also comes as parts
   (`Figure.Root`, `Figure.Media`, `Figure.Caption`) the author arranges in any markup; the

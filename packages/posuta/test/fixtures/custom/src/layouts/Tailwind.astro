@@ -1,7 +1,7 @@
 ---
-// posuta's theme and Tailwind together: Tailwind's reset sits under posuta, its utilities over it.
+// A theme in @layer posuta.theme and Tailwind together: the reset sits under it, utilities over it.
 import Canvas from "posuta/Canvas.astro";
-import "posuta/theme.css";
+import "../styles/theme.css";
 import "../styles/tailwind.css";
 const { frontmatter: fm } = Astro.props;
 ---
