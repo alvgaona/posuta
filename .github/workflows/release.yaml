@@ -20,7 +20,6 @@ jobs:
         with:
           node-version: 24
           cache: pnpm
-          registry-url: https://registry.npmjs.org
       - run: pnpm install --frozen-lockfile
       - name: Check versions match the tag
         run: |
@@ -37,9 +36,7 @@ jobs:
           args: --latest --strip header
         env:
           OUTPUT: RELEASE_NOTES.md
-      - run: pnpm -r publish --access public --no-git-checks
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+      - run: pnpm -r publish --access public --no-git-checks --provenance
       - run: gh release create "$GITHUB_REF_NAME" --notes-file RELEASE_NOTES.md --verify-tag
         env:
           GH_TOKEN: ${{ github.token }}
