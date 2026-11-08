@@ -70,11 +70,18 @@
   },
   "keywords": [
     "astro-integration",
+    "withastro",
+    "astro",
     "poster",
+    "research-poster",
+    "scientific-poster",
+    "academic",
     "research",
     "mdx",
     "print",
-    "pdf"
+    "pdf",
+    "observable-plot",
+    "katex"
   ],
   "engines": {
     "node": ">=22"

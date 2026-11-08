@@ -22,5 +22,13 @@
     "type": "git",
     "url": "git+https://github.com/alvgaona/posuta.git",
     "directory": "packages/create-posuta"
-  }
+  },
+  "keywords": [
+    "posuta",
+    "create",
+    "astro",
+    "research-poster",
+    "scientific-poster",
+    "template"
+  ]
 }
