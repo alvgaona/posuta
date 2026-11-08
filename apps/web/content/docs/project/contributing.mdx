@@ -104,9 +104,18 @@ Then `.github/workflows/release.yaml` runs these steps.
 2. Runs the tests.
 3. Writes the release notes from the commits since the last tag with git-cliff, set up in
    `cliff.toml`.
-4. Publishes both packages to npm.
+4. Stages both packages on npm with provenance. A staged version is not public yet.
 5. Creates a GitHub release with those notes.
 
-<Callout type="warn" title="npm token">
-  Publishing needs an npm access token stored as the repository secret `NPM_TOKEN`.
+Last, a maintainer approves both staged versions with 2FA, on npmjs.com or in the terminal.
+
+```sh title="Terminal"
+npm stage list @posuta/posuta
+npm stage approve <stage-id>
+```
+
+<Callout type="info" title="Trusted publishing">
+  The workflow logs in to npm through GitHub's OIDC, so there is no npm token to keep. Each
+  package has a trusted publisher on npmjs.com for `alvgaona/posuta` and `release.yaml`, allowed
+  to stage but not to publish.
 </Callout>

@@ -21,6 +21,7 @@ jobs:
           node-version: 24
           cache: pnpm
       - run: pnpm install --frozen-lockfile
+      - run: npm install -g npm@11.20.0 # npm stage needs a newer npm than Node 24 may ship
       - name: Check versions match the tag
         run: |
           for p in posuta create-posuta; do
@@ -37,9 +38,10 @@ jobs:
         env:
           OUTPUT: RELEASE_NOTES.md
       # npm, not pnpm: pnpm 11+ publishes without the README, so npmjs.com shows none.
-      - run: npm publish --access public --provenance
+      # Staged, not published: a maintainer approves each version with 2FA (npm stage approve).
+      - run: npm stage publish --access public --provenance
         working-directory: packages/posuta
-      - run: npm publish --access public --provenance
+      - run: npm stage publish --access public --provenance
         working-directory: packages/create-posuta
       - run: gh release create "$GITHUB_REF_NAME" --notes-file RELEASE_NOTES.md --verify-tag
         env:
