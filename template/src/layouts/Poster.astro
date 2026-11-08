@@ -3,10 +3,10 @@
 // only provides <Canvas> (print size, link previews); the look is ../styles/theme.css.
 // Pages use it from frontmatter: `layout: ../layouts/Poster.astro`. The lede, stat labels and
 // footer take inline Markdown: **bold**, [links](…), $maths$ and [@key] citations.
-import Canvas from "posuta/Canvas.astro";
-import { md } from "posuta/md";
-import { bibtex } from "posuta/bibtex";
-import QR from "posuta/QR.astro";
+import Canvas from "@posuta/posuta/Canvas.astro";
+import { md } from "@posuta/posuta/md";
+import { bibtex } from "@posuta/posuta/bibtex";
+import QR from "@posuta/posuta/QR.astro";
 import "../styles/theme.css";
 
 interface Stat { value: string; label: string; accent?: boolean }

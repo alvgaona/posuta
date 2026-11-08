@@ -31,7 +31,7 @@ overflow check.
 - Components are unstyled: no colour, font, border or spacing. Only the CSS a component needs to
   *work* (see "Functional CSS"). Styling hooks are `posuta-*` classes, documented as stable API.
 - Every component accepts `class` and passes through other attributes.
-- Visual design lives in `posuta/theme.css` (opt-in) and in the template.
+- Visual design lives in `@posuta/posuta/theme.css` (opt-in) and in the template.
 - Unstyled output must still be legible: SVG we generate uses `currentColor` and `fill="none"`
   defaults, never SVG's black-fill defaults.
 
@@ -39,7 +39,7 @@ overflow check.
 
 The split decides almost everything else, so it is spelled out.
 
-**Functional (`posuta/base.css`, loaded by `<Canvas>`, in `@layer posuta.base`):**
+**Functional (`@posuta/posuta/base.css`, loaded by `<Canvas>`, in `@layer posuta.base`):**
 
 - The print canvas: `@page` size, the canvas element at paper width × height, `overflow: hidden`,
   print colour adjust. `--paper-w`, `--paper-h`, `--print-scale` custom properties.
@@ -57,7 +57,7 @@ The split decides almost everything else, so it is spelled out.
 Everything in `@layer posuta.base`, so any author CSS (unlayered) wins with no `!important`.
 Exception, kept: rules that must beat Plot's unlayered `<style>` use layered `!important`.
 
-**Visual (`posuta/theme.css`, opt-in, in `@layer posuta.theme`):** tokens (light/dark), fonts
+**Visual (`@posuta/posuta/theme.css`, opt-in, in `@layer posuta.theme`):** tokens (light/dark), fonts
 (the `@fontsource` imports move here), colours, borders, spacing, the hero/stats/section/footer
 looks, diagram colours, tooltip look, references list look.
 
@@ -102,7 +102,7 @@ hydrates when auto-imported.
 
 ### 4. `<Canvas>`, and the layout moves into the template
 
-`posuta/Canvas.astro`, the only page-level component:
+`@posuta/posuta/Canvas.astro`, the only page-level component:
 
 ```astro
 <Canvas title="…" description="…" print="A1 landscape" theme={{ accent: "#0a7" }} class="…">
@@ -117,13 +117,13 @@ the print CSS from `printCss`, theme tokens / `data-theme`, base.css, KaTeX CSS)
 
 Smaller primitives:
 
-- `posuta/QR.astro`: `<QR url={…} />` → inline SVG (defaults to the page URL when `site` is set),
-  plus `qrSvg(url)` in `posuta/qr` for hand-built markup. No longer placed automatically.
+- `@posuta/posuta/QR.astro`: `<QR url={…} />` → inline SVG (defaults to the page URL when `site` is set),
+  plus `qrSvg(url)` in `@posuta/posuta/qr` for hand-built markup. No longer placed automatically.
 
 Moves to the template, as user-owned files:
 
 - `template/src/layouts/Poster.astro`: today's header (eyebrow, title, highlight, lede, stats),
-  `<main>`, footer and QR placement, built on `<Canvas>`, importing `posuta/theme.css`. Reads the
+  `<main>`, footer and QR placement, built on `<Canvas>`, importing `@posuta/posuta/theme.css`. Reads the
   same frontmatter as today.
 - `template/src/components/Section.astro`: today's numbered section.
 - `index.mdx`: `layout: ../layouts/Poster.astro`; `Section` comes from `src/components/` through step 3.
@@ -178,14 +178,14 @@ and the template with `theme.css` looks as before.
 
 So an author can go below any component:
 
-- `posuta/tex`: `tex(string)` → HTML with `$…$` rendered, and `texSvg(string, x, y, anchor)` →
+- `@posuta/posuta/tex`: `tex(string)` → HTML with `$…$` rendered, and `texSvg(string, x, y, anchor)` →
   SVG (text or `foreignObject`). One implementation; `plot.js` and `diagram.js` use it (today the
   code is duplicated).
-- `posuta/diagram`: split `renderDiagram` into `layout(spec)` → `{ boxes, groups, arrows, viewBox }`
+- `@posuta/posuta/diagram`: split `renderDiagram` into `layout(spec)` → `{ boxes, groups, arrows, viewBox }`
   (geometry only: points, label anchors) and `draw(layout)` → SVG. `route()` stays exported.
   `<Diagram>` gains a slot: SVG children are drawn on top, in diagram coordinates, so an author can
   annotate without forking.
-- `posuta/plot`: document the browser side, `plotLive`, `withPointer`, `attachTip`, `mathify`, so a
+- `@posuta/posuta/plot`: document the browser side, `plotLive`, `withPointer`, `attachTip`, `mathify`, so a
   custom island gets the same maths and tooltips.
 - Citations: `posuta({ citationStyle })` takes a CSL template name (`vancouver` default, `apa`,
   `harvard1`) or a path to a `.csl` file. Export `formatReference(entry, style)`.

@@ -108,12 +108,12 @@ is a `<span class="posuta-cite">`. To arrange the list differently, build it fro
 
 ## Citations in your own layout
 
-The template renders the `lede`, stat labels and `footer` with `md()` from `posuta/md`, which
+The template renders the `lede`, stat labels and `footer` with `md()` from `@posuta/posuta/md`, which
 turns `[@key]` into the same numbered links. In a layout of your own, do the same:
 
 ```astro title="src/layouts/Poster.astro"
 ---
-import { md } from "posuta/md";
+import { md } from "@posuta/posuta/md";
 const { frontmatter } = Astro.props;
 const lede = await md(frontmatter.lede, frontmatter.references); // [!code highlight]
 ---

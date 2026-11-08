@@ -8,7 +8,7 @@ import numpy as np
 
 logging.getLogger("matplotlib.font_manager").setLevel(logging.ERROR)  # the browser has the font
 here = Path(__file__).parent
-plt.style.use(here.parent / "node_modules/posuta/posuta.mplstyle")
+plt.style.use(here.parent / "node_modules/@posuta/posuta/posuta.mplstyle")
 
 wn = 4.0
 fig, ax = plt.subplots(figsize=(4.6, 3.0))

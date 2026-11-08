@@ -7,9 +7,9 @@ import { join, parse } from "node:path";
 
 /** posuta's components, by name. */
 export const POSUTA = {
-  ...Object.fromEntries(["Canvas", "QR", "Row", "Col", "Grid", "Cell", "Chart", "Equation"].map((n) => [n, `posuta/${n}.astro`])),
-  Figure: "posuta/Figure", // with its parts: Figure.Root, Figure.Media, Figure.Caption
-  References: "posuta/References", // parts only: <References /> itself is replaced by remark-cite
+  ...Object.fromEntries(["Canvas", "QR", "Row", "Col", "Grid", "Cell", "Chart", "Equation"].map((n) => [n, `@posuta/posuta/${n}.astro`])),
+  Figure: "@posuta/posuta/Figure", // with its parts: Figure.Root, Figure.Media, Figure.Caption
+  References: "@posuta/posuta/References", // parts only: <References /> itself is replaced by remark-cite
 };
 const EXT = [".astro", ".tsx", ".jsx"]; // first wins when two files share a name
 

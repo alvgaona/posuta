@@ -19,7 +19,7 @@
     "fumadocs-core": "16.18.2",
     "fumadocs-ui": "npm:@fumadocs/base-ui@16.18.2",
     "lucide-react": "^1.70.0",
-    "posuta": "workspace:*",
+    "@posuta/posuta": "workspace:*",
     "react": "^19.3.1",
     "react-dom": "^19.3.1",
     "sharp": "^0.35.5",

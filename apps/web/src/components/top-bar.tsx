@@ -13,7 +13,7 @@ export const tabs = [
   { text: 'Readme', url: '/' },
   { text: 'Docs', url: docsRoute },
   { text: 'Template', url: `${repo}/tree/${gitConfig.branch}/template` },
-  { text: 'npm', url: 'https://www.npmjs.com/package/posuta' },
+  { text: 'npm', url: 'https://www.npmjs.com/package/@posuta/posuta' },
 ];
 
 const cell = 'flex items-center justify-center gap-1.5 font-mono text-xs uppercase tracking-wider';

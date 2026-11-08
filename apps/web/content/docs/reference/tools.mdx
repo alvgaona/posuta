@@ -8,7 +8,7 @@ The components are thin wrappers over these functions. Use them in your own layo
 and islands to draw what the components don't. They run at build time in Node; the ones marked
 for the browser also run in client scripts.
 
-## `posuta/print`
+## `@posuta/posuta/print`
 
 Paper sizes and the print scale, shared by `<Canvas>` and `posuta pdf`.
 
@@ -47,7 +47,7 @@ It throws on an unknown size, a custom size missing `width` or `height`, a value
 an orientation other than `portrait` or `landscape`, or a `scale` that isn't a number above 0.
 
 ```js
-import { paper } from "posuta/print";
+import { paper } from "@posuta/posuta/print";
 
 paper("A1 landscape");            // { width: 841, height: 594, scale: 0.7068…, text: 1 }
 paper({ size: "A0", scale: 0.8 }); // { width: 841, height: 1189, scale: 1, text: 0.8 }
@@ -65,13 +65,13 @@ The CSS for that paper: the `@page` size with no margin, and the custom properti
 `@media print`.
 
 ```js
-import { printCss } from "posuta/print";
+import { printCss } from "@posuta/posuta/print";
 
 printCss("A1");
 // "@page{size:594mm 841mm;margin:0}:root{--paper-w:594mm;--paper-h:841mm;--print-scale:0.7068;--print-text:1}"
 ```
 
-## `posuta/data`
+## `@posuta/posuta/data`
 
 ### `load`
 
@@ -85,7 +85,7 @@ with d3's `autoType` (numbers and dates converted); JSON must hold an array. Ser
 file that isn't an array. `<Chart data="…">` uses it.
 
 ```js
-import { load } from "posuta/data";
+import { load } from "@posuta/posuta/data";
 
 const rows = await load("flight.csv", { max: 5000 });
 ```
@@ -100,12 +100,12 @@ Returns `rows` unchanged if `max` is falsy or there are at most `max` rows; othe
 spaced evenly, first and last kept. Narrow peaks between kept rows can be lost.
 
 ```js
-import { downsample } from "posuta/data";
+import { downsample } from "@posuta/posuta/data";
 
 downsample([1, 2, 3, 4, 5, 6, 7, 8, 9, 10], 4); // [1, 4, 7, 10]
 ```
 
-## `posuta/plot`
+## `@posuta/posuta/plot`
 
 Observable Plot with posuta's defaults (transparent background, `font-family: var(--font-body)`)
 and `$…$` in chart text rendered with KaTeX. Works at build time and in the browser.
@@ -124,7 +124,7 @@ Draws the chart and returns its SVG markup, with maths rendered. For build time,
 `<Chart>` uses it.
 
 ```js
-import { Plot, renderPlot } from "posuta/plot";
+import { Plot, renderPlot } from "@posuta/posuta/plot";
 
 const svg = renderPlot({ marks: [Plot.lineY(rows, { x: "t", y: "y" })], y: { label: "$y(t)$" } });
 ```
@@ -193,7 +193,7 @@ position and alignment; HTML text nodes get the KaTeX markup. Returns how many i
 
 ```js
 import katex from "katex";
-import { mathify } from "posuta/plot";
+import { mathify } from "@posuta/posuta/plot";
 
 mathify(document.querySelector("#my-chart"), katex);
 ```
@@ -216,8 +216,8 @@ frame (`data-print="only"`) and hide the live one in print (`data-print="hide"`)
 
 ```astro title="src/components/LiveStep.astro"
 ---
-import { load } from "posuta/data";
-import { Plot, renderPlot } from "posuta/plot";
+import { load } from "@posuta/posuta/data";
+import { Plot, renderPlot } from "@posuta/posuta/plot";
 const rows = await load("step.csv");
 const svg = renderPlot({ marks: [Plot.lineY(rows, { x: "t", y: "y" })], y: { label: "$y(t)$" } });
 ---
@@ -227,7 +227,7 @@ const svg = renderPlot({ marks: [Plot.lineY(rows, { x: "t", y: "y" })], y: { lab
 </figure>
 
 <script>
-  import { Plot, plotLive, withPointer, attachTip } from "posuta/plot";
+  import { Plot, plotLive, withPointer, attachTip } from "@posuta/posuta/plot";
 
   for (const box of document.querySelectorAll<HTMLElement>(".live-step [data-rows]")) {
     const rows = JSON.parse(box.dataset.rows!);
@@ -243,7 +243,7 @@ Components in `src/components/` are available in MDX without imports: `<LiveStep
 works with any framework island Astro supports. For an animation, also check
 `matchMedia("print").matches` and leave the frame still.
 
-## `posuta/tex`
+## `@posuta/posuta/tex`
 
 ### `tex`
 
@@ -255,7 +255,7 @@ Text with `$…$` to HTML: each `$…$` rendered with KaTeX, the rest HTML-escap
 throws. At build time KaTeX is built in; in the browser pass it, or it throws.
 
 ```js
-import { tex } from "posuta/tex";
+import { tex } from "@posuta/posuta/tex";
 
 tex("a < b and $\\omega_n$");                      // 'a &lt; b and <span class="katex">…'
 tex("$K_p$", (await import("katex")).default);    // in the browser
@@ -273,14 +273,14 @@ An SVG label with its baseline at (`x`, `y`). Plain text becomes a `<text fill="
 the SVG's font size and colour. `anchor` defaults to `"start"`. `katex` is as for `tex`.
 
 ```js
-import { texSvg } from "posuta/tex";
+import { texSvg } from "@posuta/posuta/tex";
 
 texSvg("Plant", 10, 20, { anchor: "middle", class: "t", size: 14 });
 // '<text class="t" x="10" y="20" text-anchor="middle" fill="currentColor" font-size="14">Plant</text>'
 texSvg("$G(s)$", 10, 20, { anchor: "end" }); // '<foreignObject x="10" y="20" …>…</foreignObject>'
 ```
 
-## `posuta/cite`
+## `@posuta/posuta/cite`
 
 ### `formatReference`
 
@@ -295,7 +295,7 @@ DOI as a link). `style` is `"vancouver"` (default), `"apa"`, `"harvard1"`, or an
 ```js
 import { Cite } from "@citation-js/core";
 import "@citation-js/plugin-bibtex";
-import { formatReference } from "posuta/cite";
+import { formatReference } from "@posuta/posuta/cite";
 
 const [entry] = new Cite(bibtexSource).data;
 formatReference(entry);        // "Bostock M, Ogievetsky V, Heer J. D³: Data-Driven Documents. …"
@@ -304,7 +304,7 @@ formatReference(entry, "apa"); // "Bostock, M., Ogievetsky, V., & Heer, J. (2011
 
 The module's default export is the remark plugin the integration runs for `[@key]` citations.
 
-## `posuta/md`
+## `@posuta/posuta/md`
 
 ### `md`
 
@@ -319,14 +319,14 @@ throws.
 
 ```astro title="src/layouts/Poster.astro"
 ---
-import { md } from "posuta/md";
+import { md } from "@posuta/posuta/md";
 const { frontmatter } = Astro.props;
 const lede = await md(frontmatter.lede, frontmatter.references);
 ---
 <p class="lede" set:html={lede} />
 ```
 
-## `posuta/bibtex`
+## `@posuta/posuta/bibtex`
 
 ### `bibtex`
 
@@ -341,13 +341,13 @@ first author's last name, the year and the first title word longer than three le
 without `title`, `authors` or `year`.
 
 ```js
-import { bibtex } from "posuta/bibtex";
+import { bibtex } from "@posuta/posuta/bibtex";
 
 bibtex({ title: "Tilted Rotors & Faults", authors: ["Álvaro Gaona", "Giribet, Juan"], year: 2026, event: "ICRA 2026" });
 // "@misc{gaona2026tilted,\n  author       = {Álvaro Gaona and Giribet, Juan},\n …"
 ```
 
-## `posuta/qr`
+## `@posuta/posuta/qr`
 
 ### `qrSvg`
 
@@ -359,7 +359,7 @@ A QR code for `url` as SVG markup: black on transparent, no quiet zone, error co
 `<QR>` wraps it.
 
 ```js
-import { qrSvg } from "posuta/qr";
+import { qrSvg } from "@posuta/posuta/qr";
 
 const svg = await qrSvg("https://lab.example/poster/");
 ```

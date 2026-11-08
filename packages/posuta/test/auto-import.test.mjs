@@ -25,17 +25,17 @@ test("imports used components: local first, then posuta's", () => {
   const got = run([el("Section", [el("Row", [el("Chart")]), el("Equation")]), el("Unknown"), el("div")]);
   assert.deepEqual(got, {
     Section: join(components, "Section.astro"),
-    Row: "posuta/Row.astro",
+    Row: "@posuta/posuta/Row.astro",
     Chart: join(components, "Chart.astro"),
-    Equation: "posuta/Equation.astro",
+    Equation: "@posuta/posuta/Equation.astro",
   });
 });
 
 test("an explicit import or export wins; nothing is added twice", () => {
   const exp = { type: "ExportNamedDeclaration", declaration: { type: "VariableDeclaration", declarations: [{ id: { name: "Row" } }] } };
-  assert.deepEqual(run([esm([imp("Chart")]), esm([exp]), el("Chart"), el("Row"), el("Col"), el("Col")]), { Col: "posuta/Col.astro" });
+  assert.deepEqual(run([esm([imp("Chart")]), esm([exp]), el("Chart"), el("Row"), el("Col"), el("Col")]), { Col: "@posuta/posuta/Col.astro" });
 });
 
 test("a dotted part imports its component once", () => {
-  assert.deepEqual(run([el("Figure.Root", [el("Figure.Media"), el("Figure.Caption")]), el("Figure")]), { Figure: "posuta/Figure" });
+  assert.deepEqual(run([el("Figure.Root", [el("Figure.Media"), el("Figure.Caption")]), el("Figure")]), { Figure: "@posuta/posuta/Figure" });
 });

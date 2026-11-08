@@ -15,7 +15,7 @@ Use it once, in a layout, around the poster's content:
 
 ```astro title="src/layouts/Poster.astro"
 ---
-import Canvas from "posuta/Canvas.astro";
+import Canvas from "@posuta/posuta/Canvas.astro";
 import "../styles/theme.css";
 const { frontmatter: fm } = Astro.props;
 ---
@@ -31,7 +31,7 @@ What it gives the page:
 - the print page size and the printed type scale, from `print`;
 - the [layer order](/docs/customize/css#layer-order) for your CSS and Tailwind, and any `theme`
   tokens;
-- `posuta/base.css`, the small amount of CSS the components need;
+- `@posuta/posuta/base.css`, the small amount of CSS the components need;
 - `div.posuta-canvas`, the printed sheet, which `posuta pdf` measures for overflow and
   `?print` previews in `astro dev`.
 

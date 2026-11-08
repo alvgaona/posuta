@@ -66,7 +66,7 @@ The most original part and the riskiest, so it gets its own prototype.
 - QR code to the live page, placed on the printed poster.
 - PNG preview for social sharing.
 - Theme packages: tokens only (`:root` custom properties), so a lab can publish its branding.
-- Publish `posuta` and `create-posuta` to npm.
+- Publish `@posuta/posuta` and `create-posuta` to npm.
 
 **Done when** `pnpm create posuta`, edit, push gives a live page and a PDF with no other setup.
 

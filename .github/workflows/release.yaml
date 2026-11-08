@@ -25,7 +25,7 @@ jobs:
             v=$(node -p "require('./packages/$p/package.json').version")
             [ "v$v" = "$GITHUB_REF_NAME" ] || { echo "$p is $v, tag is $GITHUB_REF_NAME"; exit 1; }
           done
-      - run: pnpm --filter posuta exec playwright install --with-deps --only-shell chromium
+      - run: pnpm --filter @posuta/posuta exec playwright install --with-deps --only-shell chromium
       - run: pnpm test
       - run: pnpm -r publish --access public --no-git-checks
         env:

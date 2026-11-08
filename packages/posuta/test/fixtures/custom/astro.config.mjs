@@ -1,6 +1,6 @@
 import { defineConfig } from "astro/config";
 import tailwindcss from "@tailwindcss/vite";
-import posuta from "posuta";
+import posuta from "@posuta/posuta";
 
 // An author's own rehype plugin, run after posuta's: marks every <h2> it sees.
 const markHeadings = () => (tree) => {

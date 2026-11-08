@@ -12,7 +12,7 @@ export function baseOptions(): BaseLayoutProps {
     links: [
       { text: 'Docs', url: docsRoute, active: 'nested-url' },
       { text: 'Template', url: `${repo}/tree/${gitConfig.branch}/template`, external: true },
-      { text: 'npm', url: 'https://www.npmjs.com/package/posuta', external: true },
+      { text: 'npm', url: 'https://www.npmjs.com/package/@posuta/posuta', external: true },
     ],
     githubUrl: repo,
   };

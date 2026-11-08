@@ -1,5 +1,5 @@
 import { defineConfig } from "astro/config";
-import posuta from "posuta";
+import posuta from "@posuta/posuta";
 
 // SITE and BASE_PATH come from GitHub Pages in the deploy workflow; set them for other hosts.
 // `site` also gives the poster its QR code and link previews.

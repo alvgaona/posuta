@@ -10,7 +10,7 @@ target.
 
 ## What posuta's CSS does
 
-`<Canvas>` loads `posuta/base.css`. It holds only what the components need to work: no colours,
+`<Canvas>` loads `@posuta/posuta/base.css`. It holds only what the components need to work: no colours,
 fonts, borders or spacing.
 
 - **The printed sheet.** In print, `div.posuta-canvas` is exactly the paper's width and height,
@@ -43,7 +43,7 @@ earlier layer, and a rule outside any layer beats them all, whatever order the f
 | Layer | What is in it |
 | --- | --- |
 | `theme`, `base` | Tailwind's tokens and its reset, when Tailwind is installed |
-| `posuta.base` | `posuta/base.css` |
+| `posuta.base` | `@posuta/posuta/base.css` |
 | `posuta.theme` | The template's `src/styles/theme.css` |
 | `components`, `utilities` | Tailwind's component classes and utilities |
 | no layer | Your own CSS, frontmatter `theme:` tokens, a lab theme package |
@@ -69,7 +69,7 @@ Then import its stylesheet in your layout, after the theme:
 
 ```astro title="src/layouts/Poster.astro"
 ---
-import Canvas from "posuta/Canvas.astro";
+import Canvas from "@posuta/posuta/Canvas.astro";
 import "../styles/theme.css";
 import "../styles/global.css"; // the file with @import "tailwindcss" /* [!code highlight] */
 ---

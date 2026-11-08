@@ -54,8 +54,8 @@ In an Astro layout (a `.astro` file rather than MDX), import them as usual:
 
 ```astro title="src/layouts/Mine.astro"
 ---
-import Canvas from "posuta/Canvas.astro";
-import QR from "posuta/QR.astro";
+import Canvas from "@posuta/posuta/Canvas.astro";
+import QR from "@posuta/posuta/QR.astro";
 ---
 ```
 
@@ -70,7 +70,7 @@ Pass your own to the integration in `astro.config.mjs`:
 
 ```js title="astro.config.mjs"
 import { defineConfig } from "astro/config";
-import posuta from "posuta";
+import posuta from "@posuta/posuta";
 import rehypeMermaid from "rehype-mermaid";
 
 export default defineConfig({

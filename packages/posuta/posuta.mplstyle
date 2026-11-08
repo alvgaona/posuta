@@ -1,5 +1,5 @@
 # matplotlib style that matches posuta's default theme.
-#   import matplotlib.pyplot as plt; plt.style.use("node_modules/posuta/posuta.mplstyle")
+#   import matplotlib.pyplot as plt; plt.style.use("node_modules/@posuta/posuta/posuta.mplstyle")
 #   plt.savefig("figures/plot.svg")   # then <Figure src={...} /> in the poster
 svg.fonttype: none          # keep text as text, so it uses the poster's fonts
 font.family: IBM Plex Sans, sans-serif

@@ -48,7 +48,7 @@ jobs:
           node-version: 24
           cache: pnpm
       - run: pnpm install --frozen-lockfile
-      - run: pnpm --filter posuta exec playwright install --with-deps --only-shell chromium
+      - run: pnpm --filter @posuta/posuta exec playwright install --with-deps --only-shell chromium
       - run: pnpm build
       - run: pnpm test
       - name: Export the template to PDF

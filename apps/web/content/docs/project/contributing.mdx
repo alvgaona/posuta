@@ -30,8 +30,8 @@ repository, installed together.
   </Folder>
 </Files>
 
-- **`packages/posuta`**: the Astro integration, the components, `base.css`, the tools
-  (`posuta/plot`, `posuta/tex`, `posuta/print` and the rest) and the `posuta` command line
+- **`packages/posuta`** (published as `@posuta/posuta`): the Astro integration, the components, `base.css`, the tools
+  (`@posuta/posuta/plot`, `@posuta/posuta/tex`, `@posuta/posuta/print` and the rest) and the `posuta` command line
   (`posuta pdf`, `posuta install`). Its tests are in `packages/posuta/test`.
 - **`packages/create-posuta`**: the scaffolder behind `pnpm create posuta`. When the package is
   packed for publishing, it bundles a copy of `template/`; inside the repository it reads
@@ -85,8 +85,8 @@ jobs:
 
 ## Releases
 
-`posuta` and `create-posuta` are released together, at the same version. A new poster depends on
-`posuta` at `create-posuta`'s version, so the two must match.
+`@posuta/posuta` and `create-posuta` are released together, at the same version. A new poster depends on
+`@posuta/posuta` at `create-posuta`'s version, so the two must match.
 
 1. Set the same version in `packages/posuta/package.json` and
    `packages/create-posuta/package.json`, and commit.

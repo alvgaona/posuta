@@ -19,7 +19,7 @@ page's content where `<slot />` is.
 
 ```astro title="src/layouts/Mine.astro"
 ---
-import Canvas from "posuta/Canvas.astro";
+import Canvas from "@posuta/posuta/Canvas.astro";
 import "../styles/poster.css";        // your CSS
 const { frontmatter: fm } = Astro.props;
 ---
@@ -66,7 +66,7 @@ export it to PDF, so it stays working. It shows:
   grid on `<Canvas>`, styled by a plain stylesheet, `src/styles/poster.css`. No template theme,
   no `Row` or `Col`: the sections are plain `<section>` elements laid out by the grid.
 - **A hand-drawn SVG** (`src/components/Sketch.astro`): two states and an arrow, with maths labels
-  from `texSvg()` in `posuta/tex`.
+  from `texSvg()` in `@posuta/posuta/tex`.
 - **A chart** with maths in its axis labels, from an inline `plot` function.
 - **Citations** in APA style (`posuta({ citationStyle: "apa" })`) and a `<References />` list.
 - **Your own rehype plugin**, passed through `posuta({ rehypePlugins })`
