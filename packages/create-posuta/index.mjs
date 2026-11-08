@@ -6,7 +6,7 @@
 // Without flags it asks. The template is bundled at publish time (prepack); inside the repo it
 // is read from ../../template.
 import { cpSync, existsSync, readFileSync, readdirSync, rmSync, writeFileSync } from "node:fs";
-import { basename, join, resolve } from "node:path";
+import { basename, join, relative, resolve } from "node:path";
 import { stdin, stdout } from "node:process";
 import { createInterface } from "node:readline/promises";
 import { parseArgs } from "node:util";
@@ -14,7 +14,8 @@ import { parseArgs } from "node:util";
 const here = new URL(".", import.meta.url).pathname;
 const bundled = join(here, "template");
 const repo = join(here, "..", "..", "template");
-const skip = (src) => !/[/\\](node_modules|dist|\.astro)([/\\]|$)/.test(src);
+// Match below the copy root only: an installed create-posuta itself sits inside node_modules.
+const skip = (root) => (src) => !/(^|[/\\])(node_modules|dist|\.astro)([/\\]|$)/.test(relative(root, src));
 const pkg = JSON.parse(readFileSync(join(here, "package.json"), "utf8"));
 
 const { values: opt, positionals } = parseArgs({
@@ -24,7 +25,7 @@ const { values: opt, positionals } = parseArgs({
 
 if (opt["copy-template"]) {
   rmSync(bundled, { recursive: true, force: true });
-  cpSync(repo, bundled, { recursive: true, filter: skip });
+  cpSync(repo, bundled, { recursive: true, filter: skip(repo) });
   // npm drops .gitignore from packages, so ship it under another name.
   cpSync(join(bundled, ".gitignore"), join(bundled, "gitignore"));
   rmSync(join(bundled, ".gitignore"));
@@ -44,7 +45,7 @@ try {
   const [size, orientation = "portrait"] = print.split(/\s+/);
 
   const src = existsSync(bundled) ? bundled : repo;
-  cpSync(src, dir, { recursive: true, filter: skip });
+  cpSync(src, dir, { recursive: true, filter: skip(src) });
   if (existsSync(join(dir, "gitignore"))) {
     cpSync(join(dir, "gitignore"), join(dir, ".gitignore"));
     rmSync(join(dir, "gitignore"));

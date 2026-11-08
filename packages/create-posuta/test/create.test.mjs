@@ -1,6 +1,6 @@
 import { strict as assert } from "node:assert";
 import { spawnSync } from "node:child_process";
-import { existsSync, mkdtempSync, readFileSync } from "node:fs";
+import { cpSync, existsSync, mkdirSync, mkdtempSync, readFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { test } from "node:test";
@@ -28,4 +28,19 @@ test("rejects an unknown print size", () => {
   const r = spawnSync(process.execPath, [cli, dir, "--title", "x", "--print", "B5"], { encoding: "utf8" });
   assert.equal(r.status, 1);
   assert.match(r.stderr, /unknown print size "B5"/);
+});
+
+test("works when installed inside node_modules, as npm and pnpm create run it", () => {
+  const root = mkdtempSync(join(tmpdir(), "create-posuta-"));
+  const pkg = join(root, "node_modules", "create-posuta");
+  mkdirSync(pkg, { recursive: true });
+  for (const f of ["index.mjs", "package.json"]) cpSync(new URL(`../${f}`, import.meta.url), join(pkg, f));
+  cpSync(new URL("../../../template", import.meta.url), join(pkg, "template"), {
+    recursive: true,
+    filter: (src) => !/[/\\](node_modules|dist|\.astro)$/.test(src),
+  });
+  const dir = join(root, "poster");
+  const r = spawnSync(process.execPath, [join(pkg, "index.mjs"), dir, "--title", "x", "--print", "A1"], { encoding: "utf8" });
+  assert.equal(r.status, 0, r.stderr);
+  assert.ok(existsSync(join(dir, "src/pages/index.mdx")));
 });
