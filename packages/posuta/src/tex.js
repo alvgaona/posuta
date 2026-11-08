@@ -1,5 +1,5 @@
-// $…$ in plain text → KaTeX: as HTML (tex) or as an SVG label (texSvg). Charts, diagrams and
-// hand-drawn SVG all use these. At build time KaTeX is built in; in the browser pass it in:
+// $…$ in plain text → KaTeX: as HTML (tex) or as an SVG label (texSvg). Charts and hand-drawn
+// SVG use these. At build time KaTeX is built in; in the browser pass it in:
 //   tex("$\\omega_n$", (await import("katex")).default)
 import { katex as builtIn } from "#dom";
 

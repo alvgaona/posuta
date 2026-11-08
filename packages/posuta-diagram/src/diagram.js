@@ -15,7 +15,7 @@
 // .arrow-label, .group, .group-title, plus each style word as a class (.highlight, .alert…).
 // Arrowheads take their arrow's stroke colour.
 import { parse as parseYaml } from "yaml";
-import { texSvg } from "./tex.js";
+import { texSvg } from "posuta/tex";
 
 const ROUTE_GAP = 22; // how far an over/under route clears the boxes, px
 const words = (style) => (style ? String(style).split(/\s+/) : []);

@@ -46,7 +46,6 @@
 .posuta-media, .posuta-figure svg[viewBox], .posuta-plot svg[viewBox] {
   display: block; width: 100%; height: auto; max-width: 100%;
 }
-.posuta-diagram svg { overflow: visible; }
 /* Plot ships an unlayered <style> forcing system-ui; a layered !important is what beats it. */
 .posuta-figure [class*="plot-"] { font-family: inherit !important; }
 

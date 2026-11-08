@@ -1,0 +1,36 @@
+{
+  "name": "posuta-diagram",
+  "version": "0.1.0",
+  "description": "Block diagrams for posuta posters: a short YAML spec, drawn to SVG at build time",
+  "license": "MIT",
+  "type": "module",
+  "exports": {
+    ".": "./src/diagram.js",
+    "./Diagram.astro": "./src/Diagram.astro",
+    "./theme.css": "./src/theme.css"
+  },
+  "peerDependencies": {
+    "posuta": "workspace:^"
+  },
+  "dependencies": {
+    "yaml": "^2.9.1"
+  },
+  "devDependencies": {
+    "posuta": "workspace:*"
+  },
+  "scripts": {
+    "test": "node --test test/"
+  },
+  "files": [
+    "src"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/alvgaona/posuta.git",
+    "directory": "packages/posuta-diagram"
+  },
+  "keywords": ["posuta", "diagram", "block-diagram", "svg", "astro"],
+  "engines": {
+    "node": ">=22"
+  }
+}

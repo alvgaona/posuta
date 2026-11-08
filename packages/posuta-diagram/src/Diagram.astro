@@ -1,10 +1,12 @@
 ---
 // A block diagram from a spec (see diagram.js), drawn to SVG at build time.
+//   import Diagram from "posuta-diagram/Diagram.astro";
 //   import arch from "../../diagrams/arch.yaml?raw";
 //   <Diagram spec={arch} alt="…" caption="…" />
 // SVG children are drawn on top, in the diagram's coordinates (px, as in layout()):
 //   <Diagram spec={arch} alt="…"><circle cx="40" cy="20" r="6" fill="red" /></Diagram>
 import { renderDiagram } from "./diagram.js";
+import "./diagram.css";
 interface Props { spec: string | object; alt: string; caption?: string; class?: string; [attr: string]: unknown }
 const { spec, alt, caption, class: cls, ...rest } = Astro.props;
 if (!alt) throw new Error("posuta <Diagram>: `alt` is required (what the diagram shows, for screen readers)");

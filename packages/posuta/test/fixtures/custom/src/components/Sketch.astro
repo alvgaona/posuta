@@ -1,9 +1,8 @@
 ---
-// A hand-drawn SVG: posuta's arrow routing and maths labels, the author's own drawing.
-import { route } from "posuta/diagram";
+// A hand-drawn SVG with posuta's maths labels.
 import { texSvg } from "posuta/tex";
 const a = { x: 10, y: 20, w: 120, h: 50 }, b = { x: 220, y: 90, w: 120, h: 50 };
-const { pts } = route(a, b);
+const pts = [[a.x + a.w, a.y + a.h / 2], [a.x + a.w + 45, a.y + a.h / 2], [a.x + a.w + 45, b.y + b.h / 2], [b.x, b.y + b.h / 2]];
 ---
 <svg viewBox="0 0 360 160" font-size="16" role="img" aria-label="Two states joined by a transition">
   <defs>

@@ -12,8 +12,8 @@ posuta comes in three layers, and you can stop at any of them:
    project, yours to change.
 2. **Your own layout**: `<Canvas>` gives you the print page, the PDF export and the overflow
    check; everything inside it is your markup and your CSS. posuta's components are unstyled.
-3. **Tools**: the functions under the components (Plot to SVG, KaTeX, diagram routing,
-   citations, data loading), for drawing anything the components don't.
+3. **Tools**: the functions under the components (Plot to SVG, KaTeX, citations, data
+   loading), for drawing anything the components don't.
 
 
 ## Start a poster
@@ -231,7 +231,8 @@ The list is Vancouver by default. Pick another CSL style with
 
 ### Diagrams
 
-Block diagrams from a short YAML spec on a coarse grid, drawn to SVG at build time:
+Block diagrams come from a separate package, `posuta-diagram` (the template includes it): a short
+YAML spec on a coarse grid, drawn to SVG at build time.
 
 ```yaml
 # diagrams/loop.yaml
@@ -249,10 +250,13 @@ arrows:
 ```
 
 ```mdx
+import Diagram from "posuta-diagram/Diagram.astro";
 import loop from "../../diagrams/loop.yaml?raw";
 
 <Diagram spec={loop} alt="What the diagram shows" />
 ```
+
+Its look in the default theme is `import "posuta-diagram/theme.css"`, next to `posuta/theme.css`.
 
 Arrows route themselves: straight when two boxes share a row or column, an elbow otherwise, or
 around the top/bottom with `route: over|under`. `x: <col>` pins a vertical arrow, `side: left`
@@ -265,7 +269,10 @@ SVG inside `<Diagram>` is drawn on top, in the diagram's pixel coordinates, to a
 <Diagram spec={loop} alt="…"><circle cx="230" cy="28" r="6" fill="red" /></Diagram>
 ```
 
-SVGs from Excalidraw or draw.io still go through `<Figure>`.
+Any other diagram tool works through `<Figure>`, as long as it exports SVG: Graphviz
+(`dot -Tsvg`), Mermaid (`mmdc`), D2, TikZ (`dvisvgm`), draw.io or Excalidraw. For tools that run as
+Markdown plugins, such as `rehype-mermaid`, pass them to posuta:
+`posuta({ rehypePlugins: [rehypeMermaid] })` (also `remarkPlugins`); they run after posuta's.
 
 
 ## 2. Build your own layout
@@ -331,7 +338,7 @@ stable classes to style:
 | `Chart` | `figure.posuta-figure.posuta-chart` › `.posuta-plot` (the SVG), `figcaption`, `label.posuta-slider`, `.posuta-tip` |
 | `Figure` | `Figure.Root` → `figure.posuta-figure`, `Figure.Media` → `img`, `svg` or `video` `.posuta-media` (plus the print frame `img.posuta-media`), `Figure.Caption` → `figcaption.posuta-caption` |
 | `Equation` | `div.posuta-eq` › KaTeX, `span.posuta-eq-n` |
-| `Diagram` | `figure.posuta-figure.posuta-diagram` › `svg` with `.box`, `.box-title`, `.box-sub`, `.arrow`, `.arrow-label`, `.group`, `.group-title`, and each style word (`.highlight`, `.alert`, `.dashed`, `.bus`) |
+| `Diagram` (posuta-diagram) | `figure.posuta-figure.posuta-diagram` › `svg` with `.box`, `.box-title`, `.box-sub`, `.arrow`, `.arrow-label`, `.group`, `.group-title`, and each style word (`.highlight`, `.alert`, `.dashed`, `.bus`) |
 | `References` | `ol.posuta-refs` › `li#ref-<key>` |
 | `QR` | `svg.posuta-qr` |
 
@@ -399,18 +406,17 @@ Plain text comes back as `<text fill="currentColor">`; text with maths as KaTeX 
 `foreignObject`. At build time KaTeX is built in; in the browser pass it:
 `tex(s, (await import("katex")).default)`.
 
-### `posuta/diagram`
+### `posuta-diagram`
 
 ```js
-import { layout, draw, route, renderDiagram } from "posuta/diagram";
+import { layout, draw, route, renderDiagram } from "posuta-diagram";
 const g = layout(spec);       // { boxes, groups, arrows, viewBox }: geometry only, in px
 g.boxes.find((b) => b.name === "plant").y += 20;
 const svg = draw(g);          // = renderDiagram(spec) when unchanged
 route(a, b, { route: "over" });  // orthogonal path between two { x, y, w, h } boxes: { pts, seg }
 ```
 
-A hand-drawn SVG can use `route()` for its arrows and `texSvg()` for its labels (see
-`test/fixtures/custom/src/components/Sketch.astro`).
+A hand-drawn SVG can use `route()` for its arrows and `texSvg()` from `posuta/tex` for its labels.
 
 ### `posuta/cite`
 
@@ -430,10 +436,11 @@ const svg = await qrSvg("https://lab.example/poster/");
 ## Repository
 
 - `packages/posuta`: the Astro integration, components, base CSS, theme, tools and CLI
+- `packages/posuta-diagram`: block diagrams, optional (`<Diagram>`, `layout`, `draw`, `route`)
 - `packages/create-posuta`: `pnpm create posuta`; bundles `template/` when packed
 - `template`: the starter poster that `create-posuta` copies; also what `pnpm dev` runs
 
-Release: keep `posuta` and `create-posuta` at the same version (a new poster depends on
+Release: keep `posuta`, `posuta-diagram` and `create-posuta` at the same version (a new poster depends on
 `^<create-posuta's version>`), then `pnpm -r publish --access public`.
 
 ## License

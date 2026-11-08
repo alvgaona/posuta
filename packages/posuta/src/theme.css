@@ -91,20 +91,6 @@ footer { margin-top: 1.9rem; color: var(--muted); font-size: .8rem; font-family:
 .posuta-refs { font-size: .87rem; color: var(--fg-2); padding-left: 1.6rem; margin: .4rem 0; }
 .posuta-refs p { margin: .27rem 0; }
 
-.posuta-diagram svg { font-family: var(--font-body); }
-.posuta-diagram .box { fill: var(--bg); stroke: var(--muted); stroke-width: 1.2; }
-.posuta-diagram .box.highlight { fill: var(--accent-tint); stroke: var(--accent); }
-.posuta-diagram .box.bus { fill: var(--surface); stroke-width: 1; }
-.posuta-diagram .group { stroke: var(--border); stroke-width: 1.5; }
-.posuta-diagram .arrow { stroke: var(--muted); stroke-width: 1.4; }
-.posuta-diagram .arrow.highlight { stroke: var(--accent); }
-.posuta-diagram .arrow.alert { stroke: var(--fault); stroke-dasharray: 5 3; }
-.posuta-diagram .box-title { fill: var(--fg); }
-.posuta-diagram .box-sub, .posuta-diagram .arrow-label { fill: var(--muted); }
-.posuta-diagram .arrow-label.alert { fill: var(--fault); color: var(--fault); }
-.posuta-diagram .group-title { fill: var(--muted); font-family: var(--font-mono); letter-spacing: .05em; text-transform: uppercase; }
-.posuta-diagram foreignObject > div { color: var(--fg); }
-
 @media screen and (max-width: 1000px) { .hero { grid-template-columns: 1fr; } }
 
 @media print {

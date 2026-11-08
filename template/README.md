@@ -15,8 +15,8 @@ Replace `OWNER/REPO` in the two links above with this repository's.
 - Your components: `src/components/` (used in the MDX without import lines, like `<Section>`)
 - References: `src/pages/refs.bib`
 - Charts: `charts/` (one file per chart), their data in `data/`
-- Diagrams: `diagrams/` (YAML). Figures: `figures/` (`poles.py` makes `poles.svg` with matplotlib).
-  Images and video: `src/media/`
+- Diagrams: `diagrams/` (YAML, drawn by `posuta-diagram`). Figures: `figures/` (`poles.py` makes
+  `poles.svg` with matplotlib). Images and video: `src/media/`
 
 ```sh
 pnpm install

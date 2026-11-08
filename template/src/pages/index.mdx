@@ -14,6 +14,7 @@ footer: Your Name · your-lab.org
 print: { size: A0, orientation: portrait }
 bibliography: refs.bib
 ---
+import Diagram from "posuta-diagram/Diagram.astro";
 import loop from "../../diagrams/loop.yaml?raw";
 import poles from "../../figures/poles.svg";
 import clip from "../media/oscillator.mp4";
@@ -63,12 +64,12 @@ rendered at build time [@knuth1984tex]:
 <Grid cols={3}>
 <Cell span={2}>
 
-<Section n={4} title="The loop" sub="A block diagram from diagrams/loop.yaml: boxes on a grid, arrows that route themselves.">
+<Section n={4} title="The loop" sub="A block diagram from diagrams/loop.yaml, drawn by posuta-diagram: boxes on a grid, arrows that route themselves.">
 
 <Diagram
   spec={loop}
   alt="The control loop: the reference and the measured output feed the controller, which drives the plant; a sensor measures the plant's output."
-  caption="Labels can hold maths. Styles such as highlight and dashed become classes, which the theme colours."
+  caption="Labels can hold maths. Any tool that exports SVG works too, through Figure: Graphviz, Mermaid, D2, TikZ, draw.io."
 />
 
 </Section>

@@ -20,8 +20,6 @@
     "./Figure.astro": "./src/Figure.astro",
     "./Figure": "./src/figure/index.js",
     "./Equation.astro": "./src/Equation.astro",
-    "./Diagram.astro": "./src/Diagram.astro",
-    "./diagram": "./src/diagram.js",
     "./base.css": "./src/base.css",
     "./Canvas.astro": "./src/Canvas.astro",
     "./QR.astro": "./src/QR.astro",
@@ -50,8 +48,7 @@
     "playwright": "^1.65.0",
     "qrcode": "^1.5.4",
     "rehype-katex": "^7.0.1",
-    "remark-math": "^6.0.0",
-    "yaml": "^2.9.1"
+    "remark-math": "^6.0.0"
   },
   "bin": {
     "posuta": "./bin/posuta.mjs"

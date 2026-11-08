@@ -1,6 +1,6 @@
 import { strict as assert } from "node:assert";
 import { test } from "node:test";
-import { renderDiagram, route } from "../src/diagram.js";
+import { draw, layout, renderDiagram, route } from "../src/diagram.js";
 
 const r = (x, y, w = 100, h = 50) => ({ x, y, w, h });
 
@@ -36,4 +36,15 @@ arrows:
   assert.match(svg, /class="katex"/);
   assert.equal((svg.match(/<path class="arrow"/g) ?? []).length, 2);
   assert.throws(() => renderDiagram({ boxes: {}, arrows: ["a -> b"] }), /no box named "a"/);
+});
+
+test("layout gives geometry, draw turns an edited layout into SVG", () => {
+  const spec = { boxes: { a: { at: [0, 0], title: "A" }, b: { at: [5, 0], title: "B" } }, arrows: ["a -> b: go"] };
+  const g = layout(spec);
+  assert.deepEqual(g.boxes.map((b) => [b.name, b.x, b.y, b.w, b.h]), [["a", 0, 0, 120, 56], ["b", 200, 0, 120, 56]]);
+  assert.deepEqual(g.arrows[0].pts, [[120, 28], [200, 28]]);
+  assert.deepEqual(g.arrows[0].labelAt, { x: 160, y: 21, anchor: "middle" });
+  assert.equal(draw(g), renderDiagram(spec));
+  g.boxes[1].y = 40;
+  assert.match(draw(g), /<rect class="box" x="200" y="40"/);
 });

@@ -237,9 +237,16 @@ importers:
       remark-math:
         specifier: ^6.0.0
         version: 6.0.0
+
+  packages/posuta-diagram:
+    dependencies:
       yaml:
         specifier: ^2.9.1
         version: 2.9.1
+    devDependencies:
+      posuta:
+        specifier: workspace:*
+        version: link:../posuta
 
   packages/posuta/test/fixtures/custom:
     dependencies:
@@ -264,6 +271,9 @@ importers:
       posuta:
         specifier: workspace:*
         version: link:../packages/posuta
+      posuta-diagram:
+        specifier: workspace:*
+        version: link:../packages/posuta-diagram
 
 packages:
 
