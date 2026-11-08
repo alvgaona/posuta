@@ -42,8 +42,8 @@
 @media screen { [data-print="only"] { display: none !important; } }
 @media print { [data-print="hide"] { display: none !important; } }
 
-/* Figures and charts scale to their container. */
-.posuta-media, .posuta-figure svg[viewBox], .posuta-plot svg[viewBox] {
+/* Figures and charts scale to their container; KaTeX's own SVGs (\sqrt) keep their size. */
+.posuta-media, .posuta-figure svg[viewBox]:not(.katex svg), .posuta-plot svg[viewBox]:not(.katex svg) {
   display: block; width: 100%; height: auto; max-width: 100%;
 }
 /* Plot ships an unlayered <style> forcing system-ui; a layered !important is what beats it. */

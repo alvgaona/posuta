@@ -31,10 +31,11 @@ async function hydrate(fig) {
   await render();
 }
 
+// Watch the plot box, not the figure: a figure with display: contents has no box to intersect.
 const seen = new IntersectionObserver((entries) => {
   for (const e of entries) if (e.isIntersecting) {
     seen.unobserve(e.target);
-    hydrate(e.target).catch((err) => console.error(err));
+    hydrate(e.target.closest(".posuta-chart")).catch((err) => console.error(err));
   }
 });
-document.querySelectorAll(".posuta-chart[data-chart]").forEach((f) => seen.observe(f));
+document.querySelectorAll(".posuta-chart[data-chart] > .posuta-plot").forEach((b) => seen.observe(b));

@@ -67,6 +67,8 @@ test("withPointer adds a crosshair and a pointer dot; tipRows labels values from
   const out = withPointer(options);
   assert.equal(out.marks.length, 4);
   assert.deepEqual(withPointer({ marks: [rule] }).marks, [rule]); // nothing to point at
+  const faceted = withPointer({ marks: [Plot.dot(d, { x: "t", y: "y", fy: "s" })] }).marks;
+  assert.equal(faceted.at(-1).fy, "s"); // the pointer dot stays in its facet
   // stroke and z share a field, so it is listed once; the x label keeps its maths
   assert.deepEqual(tipRows(options, d[0]), [["s", "$\\zeta$"], ["time $t$ (s)", "0.1235"], ["y", "1"]]);
 });

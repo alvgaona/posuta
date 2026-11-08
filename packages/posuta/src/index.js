@@ -42,7 +42,17 @@ export default function posuta({ theme, citationStyle = "vancouver", remarkPlugi
         // project (a linked posuta); added after resolve so Vite keeps its default allow list.
         const katex = dirname(createRequire(import.meta.url).resolve("katex/package.json"));
         const allowKatex = { name: "posuta:allow-katex", configResolved: (c) => { c.server.fs.allow.push(katex); } };
-        updateConfig({ integrations, markdown, vite: { plugins: [allowKatex] } });
+        // Imported .svg files are Astro components that hide their markup; tag each with its file
+        // so Figure.Media can inline it with its own class kept and $…$ rendered.
+        const svgFile = {
+          name: "posuta:svg-file", enforce: "post",
+          transform(code, id) {
+            if (!id.endsWith(".svg") || !code.includes("export default createSvgComponent(")) return;
+            return code.replace("export default createSvgComponent(", "const svg = createSvgComponent(") +
+              `\nexport default Object.defineProperty(svg, "posutaFile", { value: ${JSON.stringify(id)} });`;
+          },
+        };
+        updateConfig({ integrations, markdown, vite: { plugins: [allowKatex, svgFile] } });
       },
     },
   };

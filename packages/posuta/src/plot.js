@@ -95,10 +95,11 @@ export function withPointer(options) {
   const p = pointerOf(options);
   if (!p) return options;
   const { x, y, stroke, fill } = p.ch;
+  const { fx, fy } = p.mark; // facet channels, so the pointer stays in the facet it points at
   return {
     ...options,
-    marks: [...options.marks, Plot.crosshair(p.mark.data, { x, y }),
-      Plot.dot(p.mark.data, Plot.pointer({ x, y, fill: stroke ?? fill ?? "currentColor", r: 4 }))],
+    marks: [...options.marks, Plot.crosshair(p.mark.data, { x, y, fx, fy }),
+      Plot.dot(p.mark.data, Plot.pointer({ x, y, fx, fy, fill: stroke ?? fill ?? "currentColor", r: 4, className: "posuta-pointer" }))],
   };
 }
 
@@ -119,20 +120,22 @@ export function tipRows(options, d) {
 
 /** Show an HTML tooltip, with maths, over a live chart drawn with withPointer. */
 export function attachTip(el, options, box) {
-  const svg = el.matches("svg") ? el : el.querySelector("svg[viewBox]");
   const tip = Object.assign(document.createElement("div"), { className: "posuta-tip", hidden: true });
   box.append(tip);
   const html = (s) => (katex ? tex(s, katex) : esc(s));
-  const { ch } = pointerOf(options) ?? {};
   el.addEventListener("input", () => {
     const d = el.value;
-    if (!d || !ch) { tip.hidden = true; return; }
-    const get = (f) => (typeof f === "function" ? f(d) : d[f]);
-    const k = svg.getBoundingClientRect().width / svg.viewBox.baseVal.width;
-    const s = svg.getBoundingClientRect(), b = box.getBoundingClientRect();
+    if (!d) { tip.hidden = true; return; }
     tip.innerHTML = tipRows(options, d).map(([l, v]) => `<div><b>${html(l)}</b> ${html(v)}</div>`).join("");
-    tip.style.left = `${s.left - b.left + el.scale("x").apply(get(ch.x)) * k}px`;
-    tip.style.top = `${s.top - b.top + el.scale("y").apply(get(ch.y)) * k}px`;
-    tip.hidden = false;
+    // The tip goes on the pointer dot, in whatever facet it is. The crosshair can fire input
+    // before the dot is redrawn, so place it a frame later.
+    requestAnimationFrame(() => {
+      const dot = el.querySelector(".posuta-pointer circle");
+      if (!dot || el.value !== d) return;
+      const r = dot.getBoundingClientRect(), b = box.getBoundingClientRect();
+      tip.style.left = `${r.left + r.width / 2 - b.left}px`;
+      tip.style.top = `${r.top + r.height / 2 - b.top}px`;
+      tip.hidden = false;
+    });
   });
 }

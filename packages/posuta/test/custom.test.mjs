@@ -64,6 +64,34 @@ test("Tailwind: its reset sits under posuta, its utilities over it", async () =>
     assert.ok(got.half >= 4 && got.half <= 5, `image is ${got.half}/10 of the figure`);
     assert.equal(got.still, "none");
     assert.deepEqual(got.ref, ["[1] Bostock", "1"]);
+
+    // An SVG file: its own class kept, $…$ rendered, KaTeX's \sqrt SVG not resized as a figure.
+    const svg = await page.evaluate(() => {
+      const el = document.querySelector("svg.own");
+      const sq = el?.querySelector(".katex svg");
+      return { cls: el?.getAttribute("class"), tex: !!el?.querySelector("foreignObject .katex"),
+        sqrt: sq && Math.round(sq.getBoundingClientRect().height) === Math.round(sq.parentElement.getBoundingClientRect().height) };
+    });
+    assert.deepEqual(svg, { cls: "own posuta-media", tex: true, sqrt: true });
+
+    // A faceted chart in a display: contents figure comes alive, and its tooltip follows the
+    // point in the lower facet.
+    const plot = page.locator(".posuta-chart .posuta-plot");
+    await plot.scrollIntoViewIfNeeded();
+    await page.waitForSelector(".posuta-tip", { state: "attached" }); // live: attachTip has run
+    const box = await plot.boundingBox();
+    await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
+    await page.mouse.move(box.x + box.width * 0.6, box.y + box.height * 0.75, { steps: 5 });
+    await page.waitForFunction(() => !document.querySelector(".posuta-tip")?.hidden);
+    const tip = await page.evaluate(async () => {
+      await new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r))); // Plot redraws the pointer on a frame
+      const dot = document.querySelector(".posuta-pointer circle").getBoundingClientRect();
+      const t = document.querySelector(".posuta-tip");
+      const box = t.parentElement.getBoundingClientRect();
+      return { dx: Math.abs(box.left + parseFloat(t.style.left) - (dot.left + dot.width / 2)),
+        dy: Math.abs(box.top + parseFloat(t.style.top) - (dot.top + dot.height / 2)), lower: dot.top > box.top + box.height / 2 };
+    });
+    assert.ok(tip.dx < 1 && tip.dy < 1 && tip.lower, JSON.stringify(tip));
   } finally {
     await browser.close();
     server.close();
