@@ -1,0 +1,22 @@
+// The control loop, drawn with Graphviz and placed with <Figure>. To redraw it (with Graphviz
+// installed), turning black into currentColor so it follows the page in dark mode:
+//   dot -Tsvg figures/loop.dot | sed -e 's/"black"/"currentColor"/g' -e 's/<text /<text fill="currentColor" /g' > figures/loop.svg
+digraph loop {
+  rankdir=LR; bgcolor=transparent; nodesep=0.5; ranksep=0.55;
+  node [shape=box, style=rounded, fontname="IBM Plex Sans", fontsize=13, height=0.6, margin="0.2,0.08"];
+  edge [fontname="IBM Plex Sans", fontsize=12, arrowsize=0.7];
+
+  ref    [label="Reference\nr(t)"];
+  subgraph cluster_mcu {
+    label="EMBEDDED COMPUTER"; fontname="IBM Plex Mono"; fontsize=10; style="rounded,dashed"; color="#9aa0ac";
+    ctl  [label="Controller\nPD · 1 kHz", color="#4269d0", penwidth=1.6];
+  }
+  plant  [label="Plant\nζ, ωₙ"];
+  sensor [label="Sensor", style="rounded,dashed"];
+  { rank=same; plant; sensor; }
+
+  ref -> ctl     [label=" e "];
+  ctl -> plant   [label=" u "];
+  plant -> sensor [label=" y "];
+  sensor -> ctl  [label=" measured ", color="#4269d0", fontcolor="#4269d0"];
+}

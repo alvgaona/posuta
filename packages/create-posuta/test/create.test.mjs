@@ -18,7 +18,6 @@ test("copies the template with the title, print size and a real posuta version",
   const pj = JSON.parse(readFileSync(join(dir, "package.json"), "utf8"));
   assert.equal(pj.name, "my-poster");
   assert.match(pj.dependencies.posuta, /^\^\d/);
-  assert.match(pj.dependencies["posuta-diagram"], /^\^\d/);
   assert.ok(existsSync(join(dir, ".gitignore")));
   assert.ok(existsSync(join(dir, ".github/workflows/deploy.yaml")));
   assert.ok(!existsSync(join(dir, "node_modules")) && !existsSync(join(dir, "dist")));

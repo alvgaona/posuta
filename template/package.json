@@ -10,7 +10,6 @@
   },
   "dependencies": {
     "astro": "^7.4.7",
-    "posuta": "workspace:*",
-    "posuta-diagram": "workspace:*"
+    "posuta": "workspace:*"
   }
 }

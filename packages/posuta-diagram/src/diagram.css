@@ -1,2 +1,0 @@
-/* What a diagram needs to work: labels may sit just outside the drawing's box. */
-@layer posuta.base { .posuta-diagram svg { overflow: visible; } }

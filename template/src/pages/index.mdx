@@ -14,8 +14,7 @@ footer: Your Name · your-lab.org
 print: { size: A0, orientation: portrait }
 bibliography: refs.bib
 ---
-import Diagram from "posuta-diagram/Diagram.astro";
-import loop from "../../diagrams/loop.yaml?raw";
+import loop from "../../figures/loop.svg";
 import poles from "../../figures/poles.svg";
 import clip from "../media/oscillator.mp4";
 import still from "../media/oscillator.jpg";
@@ -64,12 +63,12 @@ rendered at build time [@knuth1984tex]:
 <Grid cols={3}>
 <Cell span={2}>
 
-<Section n={4} title="The loop" sub="A block diagram from diagrams/loop.yaml, drawn by posuta-diagram: boxes on a grid, arrows that route themselves.">
+<Section n={4} title="The loop" sub="A block diagram drawn with Graphviz (figures/loop.dot), placed as an SVG.">
 
-<Diagram
-  spec={loop}
+<Figure
+  src={loop}
   alt="The control loop: the reference and the measured output feed the controller, which drives the plant; a sensor measures the plant's output."
-  caption="Labels can hold maths. Any tool that exports SVG works too, through Figure: Graphviz, Mermaid, D2, TikZ, draw.io."
+  caption="Any tool that exports SVG works the same way: Graphviz, Mermaid, D2, TikZ, draw.io or Excalidraw."
 />
 
 </Section>
@@ -92,8 +91,8 @@ rendered at build time [@knuth1984tex]:
 
 <Section n={6} title="Make it yours" sub="Every block above is a file you can change.">
 
-- Text and frontmatter: `src/pages/index.mdx`. Charts: `charts/` and `data/`. Diagrams:
-  `diagrams/`. Figures and video: `figures/`, `src/media/`.
+- Text and frontmatter: `src/pages/index.mdx`. Charts: `charts/` and `data/`. Figures,
+  diagrams and video: `figures/`, `src/media/`.
 - Lay blocks out with `<Row>`/`<Col>` (top) or `<Grid>`/`<Cell>` (here), which can span rows.
 - The header, footer and QR code are `src/layouts/Poster.astro`; this numbered section is
   `src/components/Section.astro`. Any component you add there works here without an import.

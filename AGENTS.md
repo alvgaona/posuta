@@ -5,8 +5,7 @@ Researchers write MDX; the output is a static site for any free host plus a vect
 It grew out of two hand-written HTML posters (ft-tilt, dq-formation) that were hard to read and edit.
 
 ## Repo
-pnpm workspace. `packages/posuta` (Astro integration, components, theme), `packages/posuta-diagram`
-(optional block diagrams) and `template` (the
+pnpm workspace. `packages/posuta` (Astro integration, components, theme) and `template` (the
 starter poster that `create-posuta` copies; `pnpm dev` / `pnpm build` run it). Project posters
 (ft-tilt, dq-formation) live in their own repos, not here.
 
@@ -33,8 +32,8 @@ starter poster that `create-posuta` copies; `pnpm dev` / `pnpm build` run it). P
   attributes, and `as` where the element can vary.
 - **Tailwind and plain CSS both work**: `<Canvas>` declares the layer order
   `theme, base, posuta.base, posuta.theme, components, utilities`; unlayered CSS beats all.
-- **Block diagrams are a separate package** (`posuta-diagram`), not part of posuta. posuta
-  accepts any SVG through `<Figure>` and the author's own remark/rehype plugins.
+- **No diagram builder in posuta.** Diagrams come from outside tools as SVG through `<Figure>`,
+  or through the author's own remark/rehype plugins (`posuta({ rehypePlugins })`).
 - **MDX without imports**: posuta's components and the poster's `src/components/` are available
   in MDX without import lines.
 

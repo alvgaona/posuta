@@ -52,7 +52,7 @@ try {
 
   const pj = JSON.parse(readFileSync(join(dir, "package.json"), "utf8"));
   pj.name = basename(dir).toLowerCase().replace(/[^a-z0-9-]+/g, "-");
-  // Workspace links (posuta, posuta-diagram) become the published releases; they share a version.
+  // Workspace links become the published releases; the packages share a version.
   for (const [k, v] of Object.entries(pj.dependencies)) if (v.startsWith("workspace:")) pj.dependencies[k] = `^${pkg.version}`;
   writeFileSync(join(dir, "package.json"), JSON.stringify(pj, null, 2) + "\n");
 
