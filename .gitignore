@@ -4,3 +4,4 @@ dist/
 *.pdf
 .DS_Store
 packages/create-posuta/template/
+.agents/plans/
