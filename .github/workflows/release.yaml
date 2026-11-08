@@ -36,7 +36,11 @@ jobs:
           args: --latest --strip header
         env:
           OUTPUT: RELEASE_NOTES.md
-      - run: pnpm -r publish --access public --no-git-checks --provenance
+      # npm, not pnpm: pnpm 11+ publishes without the README, so npmjs.com shows none.
+      - run: npm publish --access public --provenance
+        working-directory: packages/posuta
+      - run: npm publish --access public --provenance
+        working-directory: packages/create-posuta
       - run: gh release create "$GITHUB_REF_NAME" --notes-file RELEASE_NOTES.md --verify-tag
         env:
           GH_TOKEN: ${{ github.token }}
