@@ -1,55 +1,86 @@
-/* posuta default theme: tokens first, so a theme package only overrides :root.
+/* posuta default theme. Everything sits in @layer posuta, so a theme package (plain :root tokens,
+   unlayered) overrides it whatever the load order. Sizes are rem: print scales the root size.
    Palette and type follow aerostack2.dev, as in the first two posters. */
+@layer posuta {
 :root {
   --bg: #ffffff; --surface: #f9f8f9; --fg: #282a30; --fg-2: #3c4149; --muted: #6f6e77;
-  --border: #e9e8ea; --accent: #1348dc; --accent-tint: color-mix(in oklab, #1348dc 8%, transparent);
+  --border: #e9e8ea; --accent: #1348dc; --accent-tint: color-mix(in oklab, var(--accent) 8%, transparent);
+  --fault: #c2410c;
   --font-display: "IBM Plex Serif", ui-serif, Georgia, serif;
   --font-body: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
   --font-mono: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
-  --radius: 6px;
+  --radius: .4rem;
+  font-size: 15px;
 }
-@media (prefers-color-scheme: dark) {
+@media screen and (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
     --bg: #16181d; --surface: #1a1d23; --fg: #edeef3; --fg-2: #d0d4dc; --muted: #9aa0ac;
-    --border: #2d3139; --accent: #6b96ff; --accent-tint: color-mix(in oklab, #6b96ff 12%, transparent);
+    --border: #2d3139; --accent: #6b96ff; --accent-tint: color-mix(in oklab, var(--accent) 12%, transparent);
+    --fault: #fb923c;
     color-scheme: dark;
   }
 }
 :root[data-theme="dark"] {
   --bg: #16181d; --surface: #1a1d23; --fg: #edeef3; --fg-2: #d0d4dc; --muted: #9aa0ac;
-  --border: #2d3139; --accent: #6b96ff; --accent-tint: color-mix(in oklab, #6b96ff 12%, transparent);
+  --border: #2d3139; --accent: #6b96ff; --accent-tint: color-mix(in oklab, var(--accent) 12%, transparent);
+  --fault: #fb923c;
   color-scheme: dark;
 }
 
 * { box-sizing: border-box; }
 body {
   margin: 0; background: var(--bg); color: var(--fg);
-  font-family: var(--font-body); font-size: 15px; line-height: 1.55;
-  padding: 0 max(16px, env(safe-area-inset-right, 0px)) 48px max(16px, env(safe-area-inset-left, 0px));
+  font-family: var(--font-body); font-size: 1rem; line-height: 1.55;
+  padding: 0 max(16px, env(safe-area-inset-right, 0px)) 3.2rem max(16px, env(safe-area-inset-left, 0px));
 }
-.poster { max-width: 1680px; margin: 0 auto; }
+.poster { max-width: 112rem; margin: 0 auto; }
 
-.hero { display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr); gap: 24px 56px; align-items: end;
-        padding-block: 40px 28px; border-bottom: 1px solid var(--border); margin-bottom: 28px; }
-@media (max-width: 1000px) { .hero { grid-template-columns: 1fr; } }
-.eyebrow { font-family: var(--font-mono); font-size: 12px; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
-h1 { font-family: var(--font-display); font-weight: 600; font-size: clamp(26px, 2.9vw, 42px); line-height: 1.14; margin: 10px 0 12px; text-wrap: balance; max-width: 30ch; }
+.hero { display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr); gap: 1.6rem 3.7rem; align-items: end;
+        padding-block: 2.7rem 1.9rem; border-bottom: 1px solid var(--border); margin-bottom: 1.9rem; }
+.eyebrow { font-family: var(--font-mono); font-size: .8rem; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
+h1 { font-family: var(--font-display); font-weight: 600; font-size: clamp(1.75rem, 2.9vw, 2.8rem); line-height: 1.14; margin: .67rem 0 .8rem; text-wrap: balance; max-width: 30ch; }
 h1 em { font-style: normal; color: var(--accent); }
-.lede { font-size: clamp(16px, 1.35vw, 19px); color: var(--fg-2); max-width: 70ch; margin: 0; }
-.stats { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px 32px; }
-.stat { display: grid; gap: 6px; align-content: start; }
-.stat b { font-family: var(--font-display); font-weight: 600; font-size: clamp(26px, 2.6vw, 38px); line-height: 1; font-variant-numeric: tabular-nums; }
+.lede { font-size: clamp(1.07rem, 1.35vw, 1.27rem); color: var(--fg-2); max-width: 70ch; margin: 0; }
+.stats { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.6rem 2.1rem; }
+.stat { display: grid; gap: .4rem; align-content: start; }
+.stat b { font-family: var(--font-display); font-weight: 600; font-size: clamp(1.75rem, 2.6vw, 2.5rem); line-height: 1; font-variant-numeric: tabular-nums; }
 .stat b.acc { color: var(--accent); }
-.stat span { font-size: 13px; color: var(--muted); max-width: 30ch; }
+.stat span { font-size: .87rem; color: var(--muted); max-width: 30ch; }
 
-.posuta-section { min-width: 0; margin-bottom: 28px; }
-.posuta-section.panel { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 14px; }
-h2 { font-family: var(--font-display); font-weight: 600; font-size: 22px; line-height: 1.25; margin: 0 0 4px; text-wrap: balance; }
-h2 .n { font-family: var(--font-mono); font-size: 13px; font-weight: 500; color: var(--accent); margin-right: 8px; vertical-align: 2px; }
-h3 { font-size: 14px; font-weight: 600; margin: 16px 0 6px; }
-p { margin: 8px 0; max-width: 68ch; }
-.sub { color: var(--muted); font-size: 13.5px; margin: 0 0 12px; }
+.posuta-row { display: flex; gap: 0 2.1rem; align-items: flex-start; }
+.posuta-col { flex: var(--span, 1) 1 0; min-width: 0; }
+
+.posuta-section { min-width: 0; margin-bottom: 1.9rem; }
+.posuta-section.panel { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: .93rem; }
+h2 { font-family: var(--font-display); font-weight: 600; font-size: 1.47rem; line-height: 1.25; margin: 0 0 .27rem; text-wrap: balance; }
+h2 .n { font-family: var(--font-mono); font-size: .87rem; font-weight: 500; color: var(--accent); margin-right: .53rem; vertical-align: .13rem; }
+h3 { font-size: .93rem; font-weight: 600; margin: 1.07rem 0 .4rem; }
+p { margin: .53rem 0; max-width: 68ch; }
+.sub { color: var(--muted); font-size: .9rem; margin: 0 0 .8rem; }
 code { font-family: var(--font-mono); font-size: .92em; }
 a { color: var(--accent); text-decoration: none; }
 a:hover { text-decoration: underline; }
-footer { margin-top: 28px; color: var(--muted); font-size: 12px; font-family: var(--font-mono); }
+footer { margin-top: 1.9rem; color: var(--muted); font-size: .8rem; font-family: var(--font-mono); display: flex; justify-content: space-between; align-items: end; gap: 1rem; }
+
+/* Screen reflow: three columns → two → one. Print keeps the grid as written. */
+@media screen and (max-width: 1000px) { .hero { grid-template-columns: 1fr; } }
+@media screen and (max-width: 1100px) {
+  .posuta-row { flex-wrap: wrap; }
+  .posuta-col { flex: 1 1 calc(50% - 1.05rem); }
+}
+@media screen and (max-width: 700px) { .posuta-col { flex-basis: 100%; } }
+
+/* Print: one canvas at the paper size. Body text is 24pt at A0 and follows the paper's area,
+   but never below 12pt. */
+@media print {
+  :root { font-size: max(calc(24pt * var(--print-scale, 1)), 12pt); -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  body { padding: 0; }
+  .poster { width: var(--paper-w); height: var(--paper-h); max-width: none; padding: 2.4rem 2.8rem;
+            overflow: hidden; display: flex; flex-direction: column; }
+  main { flex: 1 0 auto; }
+  h1 { font-size: 3.4rem; }
+  .lede { font-size: 1.35rem; }
+  .stat b { font-size: 2.8rem; }
+  a { color: inherit; }
+}
+}

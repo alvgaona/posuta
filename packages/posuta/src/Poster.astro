@@ -1,11 +1,23 @@
 ---
 // Page layout for a poster. Used from MDX frontmatter: `layout: posuta/Poster.astro`.
+import "@fontsource/ibm-plex-sans/400.css";
+import "@fontsource/ibm-plex-sans/400-italic.css";
+import "@fontsource/ibm-plex-sans/500.css";
+import "@fontsource/ibm-plex-sans/600.css";
+import "@fontsource/ibm-plex-serif/500.css";
+import "@fontsource/ibm-plex-serif/600.css";
+import "@fontsource/ibm-plex-mono/400.css";
+import "@fontsource/ibm-plex-mono/500.css";
 import "./theme.css";
+import { printCss } from "./print.js";
 
 interface Stat { value: string; label: string; accent?: boolean }
-interface Frontmatter { title: string; highlight?: string; eyebrow?: string; lede?: string; stats?: Stat[]; footer?: string }
+interface Frontmatter {
+  title: string; highlight?: string; eyebrow?: string; lede?: string; stats?: Stat[]; footer?: string;
+  print?: string | { size?: string; orientation?: "portrait" | "landscape"; width?: string; height?: string };
+}
 const { frontmatter } = Astro.props as { frontmatter: Frontmatter };
-const { title, highlight, eyebrow, lede, stats = [], footer } = frontmatter;
+const { title, highlight, eyebrow, lede, stats = [], footer, print } = frontmatter;
 ---
 <!doctype html>
 <html lang="en">
@@ -13,9 +25,7 @@ const { title, highlight, eyebrow, lede, stats = [], footer } = frontmatter;
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>{title}{highlight ? ` ${highlight}` : ""}</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&family=IBM+Plex+Serif:wght@500;600&display=swap">
+  <style is:inline set:html={`@media print{${printCss(print)}}`} />
 </head>
 <body>
   <div class="poster">
@@ -32,7 +42,7 @@ const { title, highlight, eyebrow, lede, stats = [], footer } = frontmatter;
       )}
     </header>
     <main><slot /></main>
-    {footer && <footer>{footer}</footer>}
+    {footer && <footer><span>{footer}</span></footer>}
   </div>
 </body>
 </html>

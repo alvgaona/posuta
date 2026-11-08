@@ -1,0 +1,6 @@
+---
+// A column inside <Row>. `span` is its width relative to its siblings (default 1).
+interface Props { span?: number }
+const { span = 1 } = Astro.props;
+---
+<div class="posuta-col" style={`--span:${span}`}><slot /></div>

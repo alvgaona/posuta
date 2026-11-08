@@ -1,8 +1,10 @@
 import mdx from "@astrojs/mdx";
-import type { AstroIntegration } from "astro";
 
-/** posuta's Astro integration: one line in astro.config, and posters are MDX pages. */
-export default function posuta(): AstroIntegration {
+/**
+ * posuta's Astro integration: one line in astro.config, and posters are MDX pages.
+ * @returns {import("astro").AstroIntegration}
+ */
+export default function posuta() {
   return {
     name: "posuta",
     hooks: {

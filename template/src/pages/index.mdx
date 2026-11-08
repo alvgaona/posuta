@@ -10,8 +10,15 @@ stats:
   - { value: "3.2×", label: "the headline result, with what it is measured against", accent: true }
   - { value: "105", label: "runs, subjects or samples behind it" }
 footer: Your Name · your-lab.org
+# A0, A1, A2, A3, 24x36in, 36x48in, 42x56in, 48x72in, or { width: 900mm, height: 1200mm }
+print: { size: A0, orientation: portrait }
 ---
 import Section from "posuta/Section.astro";
+import Row from "posuta/Row.astro";
+import Col from "posuta/Col.astro";
+
+<Row>
+<Col>
 
 <Section n={1} title="The problem" sub="One line of context under the heading.">
 
@@ -19,8 +26,15 @@ Write in plain **Markdown**. Each section is a numbered block of the poster.
 
 </Section>
 
+</Col>
+<Col span={2}>
+
 <Section n={2} title="The idea" panel>
 
-Use `panel` to set a section apart, for the method or the main result.
+Use `panel` to set a section apart, for the method or the main result. `<Col span={2}>` makes
+this column twice as wide as its neighbour.
 
 </Section>
+
+</Col>
+</Row>

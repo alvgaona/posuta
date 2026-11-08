@@ -6,7 +6,6 @@ suraido (slides).
 Write a poster in MDX, deploy it as a static site on any free host, and export a vector PDF at
 whatever size the conference asks for.
 
-> Early scaffold. Working now: the poster layout, numbered sections and the default theme.
 
 ## Try it
 
@@ -14,7 +13,10 @@ whatever size the conference asks for.
 pnpm install
 pnpm dev     # the starter poster in template/ at http://localhost:4321
 pnpm build   # static site in template/dist
+pnpm pdf     # build, then template/dist/poster.pdf at the paper size
 ```
+
+`posuta pdf` uses Playwright's Chromium; install it once with `pnpm exec playwright install chromium`.
 
 ## Write a poster
 
@@ -37,6 +39,31 @@ Plain **Markdown** here.
 ```
 
 `astro.config.mjs` needs one line: `integrations: [posuta()]`.
+
+### Columns
+
+```mdx
+<Row>
+<Col>…</Col>
+<Col span={2}>…twice as wide…</Col>
+</Row>
+```
+
+On screen a row reflows by width (three columns, then two, then one on a phone). In print it keeps
+the columns as written.
+
+### Print size
+
+```yaml
+print: A1                                    # A0 A1 A2 A3 24x36in 36x48in 42x56in 48x72in
+print: { size: A0, orientation: landscape }
+print: { width: 900mm, height: 1200mm }      # mm, cm or in
+```
+
+Type is designed at A0 (body text 24 pt) and scales with the paper's area, never below 12 pt.
+`posuta pdf` writes one vector page at the exact size with the fonts embedded, and **fails if
+anything runs past the canvas**, naming the section, so nothing is silently cut. Options:
+`--print "A1 landscape"` to try another size, `--out file.pdf`, `--dist dir`, `--page /path`.
 
 ## Layout
 
