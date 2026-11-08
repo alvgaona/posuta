@@ -61,3 +61,16 @@ test("withPointer adds a crosshair and a tip from the first x/y mark, keeping it
   assert.equal(out.marks[3].channels.stroke.value, "s");
   assert.deepEqual(withPointer({ marks: [rule] }).marks, [rule]); // nothing to point at
 });
+
+test("$…$ in chart text becomes KaTeX in place, at build time", async () => {
+  const { Plot, renderPlot } = await import("../src/plot.js");
+  const d = [{ t: 0, y: 1, s: "$\\zeta = 0.2$" }];
+  const html = renderPlot({
+    x: { label: "time $t$ (s)" }, color: { legend: true },
+    marks: [Plot.lineY(d, { x: "t", y: "y", stroke: "s" }), Plot.text(d, { x: "t", y: "y", text: () => "$\\omega$", dx: 8 })],
+  });
+  assert.equal((html.match(/<foreignObject/g) ?? []).length, 2); // axis label and text mark
+  assert.match(html, /<span><span class="katex">/); // the HTML legend
+  assert.doesNotMatch(html.replace(/<annotation[^]*?<\/annotation>/g, ""), /\$/);
+  assert.match(html, /<g transform="translate\(8,0\)"[^>]*><foreignObject/); // offset kept
+});

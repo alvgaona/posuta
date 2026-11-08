@@ -121,6 +121,11 @@ It is drawn to SVG at build time: it prints as vectors and needs no JavaScript. 
 to change). `alt` is required. For a one-off static chart, `plot` can also be an inline function,
 `plot={(d, Plot) => ({ … })}`.
 
+**Maths in charts:** write `$…$` in any chart text (axis labels, legend entries from your data,
+`Plot.text` marks), as in `y: { label: "output $y(t)$" }`. KaTeX renders it at build time, so it
+prints as vectors. A live chart with maths also loads KaTeX in the browser (about 75 KB
+compressed); other pages don't. Tooltips show the raw `$…$` source.
+
 **Interactive, with no extra code:**
 
 ```mdx

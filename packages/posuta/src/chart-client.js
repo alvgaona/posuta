@@ -6,24 +6,27 @@ async function hydrate(fig) {
   const load = charts[`/charts/${fig.dataset.chart}.js`];
   if (!load) throw new Error(`posuta: charts/${fig.dataset.chart}.js is missing from the build`);
   // Plot downloads only once a live chart scrolls into view.
-  const [{ Plot, plot: draw, withPointer }, { default: chart }] = await Promise.all([import("./plot.js"), load()]);
+  const [{ Plot, plotLive, withPointer }, { default: chart }] = await Promise.all([import("./plot.js"), load()]);
   const rows = JSON.parse(fig.querySelector("script[type='application/json']").textContent);
   const slider = fig.dataset.slider && JSON.parse(fig.dataset.slider);
   const input = fig.querySelector(".posuta-slider input");
   const out = fig.querySelector(".posuta-slider output");
   const box = fig.querySelector(".posuta-plot");
-  const render = () => {
+  let latest = 0;
+  const render = async () => {
+    const n = ++latest;
     const state = slider ? { [slider.name]: +input.value } : {};
     if (out) out.value = input.value;
     let options = { ariaLabel: fig.dataset.alt, ...chart(rows, Plot, state) };
     if (fig.hasAttribute("data-interactive")) options = withPointer(options);
-    box.replaceChildren(draw(options));
+    const el = await plotLive(options);
+    if (n === latest) box.replaceChildren(el); // a newer slider position may have finished first
   };
   if (input) {
     input.closest(".posuta-slider").hidden = false;
     input.addEventListener("input", render);
   }
-  render();
+  await render();
 }
 
 const seen = new IntersectionObserver((entries) => {
