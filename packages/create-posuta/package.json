@@ -5,7 +5,7 @@
   "license": "MIT",
   "type": "module",
   "bin": {
-    "create-posuta": "./index.mjs"
+    "create-posuta": "index.mjs"
   },
   "files": [
     "index.mjs",
