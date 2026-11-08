@@ -5,7 +5,8 @@
 //   posuta pdf [--dist dist] [--page /] [--out dist/poster.pdf] [--print "A1 landscape"] [--base /repo/] [--no-png]
 //   posuta install            download the browser posuta pdf uses (Playwright's Chromium)
 //
-// Fails, naming the section, if any content runs past the printed canvas.
+// Fails if content runs past the printed canvas, naming the innermost block that does: an element
+// led by a heading (h1–h4) or with a data-name attribute.
 import { spawnSync } from "node:child_process";
 import { createReadStream, statSync } from "node:fs";
 import { createRequire } from "node:module";
@@ -76,27 +77,39 @@ try {
     return { w: s.getPropertyValue("--paper-w"), h: s.getPropertyValue("--paper-h") };
   });
   const mm = (v) => parseFloat(v);
-  if (!size.w) throw new Error(`${url} is not a posuta poster (no --paper-w); is its layout posuta/Poster.astro?`);
+  if (!size.w) throw new Error(`${url} has no print size (--paper-w): wrap it in <Canvas>, or pass --print`);
   const px = (v) => Math.round((mm(v) * 96) / 25.4);
   await page.setViewportSize({ width: px(size.w), height: px(size.h) });
   await page.evaluate(() => document.fonts.ready);
 
   const overflow = await page.evaluate(() => {
-    const poster = document.querySelector(".posuta-canvas");
-    const pad = getComputedStyle(poster);
-    const box = poster.getBoundingClientRect();
+    const canvas = document.querySelector(".posuta-canvas");
+    if (!canvas) return null;
+    const pad = getComputedStyle(canvas);
+    const box = canvas.getBoundingClientRect();
     const limit = { bottom: box.bottom - parseFloat(pad.paddingBottom), right: box.right - parseFloat(pad.paddingRight) };
     const toMm = (v) => Math.round((v * 25.4) / 96);
-    const name = (el) => el.querySelector("h2")?.textContent.trim() || (el.matches("header") ? "the title block" : el.matches("footer") ? "the footer" : el.className);
-    const found = [];
-    for (const el of poster.querySelectorAll(".hero, .posuta-section, footer")) {
+    // A block is anything led by a heading, or marked with data-name.
+    const lead = (el) => (el.firstElementChild?.matches("h1, h2, h3, h4") ? el.firstElementChild : null);
+    const blocks = [...canvas.querySelectorAll("*")].filter((el) => el.dataset.name || lead(el));
+    const over = [];
+    for (const el of blocks) {
       const r = el.getBoundingClientRect();
+      const name = el.dataset.name || lead(el).textContent.trim();
       const wide = Math.max(r.right - limit.right, el.scrollWidth - el.clientWidth);
-      if (r.bottom > limit.bottom + 1) found.push(`"${name(el)}" runs ${toMm(r.bottom - limit.bottom)} mm past the bottom`);
-      else if (wide > 1) found.push(`"${name(el)}" is ${toMm(wide)} mm too wide`);
+      if (r.bottom > limit.bottom + 1) over.push({ el, msg: `"${name}" runs ${toMm(r.bottom - limit.bottom)} mm past the bottom` });
+      else if (wide > 1) over.push({ el, msg: `"${name}" is ${toMm(wide)} mm too wide` });
     }
-    return found;
+    // Name the innermost block, not the column or section around it.
+    const found = over.filter((o) => !over.some((p) => p !== o && o.el.contains(p.el))).map((o) => o.msg);
+    if (found.length) return found;
+    // Nothing named overflows: check the canvas itself (its scroll size includes its end padding).
+    const down = canvas.scrollHeight - canvas.clientHeight, wide = canvas.scrollWidth - canvas.clientWidth;
+    if (down > 1) return [`the poster runs ${toMm(down)} mm past the bottom`];
+    if (wide > 1) return [`the poster is ${toMm(wide)} mm too wide`];
+    return [];
   });
+  if (!overflow) throw new Error(`${url} is not a posuta page: wrap it in <Canvas>`);
   if (overflow.length) {
     throw new Error(`content does not fit on the ${size.w} × ${size.h} canvas:\n  ${overflow.join("\n  ")}\n` +
       "Shorten it, change the column spans, or pick a larger print size.");
