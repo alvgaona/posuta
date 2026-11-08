@@ -1,0 +1,76 @@
+---
+title: Introduction
+description: One MDX file becomes a research poster web page and a vector PDF for print.
+icon: BookOpen
+---
+
+posuta turns one MDX file into two things: a web page you can host for free, and a vector PDF
+at the exact paper size your conference asks for. The page and the PDF come from the same
+source, so they never drift apart.
+
+The name is ポスター (*posutā*), Japanese for "poster".
+
+## Who it is for
+
+Researchers who make conference posters and want them to live on the web too. You write text in
+Markdown and a short block of settings at the top of the file; you do not need to know HTML to
+change the words. If you do know HTML and CSS, every part of the look is yours to change.
+
+## The problem it solves
+
+A printed poster is usually a slide-software file that nobody can read on a phone. A poster
+written as a web page is easy to share but hard to print well. posuta gives you both from one
+file:
+
+- **On screen**, the poster is a static web page. Columns reflow on a narrow screen, charts can
+  have tooltips and sliders, and videos play.
+- **In print**, it is one page at the paper size (A0, A1, 36×48 in, or your own width and
+  height). Charts, equations and text stay vectors, the fonts are embedded, and the export
+  stops with an error if anything runs off the page, rather than cutting it silently.
+
+## Three layers, stop at any of them
+
+1. **The template.** A finished poster to fill in. Its layout, section style and theme are
+   files in your project, so you can change them like any other file. Most people stop here.
+   See the [quickstart](/docs/get-started/quickstart).
+2. **Your own layout on `<Canvas>`.** `<Canvas>` gives you the print page, the PDF export and
+   the overflow check. Everything inside it is your own markup and CSS. posuta's components
+   carry no colours, fonts or spacing, so they fit any design. See
+   [your own canvas](/docs/customize/canvas).
+3. **Tools.** The functions under the components: Plot to SVG, KaTeX, citations, data loading,
+   QR codes. Use them to draw anything the components don't. See
+   [tools](/docs/reference/tools).
+
+## How it works
+
+posuta is an integration for [Astro](https://astro.build), a tool that builds websites from
+files. You write the poster in MDX (Markdown that can also hold components such as
+`<Section>` or `<Chart>`). At build time, charts are drawn with
+[Observable Plot](https://observablehq.com/plot/) to SVG and maths is rendered with
+[KaTeX](https://katex.org), so both work without JavaScript and print sharply. The output is a
+folder of static files that any host can serve: GitHub Pages, Cloudflare, Netlify, Vercel.
+For the PDF, `posuta pdf` opens the built page in a headless Chromium browser (through
+Playwright) and prints it.
+
+## Next
+
+<Cards>
+  <Card title="Quickstart" href="/docs/get-started/quickstart">
+    Create a poster, preview it, export the PDF and publish it.
+  </Card>
+  <Card title="Project structure" href="/docs/get-started/project-structure">
+    What each file in a new poster is for, and which ones you edit.
+  </Card>
+  <Card title="Frontmatter" href="/docs/writing/frontmatter">
+    Title, stats, print size, theme and the other settings at the top of the poster.
+  </Card>
+  <Card title="Charts" href="/docs/writing/charts">
+    Data files and Plot charts that print as vectors and can be interactive.
+  </Card>
+  <Card title="PDF export" href="/docs/print/pdf">
+    The print preview, the overflow check and the PDF options.
+  </Card>
+  <Card title="Components" href="/docs/components/chart">
+    Every component and its props.
+  </Card>
+</Cards>

@@ -1,0 +1,365 @@
+---
+title: Tools
+description: The JavaScript functions under the components, by import path.
+icon: Wrench
+---
+
+The components are thin wrappers over these functions. Use them in your own layout, components
+and islands to draw what the components don't. They run at build time in Node; the ones marked
+for the browser also run in client scripts.
+
+## `posuta/print`
+
+Paper sizes and the print scale, shared by `<Canvas>` and `posuta pdf`.
+
+### `PAPER`
+
+```ts
+const PAPER: Record<string, [width: number, height: number]>
+```
+
+Portrait sizes in mm: `A0` `[841, 1189]`, `A1` `[594, 841]`, `A2` `[420, 594]`, `A3`
+`[297, 420]`, `24x36in` `[609.6, 914.4]`, `36x48in` `[914.4, 1219.2]`, `42x56in`
+`[1066.8, 1422.4]`, `48x72in` `[1219.2, 1828.8]`.
+
+### `paper`
+
+```ts
+function paper(print?: string | { size?: string; orientation?: "portrait" | "landscape"; width?: string; height?: string; scale?: number }):
+  { width: number; height: number; scale: number; text: number }
+```
+
+Turns a print setting (the frontmatter `print`) into the paper size in mm.
+
+<TypeTable
+  type={{
+    print: {
+      type: 'string | object',
+      description: '"A1", "A1 landscape", { size, orientation }, or { width, height } with units mm, cm or in. scale is a factor on the type size, above 0.',
+      default: '"A0"',
+    },
+  }}
+/>
+
+Returns `width` and `height` in mm (swapped to match `orientation`), `scale`, the type scale
+(the square root of the paper's area over A0's), and `text`, the author's `scale` (1 if unset).
+It throws on an unknown size, a custom size missing `width` or `height`, a value without a unit,
+an orientation other than `portrait` or `landscape`, or a `scale` that isn't a number above 0.
+
+```js
+import { paper } from "posuta/print";
+
+paper("A1 landscape");            // { width: 841, height: 594, scale: 0.7068…, text: 1 }
+paper({ size: "A0", scale: 0.8 }); // { width: 841, height: 1189, scale: 1, text: 0.8 }
+paper({ width: "900mm", height: "36in" });
+```
+
+### `printCss`
+
+```ts
+function printCss(print?: Parameters<typeof paper>[0]): string
+```
+
+The CSS for that paper: the `@page` size with no margin, and the custom properties `--paper-w`,
+`--paper-h`, `--print-scale` and `--print-text` on `:root`. `<Canvas>` puts it inside
+`@media print`.
+
+```js
+import { printCss } from "posuta/print";
+
+printCss("A1");
+// "@page{size:594mm 841mm;margin:0}:root{--paper-w:594mm;--paper-h:841mm;--print-scale:0.7068;--print-text:1}"
+```
+
+## `posuta/data`
+
+### `load`
+
+```ts
+function load(file: string, opts?: { max?: number }): Promise<object[]>
+```
+
+Reads `data/<file>` from the project root (or an absolute path) as an array of rows. CSV is parsed
+with d3's `autoType` (numbers and dates converted); JSON must hold an array. Series longer than
+`max` rows (default `2000`) are thinned with `downsample`. Throws on any other extension or a JSON
+file that isn't an array. `<Chart data="…">` uses it.
+
+```js
+import { load } from "posuta/data";
+
+const rows = await load("flight.csv", { max: 5000 });
+```
+
+### `downsample`
+
+```ts
+function downsample<T>(rows: T[], max: number): T[]
+```
+
+Returns `rows` unchanged if `max` is falsy or there are at most `max` rows; otherwise `max` rows
+spaced evenly, first and last kept. Narrow peaks between kept rows can be lost.
+
+```js
+import { downsample } from "posuta/data";
+
+downsample([1, 2, 3, 4, 5, 6, 7, 8, 9, 10], 4); // [1, 4, 7, 10]
+```
+
+## `posuta/plot`
+
+Observable Plot with posuta's defaults (transparent background, `font-family: var(--font-body)`)
+and `$…$` in chart text rendered with KaTeX. Works at build time and in the browser.
+
+### `Plot`
+
+The `@observablehq/plot` module, re-exported, so islands use the same copy.
+
+### `renderPlot`
+
+```ts
+function renderPlot(options: PlotOptions): string
+```
+
+Draws the chart and returns its SVG markup, with maths rendered. For build time, with no browser.
+`<Chart>` uses it.
+
+```js
+import { Plot, renderPlot } from "posuta/plot";
+
+const svg = renderPlot({ marks: [Plot.lineY(rows, { x: "t", y: "y" })], y: { label: "$y(t)$" } });
+```
+
+### `plot`
+
+```ts
+function plot(options: PlotOptions): Element
+```
+
+Like `renderPlot`, but returns the element. At build time maths is rendered; in the browser it
+isn't (KaTeX isn't loaded), so use `plotLive` there.
+
+### `plotLive`
+
+```ts
+function plotLive(options: PlotOptions): Promise<Element>
+```
+
+For the browser: draws the chart and, the first time a chart has `$…$` in it, loads KaTeX and
+renders the maths.
+
+### `withPointer`
+
+```ts
+function withPointer(options: PlotOptions): PlotOptions
+```
+
+Returns the options with a crosshair and a highlighted dot (`.posuta-pointer`) that follow the
+pointer, on the first mark with `x` and `y` channels. Both draw nothing until the pointer moves,
+so print and no-JS output are unchanged. Returns the options as they were if no mark qualifies.
+
+### `attachTip`
+
+```ts
+function attachTip(el: Element, options: PlotOptions, box: HTMLElement): void
+```
+
+For the browser: shows an HTML tooltip (`div.posuta-tip`, appended to `box`) on the pointer dot of
+a chart drawn with `withPointer`. Its rows come from `tipRows`, with maths rendered once KaTeX is
+loaded. `box` must be positioned; `.posuta-plot` is, in `base.css`.
+
+### `tipRows`
+
+```ts
+function tipRows(options: PlotOptions, d: object): [label: string, value: string][]
+```
+
+The tooltip's rows for datum `d`: one per channel of the pointer mark (series first, then `x`,
+`y`), labelled from the scale labels (`x.label`, `y.label`, `color.label`) or the field name, with
+arrows stripped and `$…$` kept. Non-integer numbers are shown to 4 significant figures.
+
+```js
+tipRows({ marks: [Plot.lineY(rows, { x: "t", y: "y" })], y: { label: "↑ $y(t)$" } }, { t: 0, y: 1.23456 });
+// [["t", "0"], ["$y(t)$", "1.235"]]
+```
+
+### `mathify`
+
+```ts
+function mathify(root: Element, katex: KaTeX): number
+```
+
+Renders `$…$` in place inside any SVG or HTML: SVG `<text>` becomes a `foreignObject` at the same
+position and alignment; HTML text nodes get the KaTeX markup. Returns how many it changed.
+
+```js
+import katex from "katex";
+import { mathify } from "posuta/plot";
+
+mathify(document.querySelector("#my-chart"), katex);
+```
+
+### `withDefaults`
+
+```ts
+function withDefaults(options: PlotOptions): PlotOptions
+```
+
+Fills in posuta's `style` defaults (`background: transparent`, `fontFamily: var(--font-body)`);
+your `style` keys win. `plot` and `renderPlot` call it.
+
+### Write your own island
+
+For a chart `<Chart>` can't make, write your own component. Draw it at build time with
+`renderPlot`, so it prints as vectors and works without JavaScript, then redraw it in the browser.
+`posuta pdf` prints the page as your scripts leave it, so keep the build-time drawing as the print
+frame (`data-print="only"`) and hide the live one in print (`data-print="hide"`).
+
+```astro title="src/components/LiveStep.astro"
+---
+import { load } from "posuta/data";
+import { Plot, renderPlot } from "posuta/plot";
+const rows = await load("step.csv");
+const svg = renderPlot({ marks: [Plot.lineY(rows, { x: "t", y: "y" })], y: { label: "$y(t)$" } });
+---
+<figure class="live-step">
+  <div class="posuta-plot" data-print="only" set:html={svg} />
+  <div class="posuta-plot" data-print="hide" data-rows={JSON.stringify(rows)} set:html={svg} />
+</figure>
+
+<script>
+  import { Plot, plotLive, withPointer, attachTip } from "posuta/plot";
+
+  for (const box of document.querySelectorAll<HTMLElement>(".live-step [data-rows]")) {
+    const rows = JSON.parse(box.dataset.rows!);
+    const options = withPointer({ marks: [Plot.lineY(rows, { x: "t", y: "y" })], y: { label: "$y(t)$" } });
+    const el = await plotLive(options); // loads KaTeX only if the chart has $…$
+    box.replaceChildren(el);
+    attachTip(el, options, box);
+  }
+</script>
+```
+
+Components in `src/components/` are available in MDX without imports: `<LiveStep />`. The same
+works with any framework island Astro supports. For an animation, also check
+`matchMedia("print").matches` and leave the frame still.
+
+## `posuta/tex`
+
+### `tex`
+
+```ts
+function tex(s: string, katex?: KaTeX): string
+```
+
+Text with `$…$` to HTML: each `$…$` rendered with KaTeX, the rest HTML-escaped. Invalid TeX
+throws. At build time KaTeX is built in; in the browser pass it, or it throws.
+
+```js
+import { tex } from "posuta/tex";
+
+tex("a < b and $\\omega_n$");                      // 'a &lt; b and <span class="katex">…'
+tex("$K_p$", (await import("katex")).default);    // in the browser
+```
+
+### `texSvg`
+
+```ts
+function texSvg(s: string, x: number, y: number,
+  o?: { anchor?: "start" | "middle" | "end"; class?: string; size?: number; katex?: KaTeX }): string
+```
+
+An SVG label with its baseline at (`x`, `y`). Plain text becomes a `<text fill="currentColor">`
+(with `font-size` if `size` is set); text with `$…$` becomes KaTeX in a `foreignObject`, taking
+the SVG's font size and colour. `anchor` defaults to `"start"`. `katex` is as for `tex`.
+
+```js
+import { texSvg } from "posuta/tex";
+
+texSvg("Plant", 10, 20, { anchor: "middle", class: "t", size: 14 });
+// '<text class="t" x="10" y="20" text-anchor="middle" fill="currentColor" font-size="14">Plant</text>'
+texSvg("$G(s)$", 10, 20, { anchor: "end" }); // '<foreignObject x="10" y="20" …>…</foreignObject>'
+```
+
+## `posuta/cite`
+
+### `formatReference`
+
+```ts
+function formatReference(entry: object, style?: string): string
+```
+
+One CSL-JSON entry as plain text in a CSL style, without its list number or DOI (posuta adds the
+DOI as a link). `style` is `"vancouver"` (default), `"apa"`, `"harvard1"`, or an absolute path to a
+`.csl` file. An unknown style name throws.
+
+```js
+import { Cite } from "@citation-js/core";
+import "@citation-js/plugin-bibtex";
+import { formatReference } from "posuta/cite";
+
+const [entry] = new Cite(bibtexSource).data;
+formatReference(entry);        // "Bostock M, Ogievetsky V, Heer J. D³: Data-Driven Documents. …"
+formatReference(entry, "apa"); // "Bostock, M., Ogievetsky, V., & Heer, J. (2011). …"
+```
+
+The module's default export is the remark plugin the integration runs for `[@key]` citations.
+
+## `posuta/md`
+
+### `md`
+
+```ts
+function md(text: string | undefined, references?: { key: string; n: number }[]): Promise<string>
+```
+
+Inline Markdown in frontmatter text (a lede, a stat label) to HTML: emphasis, links, `code`, `$…$`
+maths, and `[@key]` citations numbered as on the page (pass `frontmatter.references`). A single
+paragraph comes back without its `<p>`. Returns `""` for `undefined`. A key not in `references`
+throws.
+
+```astro title="src/layouts/Poster.astro"
+---
+import { md } from "posuta/md";
+const { frontmatter } = Astro.props;
+const lede = await md(frontmatter.lede, frontmatter.references);
+---
+<p class="lede" set:html={lede} />
+```
+
+## `posuta/bibtex`
+
+### `bibtex`
+
+```ts
+function bibtex(c: { title: string; authors: string[]; year: number | string;
+  event?: string; doi?: string; url?: string; key?: string }): string
+```
+
+A BibTeX `@misc` entry for the poster itself. `authors` as `"First Last"` or `"Last, First"`;
+`event` is where it was presented (`howpublished = {Poster, <event>}`). The key defaults to the
+first author's last name, the year and the first title word longer than three letters. Throws
+without `title`, `authors` or `year`.
+
+```js
+import { bibtex } from "posuta/bibtex";
+
+bibtex({ title: "Tilted Rotors & Faults", authors: ["Álvaro Gaona", "Giribet, Juan"], year: 2026, event: "ICRA 2026" });
+// "@misc{gaona2026tilted,\n  author       = {Álvaro Gaona and Giribet, Juan},\n …"
+```
+
+## `posuta/qr`
+
+### `qrSvg`
+
+```ts
+function qrSvg(url: string): Promise<string>
+```
+
+A QR code for `url` as SVG markup: black on transparent, no quiet zone, error correction level M.
+`<QR>` wraps it.
+
+```js
+import { qrSvg } from "posuta/qr";
+
+const svg = await qrSvg("https://lab.example/poster/");
+```

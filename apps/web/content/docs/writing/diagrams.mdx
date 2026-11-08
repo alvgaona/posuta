@@ -1,0 +1,136 @@
+---
+title: Diagrams
+description: Draw block diagrams and flowcharts in any tool that exports SVG.
+icon: Workflow
+---
+
+Draw your diagram in the tool you already use, export it as SVG, and place it with `<Figure>`.
+It comes out as a vector drawing in the poster's fonts, it prints sharply, and it can follow the
+page into dark mode.
+
+posuta has no diagram builder of its own, on purpose: good diagram tools already exist, and an
+SVG from any of them works the same way.
+
+## An example with Graphviz
+
+The template's control loop is drawn with [Graphviz](https://graphviz.org). You describe boxes
+and arrows in a text file and Graphviz lays them out.
+
+<Steps>
+<Step>
+
+### Describe the diagram
+
+A shortened version of the template's file:
+
+```txt title="figures/loop.dot"
+digraph loop {
+  rankdir=LR; bgcolor=transparent;
+  node [shape=box, style=rounded, fontname="IBM Plex Sans", fontsize=13];
+  edge [fontname="IBM Plex Sans", fontsize=12, arrowsize=0.7];
+
+  ref    [label="Reference\nr(t)"];
+  ctl    [label="Controller\nPD · 1 kHz"];
+  plant  [label="Plant\nζ, ωₙ"];
+  sensor [label="Sensor", style="rounded,dashed"];
+
+  ref -> ctl      [label=" e "];
+  ctl -> plant    [label=" u "];
+  plant -> sensor [label=" y "];
+  sensor -> ctl   [label=" measured "];
+}
+```
+
+`bgcolor=transparent` leaves the poster's background showing through. `fontname` names the
+poster's body font, so Graphviz sizes the boxes for the text the reader will see.
+
+</Step>
+<Step>
+
+### Export it as SVG
+
+With Graphviz installed, run from the project folder:
+
+```sh title="Terminal"
+dot -Tsvg figures/loop.dot | sed -e 's/"black"/"currentColor"/g' -e 's/<text /<text fill="currentColor" /g' > figures/loop.svg
+```
+
+`dot -Tsvg` writes the SVG. The `sed` part replaces black with `currentColor`, so lines and text
+take the page's text colour and turn light in dark mode. Run it again whenever you change the
+`.dot` file.
+
+</Step>
+<Step>
+
+### Place it
+
+```mdx title="src/pages/index.mdx"
+import loop from "../../figures/loop.svg";
+
+<Figure
+  src={loop}
+  alt="The control loop: the reference and the measured output feed the controller, which drives the plant; a sensor measures the plant's output."
+  caption="The control loop."
+/>
+```
+
+</Step>
+</Steps>
+
+See [Figure](/docs/components/figure) for everything `<Figure>` takes.
+
+## Other tools
+
+Any tool that exports SVG works the same way: export the file, put it in `figures/`, place it with
+`<Figure>`.
+
+| Tool | Good for | How to get an SVG |
+| --- | --- | --- |
+| [Graphviz](https://graphviz.org) | Graphs laid out for you | `dot -Tsvg in.dot > out.svg` |
+| [Mermaid](https://mermaid.js.org) | Flowcharts, sequences, from text | `mmdc -i in.mmd -o out.svg` (Mermaid CLI) |
+| [D2](https://d2lang.com) | Architecture diagrams, from text | `d2 in.d2 out.svg` |
+| TikZ | Diagrams already in your LaTeX paper | Compile, then convert with `dvisvgm` |
+| [draw.io](https://www.drawio.com) | Drawing by hand | Export as SVG |
+| [Excalidraw](https://excalidraw.com) | Sketch-style drawings | Export image as SVG |
+
+## Make it fit the poster
+
+Two things decide whether a diagram looks like part of the poster:
+
+- **Text as text.** If the SVG keeps its labels as `<text>`, they are drawn in the poster's fonts,
+  print as text and can be searched. Some exports turn letters into shapes; look for an option
+  that keeps text, and set the font to the poster's.
+- **`currentColor` for dark mode.** A colour of `currentColor` takes the colour of the text around
+  the figure, so the diagram turns light when the page does. Fixed black stays black on a dark
+  background. Replace it in the file, as the `sed` command above does, or set it in the tool if
+  it lets you.
+
+Accent colours you set on purpose, like the blue controller box in the template, can stay as they
+are.
+
+## Markdown plugins
+
+Some diagram tools run as Markdown plugins instead, turning a code block in your text into an
+SVG during the build. `rehype-mermaid` is one. Pass such plugins to posuta in
+`astro.config.mjs`:
+
+```js title="astro.config.mjs"
+import { defineConfig } from "astro/config";
+import posuta from "posuta";
+import rehypeMermaid from "rehype-mermaid";
+
+export default defineConfig({
+  integrations: [posuta({ rehypePlugins: [rehypeMermaid] })],
+});
+```
+
+`remarkPlugins` takes remark plugins the same way. Both run after posuta's own: maths and
+citations are handled first. Follow the plugin's own documentation for what it needs installed.
+
+<Callout type="warn">
+posuta adds its plugins, and yours, through Astro's default Markdown processor. If you set
+`markdown.processor` yourself, posuta warns and adds none of them; add them to your processor
+instead.
+</Callout>
+
+See [Plugins](/docs/customize/plugins) for more on extending the build.

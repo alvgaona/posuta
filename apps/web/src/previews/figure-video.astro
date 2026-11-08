@@ -1,0 +1,14 @@
+---
+import Figure from 'posuta/Figure';
+import clip from './assets/oscillator.mp4';
+import still from './assets/oscillator.jpg';
+---
+<Figure.Root>
+  <Figure.Media
+    src={clip}
+    poster={still}
+    alt="Two masses on springs: the lightly damped one overshoots the target and bounces; the damped one settles almost at once."
+    muted loop autoplay
+  />
+  <Figure.Caption>The two systems at the same time scale. In print, the still frame.</Figure.Caption>
+</Figure.Root>

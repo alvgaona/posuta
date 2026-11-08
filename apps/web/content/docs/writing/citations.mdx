@@ -1,0 +1,123 @@
+---
+title: Citations
+description: Cite from a BibTeX file and get a numbered reference list.
+icon: Quote
+---
+
+Cite papers with `[@key]` from a BibTeX file, and posuta numbers them in the text and builds the
+reference list. DOIs and URLs in the list become links. A typo in a key stops the build, so a
+poster never goes to print with a broken citation.
+
+<Steps>
+<Step>
+
+### Add a BibTeX file
+
+Put a `.bib` file next to the page, such as `src/pages/refs.bib`. Export it from Zotero, Mendeley,
+JabRef or Google Scholar, or write it by hand:
+
+```bibtex title="src/pages/refs.bib"
+@book{ogata2010modern,
+  title     = {Modern Control Engineering},
+  author    = {Ogata, Katsuhiko},
+  publisher = {Prentice Hall},
+  year      = {2010}
+}
+```
+
+</Step>
+<Step>
+
+### Name it in the frontmatter
+
+```yaml title="src/pages/index.mdx"
+bibliography: refs.bib
+```
+
+The path is relative to the page.
+
+</Step>
+<Step>
+
+### Cite in the text
+
+```mdx title="src/pages/index.mdx"
+A second-order system [@ogata2010modern] rendered with KaTeX [@knuth1984tex].
+Several at once: [@ogata2010modern; @knuth1984tex].
+```
+
+Each citation becomes a number linked to its entry in the list: `[1]`, and `[1, 2]` for several.
+
+</Step>
+<Step>
+
+### Place the list
+
+```mdx title="src/pages/index.mdx"
+<Section title="References">
+
+<References />
+
+</Section>
+```
+
+</Step>
+</Steps>
+
+## How numbering works
+
+References are numbered in the order they are first cited. Citations in the frontmatter text
+(the `lede`, stat labels, `footer`) count first, because they sit at the top of the poster; then
+the body, top to bottom. Citing the same key again reuses its number. Entries in the BibTeX file
+that you never cite are left out of the list.
+
+## What stops the build
+
+- A `[@key]` that is not in the BibTeX file. The error names the key and the page.
+- Citations without `bibliography:` in the frontmatter.
+- Citations without `<References />` (or its [parts](/docs/components/references)) on the page.
+
+## Citation style
+
+The list is formatted in Vancouver style by default. Choose another in `astro.config.mjs`:
+
+```js title="astro.config.mjs"
+export default defineConfig({
+  integrations: [posuta({ citationStyle: "apa" })], // [!code highlight]
+});
+```
+
+`citationStyle` takes `vancouver`, `apa` or `harvard1`, or the path of a `.csl` file relative to
+the project root, such as `"./ieee.csl"`. CSL files for most journals and conferences are in
+the [Zotero style repository](https://www.zotero.org/styles). An unknown style name stops the
+build.
+
+The style changes how the list is written. Citations in the text stay numbered, `[1]`, whatever
+the style.
+
+Each entry ends with its DOI as a link, `doi:10.…`, when the BibTeX entry has one. A BibTeX `note`
+is added in brackets after the reference, as BibTeX itself would print it.
+
+## Lay out the list yourself
+
+`<References />` gives a numbered list (`<ol class="posuta-refs">`), and each citation in the text
+is a `<span class="posuta-cite">`. To arrange the list differently, build it from its parts,
+`References.Root` and `References.Item`, using the cited entries posuta puts on
+`frontmatter.references`. The parts, the entry fields and the class hooks are on
+[References](/docs/components/references).
+
+## Citations in your own layout
+
+The template renders the `lede`, stat labels and `footer` with `md()` from `posuta/md`, which
+turns `[@key]` into the same numbered links. In a layout of your own, do the same:
+
+```astro title="src/layouts/Poster.astro"
+---
+import { md } from "posuta/md";
+const { frontmatter } = Astro.props;
+const lede = await md(frontmatter.lede, frontmatter.references); // [!code highlight]
+---
+<p class="lede" set:html={lede} />
+```
+
+To let others cite the poster itself, see the `cite` key in [Frontmatter](/docs/writing/frontmatter).

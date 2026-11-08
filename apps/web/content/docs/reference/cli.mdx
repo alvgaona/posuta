@@ -1,0 +1,112 @@
+---
+title: CLI
+description: posuta pdf, posuta install and create-posuta, with every flag.
+icon: SquareTerminal
+---
+
+## `posuta pdf`
+
+Exports a built poster (`dist/`) to a one-page vector PDF at the paper size, and writes `og.png`
+for link previews. Run `astro build` first; the template's `pnpm pdf` runs
+`astro build && posuta pdf --handout`. See [PDF export](/docs/print/pdf).
+
+```sh title="Terminal"
+posuta pdf [--dist dist] [--page /] [--out <dist>/<page>/poster.pdf] [--print "A1 landscape"] [--base /] [--no-png] [--handout]
+```
+
+<TypeTable
+  type={{
+    '--dist': { type: 'string', description: 'The built site to serve.', default: '"dist"' },
+    '--page': { type: 'string', description: 'The page to print, as a path under the site.', default: '"/"' },
+    '--out': { type: 'string', description: 'Where to write the PDF.', default: '<dist>/<page>/poster.pdf' },
+    '--print': { type: 'string', description: 'Override the page\'s print size, e.g. "A1 landscape". Same values as the frontmatter string form.', default: 'the page\'s own' },
+    '--base': { type: 'string', description: 'The site\'s base path, stripped from requests.', default: '$BASE_PATH, or "/"' },
+    '--no-png': { type: 'boolean', description: 'Skip og.png.', default: 'og.png is written' },
+    '--handout': { type: 'boolean', description: 'Also write handout.pdf: the poster shrunk onto one A4 sheet (portrait or landscape, to match the poster), next to the PDF.', default: 'false' },
+  }}
+/>
+
+### What it does
+
+1. Serves `--dist` on a local port (`127.0.0.1`) and opens the page in Playwright's Chromium, in
+   print media and the light colour scheme.
+2. Reads the paper size from the page (`--paper-w`, `--paper-h`, set by `<Canvas>`), and lays the
+   page out at that size.
+3. Checks for overflow: the innermost block that runs past the canvas is named, where a block is
+   an element led by a heading (`h1`–`h4`) or one with a `data-name` attribute. If no named block
+   overflows but the canvas does, it says by how much.
+4. Writes the PDF: one page at the CSS page size, backgrounds printed, tagged (screen readers,
+   text extraction), with the headings as its outline.
+5. With `--handout`, writes `handout.pdf` in the same folder as the PDF.
+6. Unless `--no-png`, screenshots the screen layout's first 1200 × 630 px to `og.png` next to the
+   page (`<dist>/<page>/og.png`), where `<Canvas>`'s `og:image` tag points.
+
+On success it prints each file written:
+
+```txt title="Terminal"
+/path/dist/poster.pdf: 841mm × 1189mm
+/path/dist/handout.pdf: A4
+/path/dist/og.png
+```
+
+### Errors
+
+On failure it prints `posuta pdf: <message>` to stderr and exits with code 1.
+
+| Message | Cause |
+| --- | --- |
+| `could not open <url> (<status>); did you run astro build?` | The page isn't in `--dist`. |
+| `<url> has no print size (--paper-w): wrap it in <Canvas>, or pass --print` | The page sets no paper size. |
+| `<url> is not a posuta page: wrap it in <Canvas>` | No `.posuta-canvas` on the page. |
+| `content does not fit on the <w> × <h> canvas:` then one line per block | Overflow, e.g. `"Results" runs 12 mm past the bottom`, `"logo strip" is 4 mm too wide`, or `the poster runs 8 mm past the bottom`. |
+
+## `posuta install`
+
+Downloads the browser `posuta pdf` uses: Playwright's Chromium headless shell. Run it once per
+machine (or CI job).
+
+```sh title="Terminal"
+posuta install [--with-deps]
+```
+
+Extra arguments are passed to `playwright install --only-shell chromium`; `--with-deps` also
+installs the system libraries Chromium needs (on Linux). It exits with Playwright's exit code.
+
+Run `posuta` with no command to print the usage (exit code 0); an unknown command prints it and
+exits with code 1.
+
+## `create-posuta`
+
+Copies the starter poster into a new folder. See [quickstart](/docs/get-started/quickstart).
+
+```sh title="Terminal"
+pnpm create posuta [dir] [--title "…"] [--print "A0 portrait"]
+```
+
+With npm, put `--` before the flags: `npm create posuta@latest my-poster -- --title "…"`.
+
+<TypeTable
+  type={{
+    dir: { type: 'string (positional)', description: 'The folder to create. Must not exist or be empty.', default: 'asks; "my-poster"' },
+    '--title': { type: 'string', description: 'The poster\'s title.', default: 'asks; "My poster"' },
+    '--print': { type: 'string', description: 'Print size and optional orientation.', default: 'asks; "A0 portrait"' },
+  }}
+/>
+
+Each value left out is asked for; pressing Enter takes the default shown in brackets.
+
+`--print` accepts a size, `A0`, `A1`, `A2`, `A3`, `24x36in`, `36x48in`, `42x56in` or `48x72in`
+(exact case), optionally followed by `portrait` or `landscape`. Without an orientation it is
+portrait. Anything else fails with `unknown print size "…"`.
+
+It then:
+
+- copies the template, without `node_modules`, `dist` and `.astro`;
+- sets `name` in `package.json` from the folder name (lower case, other characters as `-`) and
+  turns `workspace:` dependencies into the published version;
+- in `src/pages/index.mdx`, sets `title`, removes `highlight`, and sets
+  `print: { size: …, orientation: … }`;
+- prints the next steps: `cd <dir>`, `pnpm install`, `pnpm dev`.
+
+On failure (a folder that isn't empty, an unknown print size) it prints
+`create-posuta: <message>` and exits with code 1.

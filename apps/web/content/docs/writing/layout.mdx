@@ -1,0 +1,117 @@
+---
+title: Rows, columns and grids
+description: Place sections side by side, and keep the columns in print.
+icon: LayoutGrid
+---
+
+A poster is a set of blocks in columns. `<Row>` and `<Col>` put blocks side by side;
+`<Grid>` and `<Cell>` line them up across rows. On a phone or a narrow window they stack, so the
+page stays readable. In print they keep the columns exactly as you wrote them.
+
+The props and markup of each are on [Row and Col](/docs/components/row) and
+[Grid and Cell](/docs/components/grid).
+
+## Sections
+
+`<Section>` is one numbered block of the poster: a heading, an optional line under it, and your
+text.
+
+```mdx title="src/pages/index.mdx"
+<Section n={1} title="The problem" sub="One line of context under the heading.">
+
+Plain **Markdown** here.
+
+</Section>
+```
+
+Leave an empty line after the opening tag and before the closing one, so the text inside is read
+as Markdown.
+
+<TypeTable
+  type={{
+    title: { type: 'string', description: 'The heading.', required: true },
+    n: { type: 'number | string', description: 'The number shown before the heading. Leave it out for an unnumbered section, such as the references.' },
+    sub: { type: 'string', description: 'A short line under the heading.' },
+    panel: { type: 'boolean', description: 'Sets the section apart (a tinted box in the template), for the method or the main result.', default: 'false' },
+  }}
+/>
+
+`<Section>` is not part of posuta: it is `src/components/Section.astro` in your project, and you
+can change it like any other file. It renders a `<section class="posuta-section">` with an `<h2>`.
+Its title also names the block when `posuta pdf` reports that something does not fit on the
+page.
+
+## Sections in columns
+
+Put sections in columns with `<Row>` and `<Col>`. Each column stacks its sections on its own, so
+a tall section in one column does not push the others down. `span` makes a column wider than its
+neighbours.
+
+```mdx title="src/pages/index.mdx"
+<Row>
+<Col>
+
+<Section n={1} title="The problem">…</Section>
+<Section n={2} title="The idea">…</Section>
+
+</Col>
+<Col span={2}>
+
+<Section n={3} title="The result">…</Section>
+
+</Col>
+</Row>
+```
+
+When sections must line up across rows, or one should be taller than its neighbours, use
+`<Grid>` and `<Cell>` instead. See [Grid and Cell](/docs/components/grid).
+
+## On screen and in print
+
+<Preview name="row" />
+
+The box above is narrower than 1100px, so you see the row as a small window would: the columns
+wrap and share the width equally. In print and on wide screens the second column is twice as
+wide.
+
+| Width | Rows and columns | Grids |
+| --- | --- | --- |
+| Wider than 1100 px | As written | As written |
+| 701 to 1100 px | Columns wrap, two to a line | At most two columns; wider cells shrink to two, tall cells become one row |
+| 700 px or narrower | One column | One column |
+| Print and PDF | As written | As written |
+
+The narrow layouts apply on screen only. A printed poster, and the PDF from `posuta pdf`, always
+has the columns you wrote, whatever the size of the window. To check that everything fits on the
+sheet while you write, open the page with `?print` in `pnpm dev` (see [PDF](/docs/print/pdf)).
+
+## The gap between columns
+
+`--posuta-gap` sets the space between columns, in rows and grids alike. It defaults to `2rem`.
+The template sets it in `src/styles/theme.css`:
+
+```css title="src/styles/theme.css"
+:root { --posuta-gap: 2.1rem; }
+```
+
+To change it for one row or grid only, see [Gap between columns](/docs/components/row#gap-between-columns).
+Spacing between blocks in the same column is up to your theme.
+
+## Screen only, print only
+
+Any element can carry `data-print`:
+
+- `data-print="only"` shows it in print and hides it on screen.
+- `data-print="hide"` shows it on screen and hides it in print.
+
+```mdx title="src/pages/index.mdx"
+<p data-print="only">Scan the QR code at the bottom to watch the video.</p>
+```
+
+The template uses this for the QR code (print only) and the "Cite this poster" box (screen only).
+
+## Your own layout
+
+Rows and grids are plain flex and CSS grid with a few class names (`posuta-row`, `posuta-col`,
+`posuta-grid`, `posuta-cell`). You don't have to use them: any HTML and CSS works in a poster.
+See [Your own CSS](/docs/customize/css).

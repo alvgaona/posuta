@@ -1,0 +1,106 @@
+---
+title: Components and plugins
+description: Use your own components in MDX without imports, and add Markdown plugins.
+icon: Puzzle
+---
+
+You can write your own components and use them in the poster as if they were built in, with no
+import lines. You can also add Markdown plugins, such as one that draws diagrams, to the
+pipeline that turns your MDX into HTML.
+
+## Your own components
+
+Put a component in `src/components/` and use it in the poster by its file name.
+`src/components/Takeaway.astro` becomes `<Takeaway>`:
+
+```astro title="src/components/Takeaway.astro"
+---
+const { title } = Astro.props;
+---
+<aside class="takeaway" data-name={title}>
+  <strong>{title}</strong>
+  <slot />
+</aside>
+```
+
+```mdx title="src/pages/index.mdx"
+<Takeaway title="Key result">
+The tilt stays under 1.5° with any one motor off.
+</Takeaway>
+```
+
+The template's `<Section>` works the same way: it is `src/components/Section.astro`.
+
+The rules:
+
+- The file name must start with a capital letter, and is the component's name.
+- Only files directly in `src/components/` count, not those in subfolders. Import those
+  yourself.
+- `.astro`, `.tsx` and `.jsx` files are found. If two share a name, `.astro` wins, then `.tsx`.
+  (`.tsx` and `.jsx` components need the matching Astro integration, such as React.)
+- A new file is picked up the next time you edit the page.
+- An import line in the page always wins. If your component has the same name as one of
+  posuta's, yours is used.
+
+## posuta's components
+
+posuta's components are also available without imports: `Canvas`, `Row`, `Col`, `Grid`,
+`Cell`, `Chart`, `Equation`, `Figure` (with `Figure.Root`, `Figure.Media` and
+`Figure.Caption`), `QR`, and the parts `References.Root` and `References.Item`.
+`<References />` itself is handled by the citation step. See
+[components](/docs/components/chart) for their props.
+
+In an Astro layout (a `.astro` file rather than MDX), import them as usual:
+
+```astro title="src/layouts/Mine.astro"
+---
+import Canvas from "posuta/Canvas.astro";
+import QR from "posuta/QR.astro";
+---
+```
+
+## Markdown plugins
+
+MDX goes through two kinds of plugins on its way to HTML:
+
+- **remark** plugins work on the Markdown, before it becomes HTML.
+- **rehype** plugins work on the HTML.
+
+Pass your own to the integration in `astro.config.mjs`:
+
+```js title="astro.config.mjs"
+import { defineConfig } from "astro/config";
+import posuta from "posuta";
+import rehypeMermaid from "rehype-mermaid";
+
+export default defineConfig({
+  integrations: [posuta({ rehypePlugins: [rehypeMermaid] })], // [!code highlight]
+});
+```
+
+`remarkPlugins` takes a list the same way. To give a plugin options, pass a pair:
+`[plugin, { …options }]`.
+
+### Order
+
+Your plugins run after posuta's:
+
+| Step | remark (Markdown) | rehype (HTML) |
+| --- | --- | --- |
+| 1 | maths (`$…$`) | KaTeX renders the maths |
+| 2 | citations (`[@key]`, `<References />`) | your `rehypePlugins` |
+| 3 | imports for components | |
+| 4 | your `remarkPlugins` | |
+
+So a rehype plugin sees the maths already rendered, and the citations already numbered and
+linked. A remark plugin that adds component tags runs after the automatic imports, so the page
+must import those components itself.
+
+[`test/fixtures/custom`](https://github.com/alvgaona/posuta/blob/main/packages/posuta/test/fixtures/custom/astro.config.mjs)
+passes a small rehype plugin of its own that marks every `h2`.
+
+<Callout type="warn">
+If you set Astro's `markdown.processor` yourself, posuta doesn't add its plugins and warns at
+build time. Add remark-math, rehype-katex and posuta's citation and import plugins to your
+processor yourself.
+</Callout>

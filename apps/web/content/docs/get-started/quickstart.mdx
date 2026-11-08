@@ -1,0 +1,165 @@
+---
+title: Quickstart
+description: Create a poster, preview it, export the PDF and publish it.
+icon: Zap
+---
+
+By the end of this page you will have a poster running on your computer, a PDF at the print
+size, and a public web page that updates on every push.
+
+You need [Node.js](https://nodejs.org) 22 or newer. The examples use [pnpm](https://pnpm.io),
+which the template's publish workflow also uses.
+
+<Steps>
+<Step>
+
+### Create the poster
+
+<Tabs items={['pnpm', 'npm', 'yarn', 'bun']}>
+<Tab value="pnpm">
+
+```sh title="Terminal"
+pnpm create posuta my-poster
+```
+
+</Tab>
+<Tab value="npm">
+
+```sh title="Terminal"
+npm create posuta@latest my-poster
+```
+
+</Tab>
+<Tab value="yarn">
+
+```sh title="Terminal"
+yarn create posuta my-poster
+```
+
+</Tab>
+<Tab value="bun">
+
+```sh title="Terminal"
+bun create posuta my-poster
+```
+
+</Tab>
+</Tabs>
+
+This copies the starter poster into a new folder, `my-poster`. It asks for anything you leave
+out: the folder, the poster's title, and the print size (A0, A1, A2, A3, 24x36in, 36x48in,
+42x56in or 48x72in, then `portrait` or `landscape`; the default is `A0 portrait`). The folder
+must be new or empty.
+
+To skip the questions, pass the answers as flags:
+
+```sh title="Terminal"
+pnpm create posuta my-poster --title "Fast Rotor Fault Recovery" --print "A1 landscape"
+```
+
+With npm, put `--` before the flags: `npm create posuta@latest my-poster -- --title "…"`.
+
+</Step>
+<Step>
+
+### Install and start the preview
+
+```sh title="Terminal"
+cd my-poster
+pnpm install
+pnpm dev
+```
+
+Open [http://localhost:4321](http://localhost:4321). The page reloads each time you save a file.
+
+</Step>
+<Step>
+
+### Edit the poster
+
+The whole poster is one file, `src/pages/index.mdx`. The block between the `---` lines at the
+top is the frontmatter: the title, the highlighted phrase, the lede, the headline stats, the
+footer and the print size. Below it, each `<Section>` is a numbered block of the poster, and the
+text inside is plain Markdown.
+
+```mdx title="src/pages/index.mdx"
+---
+layout: ../layouts/Poster.astro
+title: The Title of Your Poster,
+highlight: with the Key Idea Highlighted
+print: { size: A0, orientation: portrait } # [!code highlight]
+---
+
+<Section n={1} title="The problem">
+
+Write in plain **Markdown**. Inline maths goes between dollar signs, $\omega_n$.
+
+</Section>
+```
+
+The template is full of examples to copy: columns, a chart with a slider, an equation, a
+matplotlib figure, a diagram, a video and a reference list. See
+[project structure](/docs/get-started/project-structure) for where each one lives, and
+[frontmatter](/docs/writing/frontmatter) for every setting.
+
+</Step>
+<Step>
+
+### Preview the print version
+
+Add `?print` to the address: [http://localhost:4321/?print](http://localhost:4321/?print). The
+page now shows as it will print: at the paper's shape, scaled to fit the window, in light
+colours. Any block that runs past the edge of the paper gets a red outline, and a banner says by
+how much. It updates as you edit.
+
+</Step>
+<Step>
+
+### Export the PDF
+
+The PDF is printed by a headless Chromium browser. Download it once:
+
+```sh title="Terminal"
+pnpm exec posuta install
+```
+
+Then, each time you want a PDF:
+
+```sh title="Terminal"
+pnpm pdf
+```
+
+This builds the site into `dist/` and writes:
+
+- `dist/poster.pdf`: one vector page at the print size, fonts embedded.
+- `dist/handout.pdf`: the same poster shrunk onto one A4 sheet, for people to take away.
+- `dist/og.png`: the image shown when someone shares a link to the page.
+
+If anything runs past the edge of the paper, the export fails and names the block, so nothing is
+cut off without you knowing. See [PDF export](/docs/print/pdf) for the options.
+
+</Step>
+<Step>
+
+### Publish
+
+The template includes a GitHub Actions workflow, `.github/workflows/deploy.yaml`. To use it:
+
+1. Push the folder to a new GitHub repository.
+2. In the repository, go to **Settings → Pages** and set **Source** to **GitHub Actions**.
+
+Every push to `main` then builds the page, exports the PDF and publishes both to GitHub Pages.
+The PDF sits next to the page as `poster.pdf`, and is also attached to the workflow run. The
+workflow tells the build the page's address, so the printed poster gets a QR code that links to
+the live page.
+
+To publish somewhere else, see [publish](/docs/print/publish).
+
+</Step>
+</Steps>
+
+<Callout title="No install at all">
+  The template's `README.md` has **Open in StackBlitz** and **Open in GitHub Codespaces**
+  buttons for editing in the browser. Replace `OWNER/REPO` in their links with your
+  repository's.
+</Callout>

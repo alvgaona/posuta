@@ -1,0 +1,138 @@
+---
+title: References
+description: The numbered reference list for the papers cited with [@key].
+icon: Quote
+---
+
+`<References />` marks where the list of cited papers goes; posuta numbers it, formats it and
+links each entry to its citations in the text.
+
+<ComponentPreview name="references" />
+
+<Callout>
+On a poster you write `[@key]` in the text and `<References />` once; posuta's citation plugin
+replaces it with the list. The plugin does not run in these docs, so the examples build the list
+from its parts, `References.Root` and `References.Item`, from the entries the plugin would put on
+`frontmatter.references`. The Code tab shows what you write to lay the list out yourself.
+</Callout>
+
+## Usage
+
+```mdx title="src/pages/index.mdx"
+---
+bibliography: refs.bib
+---
+
+A second-order system [@ogata2010modern].
+
+<Section title="References">
+
+<References />
+
+</Section>
+```
+
+`<References />` renders `ol.posuta-refs`, one `li` per cited entry, in the order they are first
+cited. The [Citations](/docs/writing/citations) guide covers the BibTeX file, numbering, styles
+and the errors that stop the build.
+
+## Examples
+
+### Default items
+
+The preview at the top is the same list as `<References />`, built from its parts: map
+`frontmatter.references` to `References.Item`s inside `References.Root`. Without children each
+item shows the formatted reference, with URLs in it and its DOI as links.
+
+### Your own entry content
+
+Children of `References.Item` replace its content. The item keeps its `id`, so the numbers in the
+text still link to it. Here the DOI link reads "DOI".
+
+<ComponentPreview name="references-children" />
+
+### Another list element
+
+`as` on `References.Root` renders another element. A `ul` with the number written in each item
+gives `[1]`-style labels; the `refs` class removes the bullets in your CSS.
+
+<ComponentPreview name="references-ul" />
+
+## API reference
+
+### `References`
+
+`<References />` is not a component: the citation plugin replaces it with the list at build time.
+It takes no props. A page that cites with `[@key]` must have it, or the parts below, or the build
+stops.
+
+### `References.Root`
+
+The list element. Import it as `import References from "posuta/References"`, or use it in MDX
+without an import.
+
+<TypeTable
+  type={{
+    as: { type: 'string', description: 'The element to render.', default: 'ol' },
+    class: { type: 'string', description: 'Classes added after posuta-refs, for your own CSS or Tailwind.' },
+    '...attributes': { type: 'any', description: 'Any other attribute goes on the element.' },
+  }}
+/>
+
+### `References.Item`
+
+One entry. Without children it shows the formatted reference, URLs in it as links, then
+`doi:<doi>` linked to `https://doi.org/<doi>` when the entry has a DOI. With children, they
+replace that content.
+
+<TypeTable
+  type={{
+    entry: { type: '{ key, n, text, doi? }', description: 'One entry of frontmatter.references.', required: true },
+    as: { type: 'string', description: 'The element to render.', default: 'li' },
+    class: { type: 'string', description: 'Classes added after posuta-ref.' },
+    '...attributes': { type: 'any', description: 'Any other attribute goes on the element.' },
+  }}
+/>
+
+### Entries
+
+posuta puts the entries cited on the page on `frontmatter.references`, in citation order.
+
+<TypeTable
+  type={{
+    key: { type: 'string', description: 'The BibTeX key, as in [@key].', required: true },
+    n: { type: 'number', description: 'Its number in the text.', required: true },
+    text: { type: 'string', description: 'The formatted reference in the chosen style, without its number or DOI. A BibTeX note is added in brackets.', required: true },
+    doi: { type: 'string', description: 'The DOI, when the BibTeX entry has one.' },
+  }}
+/>
+
+### Markup and class hooks
+
+```html
+<!-- <References /> -->
+<ol class="posuta-refs">
+  <li id="ref-bostock2011d3">Bostock M, … 2011;17(12):2301–9. <a href="https://doi.org/10.1109/TVCG.2011.185">doi:10.1109/TVCG.2011.185</a></li>
+</ol>
+
+<!-- References.Root and References.Item -->
+<ol class="posuta-refs">
+  <li id="ref-bostock2011d3" class="posuta-ref">Bostock M, … <a href="https://doi.org/…">doi:…</a></li>
+</ol>
+
+<!-- a citation in the text -->
+<span class="posuta-cite">[<a href="#ref-bostock2011d3">1</a>]</span>
+```
+
+| Hook | What it is |
+| --- | --- |
+| `.posuta-refs` | The list. |
+| `.posuta-ref` | Each item built with `References.Item`. Items from `<References />` have no class; select them with `.posuta-refs > li`. |
+| `#ref-<key>` | Each entry, the target of the numbers in the text. |
+| `.posuta-cite` | Each citation in the text, brackets included. |
+
+posuta adds no CSS for the list: numbering, spacing and link colour come from your theme.
+
+## See also
+
+- [Citations](/docs/writing/citations): BibTeX, `[@key]`, numbering, citation styles, errors.

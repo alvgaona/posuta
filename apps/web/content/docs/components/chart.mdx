@@ -1,0 +1,145 @@
+---
+title: Chart
+description: An Observable Plot chart drawn to SVG at build time, with an optional tooltip and slider in the browser.
+icon: ChartLine
+---
+
+A chart from your data, drawn with [Observable Plot](https://observablehq.com/plot/) when the site
+is built, so it prints as vectors and shows without JavaScript.
+
+<ComponentPreview name="chart-demo" />
+
+## Usage
+
+Put the data in `data/`, the chart function in `charts/`, and name both on the page.
+
+```mdx title="src/pages/index.mdx"
+<Chart
+  data="step.csv"
+  plot="response"
+  alt="Step response of two systems: the lightly damped one overshoots to about 1.5; the damped one settles in about 1.5 seconds."
+/>
+```
+
+```js title="charts/response.js"
+export default (d, Plot) => ({
+  width: 760, height: 320,
+  x: { label: "time $t$ (s)" },
+  y: { label: "output $y(t)$", grid: true },
+  color: { legend: true },
+  marks: [
+    Plot.ruleY([1], { strokeDasharray: "4 3", stroke: "currentColor", strokeOpacity: 0.4 }),
+    Plot.lineY(d, { x: "t", y: "y", stroke: "system" }),
+  ],
+});
+```
+
+The chart file exports one function: it gets the rows, Plot and the slider state, and returns
+[Plot options](https://observablehq.com/plot/features/plots). `alt` is required; the build stops
+without it.
+
+## Examples
+
+### Static, from a file
+
+`data` names a `.csv` or `.json` file in `data/`; `plot` names a file in `charts/`, without `.js`.
+The page holds the finished SVG and no script.
+
+<ComponentPreview name="chart-file" />
+
+### Inline
+
+For a small static chart, pass the rows as `data` and write the function in `plot`. No files
+needed.
+
+<ComponentPreview name="chart-inline" />
+
+### Interactive
+
+`interactive` adds a crosshair and a tooltip that follow the pointer, on the first mark with both
+`x` and `y`. The chart must be in a file.
+
+<ComponentPreview name="chart-interactive" />
+
+### Slider
+
+`slider` adds a range input; its value reaches the chart function as `state[name]`, and the chart
+is redrawn as the reader drags. The chart prints at the slider's starting `value`.
+
+<ComponentPreview name="chart-slider" />
+
+The chart file reads the value from its third argument:
+
+```js title="charts/step.js"
+export default (d, Plot, { t }) => ({
+  marks: [
+    Plot.lineY(d, { x: "t", y: "y", stroke: "system" }),
+    Plot.ruleX([t]), // [!code highlight]
+  ],
+});
+```
+
+### Maths in labels
+
+Write `$…$` in any text the chart draws: axis labels, text marks, or values in your data such as
+legend entries. KaTeX renders it at build time. In a JavaScript string, double the backslash:
+`"$\\omega$"`.
+
+<ComponentPreview name="chart-math" />
+
+### Caption
+
+`caption` adds a `<figcaption>` under the chart.
+
+<ComponentPreview name="chart" />
+
+## API reference
+
+<TypeTable
+  type={{
+    plot: { type: 'string | (d, Plot, state) => options', description: 'A chart file in `charts/`, without `.js`, or an inline function. An inline function only works for a static chart.', required: true },
+    alt: { type: 'string', description: 'What the chart shows, for screen readers. Also the SVG\'s `aria-label`. The build stops without it.', required: true },
+    data: { type: 'string | object[]', description: 'A `.csv` or `.json` file under `data/`, or the rows themselves. A JSON file must hold an array.', default: '[]' },
+    caption: { type: 'string', description: 'Text for a `<figcaption>` under the chart.' },
+    max: { type: 'number', description: 'Thin a data file longer than this many rows, keeping evenly spaced rows. `0` keeps every row. Rows passed inline are never thinned.', default: '2000' },
+    interactive: { type: 'boolean', description: 'Crosshair and tooltip in the browser. Needs a chart file.', default: 'false' },
+    slider: { type: '{ name, min, max, value, step?, label? }', description: 'A range input that passes `state[name]` to the chart function. `value` is the starting value and the one that prints; `step` defaults to `1`, `label` to `name`. Needs a chart file.' },
+    class: { type: 'string', description: 'Classes for the `<figure>`. Any other attribute goes on the `<figure>` too.' },
+  }}
+/>
+
+### Markup and class hooks
+
+```html
+<figure class="posuta-figure posuta-chart">
+  <!-- with slider: shown by the script, hidden in print -->
+  <label class="posuta-slider" data-print="hide" hidden>
+    <span>Time (s)</span>
+    <input type="range" min="0" max="5" step="0.05" value="0.8" />
+    <output>0.8</output>
+  </label>
+  <div class="posuta-plot">
+    <svg aria-label="…">…</svg>
+  </div>
+  <!-- interactive or slider: the rows, for the browser -->
+  <script type="application/json">[…]</script>
+  <figcaption>…</figcaption>
+</figure>
+```
+
+- A chart with a legend holds Plot's own `<figure>` (legend and SVG) inside `.posuta-plot`.
+- Maths in chart text becomes a `foreignObject` holding `div.posuta-tex`.
+- A live chart (`interactive` or `slider`) also carries `data-chart`, `data-alt`,
+  `data-interactive` and `data-slider` on the `<figure>`. In the browser its `.posuta-plot` is
+  redrawn and marked `data-print="hide"`, and a copy of the build-time drawing is added after it,
+  marked `data-print="only"`: that copy is what prints.
+- The tooltip is `div.posuta-tip` inside the live `.posuta-plot`; the highlighted point has the
+  class `posuta-pointer`.
+
+`base.css` only positions the tooltip and scales the SVG to its container. Colours, fonts and
+spacing are yours; see [CSS](/docs/customize/css).
+
+## See also
+
+- [Charts](/docs/writing/charts): data files, thinning, slider state, what prints, and your own island.
+- [`posuta/plot`](/docs/reference/tools#posutaplot): the tools `<Chart>` is built on.

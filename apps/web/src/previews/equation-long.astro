@@ -1,0 +1,9 @@
+---
+import Equation from 'posuta/Equation.astro';
+---
+<Equation n={3} tex="y(t) = 1 - \dfrac{e^{-\zeta\omega_n t}}{\sqrt{1 - \zeta^2}} \sin(\omega_n \sqrt{1 - \zeta^2}\, t + \arccos\zeta), \qquad 0 \le \zeta < 1, \quad t \ge 0" />
+<style is:global>
+  /* a narrow column, so the preview shows the sideways scroll */
+  [data-preview="equation-long"] { max-width: 24rem; }
+  [data-preview="equation-long"] .posuta-eq { justify-content: flex-start; }
+</style>

@@ -1,6 +1,10 @@
 packages:
+  - apps/*
   - packages/*
   - template
   - packages/posuta/test/fixtures/custom
 allowBuilds:
   lefthook: true
+minimumReleaseAgeExclude:
+  - '@fumadocs/base-ui@16.18.2'
+  - fumadocs-core@16.18.2

@@ -1,0 +1,16 @@
+---
+import Col from 'posuta/Col.astro';
+import Row from 'posuta/Row.astro';
+---
+<Row>
+  <Col>
+    <p class="box">Col</p>
+  </Col>
+  <Col>
+    <p class="box">Col with a row inside</p>
+    <Row>
+      <Col><p class="box">inner 1</p></Col>
+      <Col><p class="box">inner 2</p></Col>
+    </Row>
+  </Col>
+</Row>

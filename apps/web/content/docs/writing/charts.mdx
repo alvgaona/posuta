@@ -1,0 +1,198 @@
+---
+title: Charts
+description: Plots from your data, drawn at build time and printed as vectors.
+icon: ChartLine
+---
+
+A chart is two files and one line of MDX: your data in `data/`, a short chart file in `charts/`,
+and a `<Chart>` on the page. posuta draws it with [Observable Plot](https://observablehq.com/plot/)
+when the site is built, so the page holds a finished SVG drawing. It prints as sharp vectors and
+shows even when JavaScript is off. Add one word and it gets a tooltip; add a slider and readers
+can move through your data.
+
+## Your first chart
+
+<Steps>
+<Step>
+
+### Put the data in `data/`
+
+A CSV file with a header row, or a JSON file holding an array of rows. The template ships with a
+step response:
+
+```csv title="data/step.csv"
+t,system,y
+0,$\zeta = 0.7$ (damped),0.00000
+0.001,$\zeta = 0.7$ (damped),0.00001
+0.002,$\zeta = 0.7$ (damped),0.00003
+```
+
+Numbers in a CSV are read as numbers, so you don't need to convert them.
+
+</Step>
+<Step>
+
+### Write a chart file in `charts/`
+
+A chart file exports one function. It gets the rows (`d`) and Plot, and returns
+[Plot options](https://observablehq.com/plot/features/plots): the marks to draw, the axes, the size.
+
+```js title="charts/step.js"
+export default (d, Plot) => ({
+  width: 760, height: 320,
+  x: { label: "time $t$ (s)" },
+  y: { label: "output $y(t)$", grid: true },
+  color: { legend: true },
+  marks: [
+    Plot.lineY(d, { x: "t", y: "y", stroke: "system" }), // [!code highlight]
+  ],
+});
+```
+
+`stroke: "system"` gives each value of the `system` column its own colour and legend entry.
+Anything in the Plot documentation works here.
+
+</Step>
+<Step>
+
+### Place it on the poster
+
+```mdx title="src/pages/index.mdx"
+<Chart
+  data="step.csv"
+  plot="step"
+  alt="Step response of two systems: the lightly damped one overshoots to about 1.5; the damped one settles in about 1.5 seconds."
+  caption="Unit step response for two damping ratios."
+/>
+```
+
+`data` names the file in `data/`; `plot` names the chart file in `charts/`, without `.js`.
+
+</Step>
+</Steps>
+
+`alt` is required: the build stops without it. Describe what the chart shows, not how it looks,
+for readers who use a screen reader. It also becomes the SVG's label.
+
+## Data
+
+`data` takes:
+
+- a file name under `data/`, ending in `.csv` or `.json`. A JSON file must hold an array of rows;
+  any other extension stops the build.
+- the rows themselves, as an array: `data={[{ x: 1, y: 2 }, { x: 2, y: 3 }]}`.
+
+Long series are thinned to keep the page light: a file with more than 2000 rows keeps 2000 of
+them, evenly spaced, plus the last. Set `max` to change the limit:
+
+```mdx title="src/pages/index.mdx"
+<Chart data="flight.csv" plot="flight" max={5000} alt="…" />
+```
+
+<Callout type="warn" title="Thinning can hide narrow peaks">
+It keeps every k-th row, so a spike only one or two rows wide can fall between them. If the
+chart must show it, raise `max` or thin the data yourself before saving it.
+</Callout>
+
+## A one-off chart, inline
+
+For a small static chart you can skip the chart file and write the function in the page:
+
+```mdx title="src/pages/index.mdx"
+<Chart
+  data="runs.csv"
+  plot={(d, Plot) => ({ marks: [Plot.dot(d, { x: "mass", y: "error" })] })}
+  alt="Tracking error against payload mass for 105 runs; no trend."
+/>
+```
+
+An inline chart cannot be interactive or have a slider: those need the chart in a file, because
+the browser redraws it from that file.
+
+## Maths in chart text
+
+Write `$…$` in any text the chart draws: axis labels, legend entries that come from your data,
+`Plot.text` marks. KaTeX turns it into typeset maths at build time, so it prints as vectors too.
+The template does all three: `label: "output $y(t)$"` in the chart file, `$\zeta = 0.7$` in the
+CSV's `system` column, and a text mark showing `$y = 0.85$` next to the marker.
+
+See [Maths](/docs/writing/maths) for the maths in the rest of the poster.
+
+## Interactive charts
+
+Charts are static by default. Two props make one live in the browser, with no code from you.
+
+### Tooltip and crosshair
+
+```mdx title="src/pages/index.mdx"
+<Chart data="step.csv" plot="step" interactive alt="…" />
+```
+
+`interactive` adds a crosshair and a tooltip that follow the pointer. They track the first mark
+that has both `x` and `y` (here the line), and the tooltip shows its values with the axis labels,
+maths included.
+
+### A slider
+
+```mdx title="src/pages/index.mdx"
+<Chart
+  data="step.csv"
+  plot="step"
+  slider={{ name: "t", min: 0, max: 5, step: 0.05, value: 0.8, label: "Time (s)" }}
+  alt="…"
+/>
+```
+
+`slider` adds a range input above the chart. Its current value reaches the chart function as the
+third argument, `state`, under the slider's `name`. The chart is redrawn as the reader drags.
+The template's chart uses it to place a marker at time `t`:
+
+```js title="charts/step.js"
+export default (d, Plot, { t }) => { // [!code highlight]
+  // The row closest to the slider's time, for each system.
+  const at = Object.values(Object.groupBy(d, (r) => r.system))
+    .map((rows) => rows.reduce((a, b) => (Math.abs(b.t - t) < Math.abs(a.t - t) ? b : a)));
+  return {
+    marks: [
+      Plot.lineY(d, { x: "t", y: "y", stroke: "system" }),
+      Plot.ruleX([t], { stroke: "currentColor", strokeOpacity: 0.3 }),
+      Plot.dot(at, { x: "t", y: "y", fill: "system", r: 4 }),
+    ],
+  };
+};
+```
+
+`interactive` and `slider` can be used together, as the template does. The slider's `min`,
+`max`, `step` and `label` are listed under [Chart](/docs/components/chart#api-reference).
+
+### What prints
+
+The printed poster, and the page with JavaScript off, show the drawing made at build time: the
+chart at the slider's starting `value`, with no tooltip. Whatever a reader does on screen, the
+print stays the same. The slider itself is hidden in print and without JavaScript.
+
+So pick `value` for the paper: the template prints its marker at 0.8 s, near the overshoot.
+
+### What it costs the page
+
+A page with only static charts ships no JavaScript for them. For a live chart, posuta embeds its
+rows in the page (after thinning) and adds a small script. Observable Plot itself, about 130 KB
+compressed, downloads only when a live chart scrolls into view. KaTeX is loaded in the browser
+only if a live chart has maths in its text.
+
+## `<Chart>` props and markup
+
+Every prop, the rendered markup and its class hooks, with live examples, are on the
+[Chart](/docs/components/chart) component page.
+
+## Your own island
+
+For anything `<Chart>` doesn't do, such as two charts linked to one slider or an animation, write
+your own island: a `<script>` in a component, or any framework Astro supports. The same tools
+`<Chart>` uses are in `posuta/plot`: `renderPlot` draws Plot options to SVG at build time, and
+`plotLive`, `withPointer` and `attachTip` redraw it in the browser with maths and a tooltip. See
+[Tools](/docs/reference/tools).
+
+Give your island a static frame for print: draw it at build time with `renderPlot`, then redraw
+in the browser. `posuta pdf` prints the page as your scripts leave it, so mark the build-time
+drawing `data-print="only"` and the live one `data-print="hide"`, as `<Chart>` does.

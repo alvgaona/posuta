@@ -1,0 +1,5 @@
+---
+import Chart from 'posuta/Chart.astro';
+---
+<Chart data="step.csv" plot="step" alt="Step response of two second-order systems"
+  slider={{ name: 't', min: 0, max: 5, step: 0.05, value: 0.8, label: 'Time (s)' }} />

@@ -1,0 +1,16 @@
+---
+import Figure from 'posuta/Figure';
+import loop from './assets/loop.svg';
+---
+<Figure.Root class="above">
+  <Figure.Caption>Fig. 2. The control loop, with the caption above.</Figure.Caption>
+  <a href="https://graphviz.org">
+    <Figure.Media src={loop} alt="The control loop: the controller drives the plant; a sensor feeds its output back." />
+  </a>
+  <p class="credit">Drawn with Graphviz.</p>
+</Figure.Root>
+<style is:global>
+  .above .posuta-caption { margin: 0 0 0.75rem; }
+  .above a { color: inherit; }
+  .credit { margin: 0.5rem 0 0; font-size: 0.75rem; color: var(--muted); text-align: right; }
+</style>

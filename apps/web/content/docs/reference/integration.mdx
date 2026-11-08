@@ -1,0 +1,100 @@
+---
+title: Integration options
+description: The options of posuta() in astro.config.mjs, and the package's exports.
+icon: Settings
+---
+
+## `posuta(options)`
+
+The default export of `posuta` is an Astro integration. All options are optional.
+
+<TypeTable
+  type={{
+    theme: {
+      type: 'string',
+      description: 'A CSS file or package of :root tokens, imported on every page, e.g. "@my-lab/posuta-theme". Its tokens are unlayered, so they beat posuta\'s layered CSS. See /docs/customize/themes.',
+    },
+    citationStyle: {
+      type: 'string',
+      description: 'CSL style for the reference list: "vancouver", "apa", "harvard1", or a path to a .csl file relative to the project root. An unknown name fails at startup. In-text citations stay numbered.',
+      default: '"vancouver"',
+    },
+    remarkPlugins: {
+      type: 'any[]',
+      description: 'Your remark plugins, run after posuta\'s.',
+      default: '[]',
+    },
+    rehypePlugins: {
+      type: 'any[]',
+      description: 'Your rehype plugins, run after posuta\'s (e.g. rehype-mermaid).',
+      default: '[]',
+    },
+  }}
+/>
+
+```js title="astro.config.mjs"
+import { defineConfig } from "astro/config";
+import posuta from "posuta";
+import rehypeMermaid from "rehype-mermaid";
+
+// SITE and BASE_PATH come from the deploy workflow; set them for other hosts.
+// `site` also gives the poster its QR code and link previews.
+export default defineConfig({
+  site: process.env.SITE,
+  base: process.env.BASE_PATH,
+  integrations: [
+    posuta({
+      theme: "@my-lab/posuta-theme",
+      citationStyle: "./ieee.csl",
+      rehypePlugins: [rehypeMermaid],
+    }),
+  ],
+});
+```
+
+The template's config is the same without the options: `integrations: [posuta()]`.
+
+### What it sets up
+
+- Adds `@astrojs/mdx`, unless it is already in `integrations`.
+- Markdown plugins, in this order: `remark-math`, posuta's citations (`[@key]`, `<References />`),
+  imports for components used in MDX, then your `remarkPlugins`; `rehype-katex`, then your
+  `rehypePlugins`.
+- Components without import lines: a capitalised name an MDX page uses but doesn't import or
+  define is looked up first in the poster's `src/components/` (top level; file name = component
+  name; `.astro`, then `.tsx`, then `.jsx`), then in posuta's components. An explicit import wins.
+- `data/` for `<Chart data>` is read from the project root.
+- Imported `.svg` files are tagged so `<Figure>` can inline them.
+
+<Callout type="warn">
+  If you set `markdown.processor` yourself, posuta logs a warning and adds none of its Markdown
+  plugins. Add `remark-math`, `rehype-katex` and posuta's citation and auto-import plugins to your
+  processor yourself.
+</Callout>
+
+## Package exports
+
+| Import path | What it is |
+| --- | --- |
+| `posuta` | The Astro integration, `posuta(options)`. |
+| `posuta/print` | `paper`, `printCss`, `PAPER`: paper sizes and the print scale. See [tools](/docs/reference/tools#posutaprint). |
+| `posuta/data` | `load`, `downsample`: read CSV or JSON from `data/`. |
+| `posuta/plot` | `renderPlot`, `plot`, `plotLive`, `Plot` and the pointer and tooltip helpers. |
+| `posuta/tex` | `tex`, `texSvg`: `$…$` in text to KaTeX HTML or an SVG label. |
+| `posuta/cite` | `formatReference` (default export: the remark citation plugin). |
+| `posuta/md` | `md`: inline Markdown in frontmatter text to HTML, citations numbered. |
+| `posuta/bibtex` | `bibtex`: a BibTeX entry for the poster itself. |
+| `posuta/qr` | `qrSvg`: a QR code as SVG markup. |
+| `posuta/Canvas.astro` | The `Canvas` component. |
+| `posuta/Row.astro`, `posuta/Col.astro` | The `Row` and `Col` components. |
+| `posuta/Grid.astro`, `posuta/Cell.astro` | The `Grid` and `Cell` components. |
+| `posuta/Chart.astro` | The `Chart` component. |
+| `posuta/Figure.astro` | The `Figure` preset alone. |
+| `posuta/Figure` | `Figure` with its parts (`Figure.Root`, `Figure.Media`, `Figure.Caption`; also named exports `Root`, `Media`, `Caption`). |
+| `posuta/Equation.astro` | The `Equation` component. |
+| `posuta/QR.astro` | The `QR` component. |
+| `posuta/References` | `References.Root` and `References.Item` (also named exports `Root`, `Item`). |
+| `posuta/base.css` | The CSS the components need to work; `Canvas` loads it. |
+| `posuta/posuta.mplstyle` | A matplotlib style matching the poster: fonts, colours, text kept as text. |
+
+See [components](/docs/components/chart) and [tools](/docs/reference/tools) for each.

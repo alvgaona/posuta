@@ -1,0 +1,16 @@
+---
+import Chart from 'posuta/Chart.astro';
+---
+<Chart
+  data={Array.from({ length: 101 }, (_, i) => ({ w: 10 ** (i / 25 - 2) }))}
+  plot={(d, Plot) => ({
+    height: 260,
+    x: { type: "log", label: "frequency $\\omega$ (rad/s)" },
+    y: { label: "gain $|G(j\\omega)|$", grid: true },
+    marks: [
+      Plot.lineY(d, { x: "w", y: (r) => 1 / Math.sqrt(1 + r.w ** 2) }),
+      Plot.text(["$G(s) = \\frac{1}{s + 1}$"], { frameAnchor: "top-right", dx: -8, dy: 8 }),
+    ],
+  })}
+  alt="Gain of a first-order low-pass filter: flat at 1 up to about 1 rad/s, then falling."
+/>

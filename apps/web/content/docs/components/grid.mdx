@@ -1,0 +1,104 @@
+---
+title: Grid and Cell
+description: Line blocks up across rows, with cells that cover several columns or rows.
+icon: LayoutGrid
+---
+
+`<Grid>` lays its `<Cell>`s out in equal columns that line up across rows; a cell can be wider or
+taller than its neighbours.
+
+<ComponentPreview name="grid" />
+
+<Callout>
+The previews on this page are narrower than 1100px, so they show the narrow-screen layout: at
+most two columns, wide cells cut to two, tall cells one row high. Wide screens, print and the PDF
+keep the grid as written. See [On screen and in print](/docs/writing/layout#on-screen-and-in-print).
+</Callout>
+
+## Usage
+
+```mdx title="src/pages/index.mdx"
+<Grid cols={3}>
+<Cell rows={2}>…tall, two rows…</Cell>
+<Cell span={2}>…wide, two columns…</Cell>
+<Cell>…</Cell>
+<Cell>…</Cell>
+</Grid>
+```
+
+`Grid` and `Cell` are available in MDX without an import. Cells fill the grid left to right, top
+to bottom, skipping places already taken by a wide or tall cell.
+
+Use a grid when blocks must line up across rows. When each column can run to its own length, use
+[Row and Col](/docs/components/row).
+
+## Examples
+
+### Number of columns
+
+`cols` sets the number of equal columns. This grid has four; on a narrow screen it shows two.
+
+<ComponentPreview name="grid-cols" />
+
+### Wide cells
+
+`span` is the number of columns a cell covers. A cell as wide as the grid makes a full-width band.
+
+<ComponentPreview name="grid-span" />
+
+### Tall cells
+
+`rows` is the number of rows a cell covers, for a figure beside two blocks of text. On a narrow
+screen tall cells become one row high, so this preview shows five cells in order; in print the
+first cell runs down beside the next two rows.
+
+<ComponentPreview name="grid-rows" />
+
+## API reference
+
+### `Grid`
+
+<TypeTable
+  type={{
+    cols: { type: 'number', description: 'Number of equal columns (sets --cols).', default: '3' },
+    class: { type: 'string', description: 'Added to div.posuta-grid, for your own CSS or Tailwind.' },
+    style: { type: 'string', description: 'Added after --cols in the style attribute, e.g. "--posuta-gap: 1rem". Use a string, not an object.' },
+    '...attributes': { type: 'any', description: 'Any other attribute (id, data-print, data-*) goes on the element.' },
+  }}
+/>
+
+### `Cell`
+
+<TypeTable
+  type={{
+    span: { type: 'number', description: 'Columns the cell covers (sets --span).', default: '1' },
+    rows: { type: 'number', description: 'Rows the cell covers (sets --rows).', default: '1' },
+    class: { type: 'string', description: 'Added to div.posuta-cell.' },
+    style: { type: 'string', description: 'Added after --span and --rows in the style attribute.' },
+    '...attributes': { type: 'any', description: 'Any other attribute goes on the element.' },
+  }}
+/>
+
+### Markup and class hooks
+
+```html
+<div class="posuta-grid" style="--cols:3">
+  <div class="posuta-cell" style="--span:1;--rows:2">…</div>
+  <div class="posuta-cell" style="--span:2;--rows:1">…</div>
+</div>
+```
+
+| Hook | What it is |
+| --- | --- |
+| `.posuta-grid` | A CSS grid of `--cols` equal columns, `align-items: start`, column gap `var(--posuta-gap, 2rem)`. |
+| `.posuta-cell` | `grid-column: span var(--span)`, `grid-row: span var(--rows)`, `min-width: 0`. |
+| `--cols`, `--span`, `--rows` | Set by the props above. |
+| `--posuta-gap` | Yours to set, on `:root` or on one grid. |
+
+There is no row gap, colour, border or padding: style the hooks in your theme. Cells align to the
+top of their area, so a tall cell's content does not stretch to fill it.
+
+## See also
+
+- [Rows, columns and grids](/docs/writing/layout): sections, screen and print, the gap, `data-print`.
+- [Row and Col](/docs/components/row).

@@ -1,0 +1,116 @@
+---
+title: Canvas
+description: The page every poster is drawn on, with its print size, theme and link previews.
+icon: Frame
+---
+
+`<Canvas>` renders the whole page: `<html>`, `<head>` and one `div.posuta-canvas` around your
+poster. It draws nothing you can see. It renders a whole document, so it has no live preview
+here; the [template's layout](https://github.com/alvgaona/posuta/tree/main/template) is a working
+example.
+
+## Usage
+
+Use it once, in a layout, around the poster's content:
+
+```astro title="src/layouts/Poster.astro"
+---
+import Canvas from "posuta/Canvas.astro";
+import "../styles/theme.css";
+const { frontmatter: fm } = Astro.props;
+---
+<Canvas title={fm.title} print={fm.print} theme={fm.theme}>
+  <header><h1>{fm.title}</h1></header>
+  <main><slot /></main>
+</Canvas>
+```
+
+What it gives the page:
+
+- the title, the description and the link-preview tags;
+- the print page size and the printed type scale, from `print`;
+- the [layer order](/docs/customize/css#layer-order) for your CSS and Tailwind, and any `theme`
+  tokens;
+- `posuta/base.css`, the small amount of CSS the components need;
+- `div.posuta-canvas`, the printed sheet, which `posuta pdf` measures for overflow and
+  `?print` previews in `astro dev`.
+
+`posuta pdf` only exports pages built on `<Canvas>`.
+
+## Examples
+
+### Print size and scale
+
+`print` takes the same values as the `print:` frontmatter field. `scale` multiplies the printed
+type size.
+
+```astro title="src/layouts/Poster.astro"
+<Canvas title="…" print="A1 landscape">…</Canvas>
+<Canvas title="…" print={{ size: "A0", scale: 0.8 }}>…</Canvas>
+<Canvas title="…" print={{ width: "900mm", height: "36in" }}>…</Canvas>
+```
+
+The sizes are `A0` to `A3`, `24x36in`, `36x48in`, `42x56in` and `48x72in`, or any `width` and
+`height` in `mm`, `cm` or `in`; see [Print size and PDF](/docs/print/pdf).
+
+### Theme
+
+A string fixes the colour scheme; an object sets custom properties on `:root`.
+
+```astro title="src/layouts/Poster.astro"
+<Canvas title="…" theme="dark">…</Canvas>
+<Canvas title="…" theme={{ accent: "#0a7" }}>…</Canvas>
+```
+
+### Tags in the head
+
+Give a child `slot="head"` to put it in `<head>`, such as a favicon or a font stylesheet:
+
+```astro title="src/layouts/Poster.astro"
+<Canvas title={fm.title} print={fm.print}>
+  <link slot="head" rel="icon" href="/favicon.svg" />
+  …
+</Canvas>
+```
+
+## API reference
+
+<TypeTable
+  type={{
+    title: { type: 'string', description: 'The page title, in the browser tab and link previews (og:title).', required: true },
+    description: { type: 'string', description: 'A short summary for search results and link previews.' },
+    print: { type: 'string | { size?, orientation?, width?, height?, scale? }', description: 'The paper: "A1 landscape", { size: "A0", scale: 0.8 } or { width: "900mm", height: "36in" }. scale multiplies the printed type size.', default: '"A0" portrait' },
+    theme: { type: '"light" | "dark" | Record<string, string>', description: 'A string fixes the colour scheme (data-theme on html); an object sets custom properties on :root, such as { accent: "#0a7" }.' },
+    lang: { type: 'string', description: 'The lang attribute of html.', default: '"en"' },
+    class: { type: 'string', description: 'Classes for div.posuta-canvas. Any other attribute (id, style, data-*) goes on it too.' },
+  }}
+/>
+
+When `site` is set in `astro.config.mjs`, `<Canvas>` also adds `og:url` and `og:image`, the
+`og.png` that `posuta pdf` writes next to the page; see [Publish](/docs/print/publish).
+
+### Markup and class hooks
+
+```html
+<!doctype html>
+<html lang="en" data-theme="dark">  <!-- data-theme only with theme="light" or "dark" -->
+<head>
+  <title>…</title>
+  <!-- description, link-preview tags, layer order, print CSS, theme tokens -->
+  <!-- children with slot="head" -->
+</head>
+<body>
+  <div class="posuta-canvas">…your poster…</div>
+</body>
+</html>
+```
+
+In print, `.posuta-canvas` is exactly the size of the paper and hides what doesn't fit. On screen
+posuta gives it no size or look; that is up to your layout.
+
+## See also
+
+- [Your own layout](/docs/customize/canvas): building a poster's layout from scratch on
+  `<Canvas>`.
+- [Print size and PDF](/docs/print/pdf): paper sizes, the type scale and the overflow check.
+- [Publish](/docs/print/publish): link previews and `site`.

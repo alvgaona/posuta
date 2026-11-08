@@ -1,0 +1,119 @@
+---
+title: Row and Col
+description: Put blocks side by side in columns that stay as written in print.
+icon: Columns3
+---
+
+`<Row>` puts its `<Col>`s side by side; each column takes a share of the width and stacks its
+blocks independently of the others.
+
+<ComponentPreview name="row-demo" />
+
+<Callout>
+The previews on this page are narrower than 1100px, so they show the narrow-screen layout: the
+columns wrap two to a line and share the width equally. Wide screens, print and the PDF keep the
+columns and widths as written. See [On screen and in print](/docs/writing/layout#on-screen-and-in-print).
+</Callout>
+
+## Usage
+
+```mdx title="src/pages/index.mdx"
+<Row>
+<Col>
+
+<Section n={1} title="The problem">…</Section>
+
+</Col>
+<Col span={2}>
+
+<Section n={2} title="The result">…</Section>
+
+</Col>
+</Row>
+```
+
+`Row` and `Col` are available in MDX without an import. Leave an empty line inside each `<Col>`
+when it holds Markdown or sections.
+
+## Examples
+
+### Column widths
+
+`span` is a column's weight against its siblings: here the second column is three times as wide
+as the first. On a narrow screen the weights give way to two equal columns.
+
+<ComponentPreview name="row-span" />
+
+### Three columns
+
+The usual poster layout. On a narrow screen the third column wraps to its own line and takes the
+full width; below 700px every column does.
+
+<ComponentPreview name="row-three" />
+
+### Gap between columns
+
+`--posuta-gap` sets the space between columns (default `2rem`). Set it on one row with `style`,
+or with a class in your CSS. The space between blocks inside a column is up to your theme.
+
+<ComponentPreview name="row-gap" />
+
+### Rows inside columns
+
+A `<Col>` can hold another `<Row>`, for a pair of figures under a wide section. The inner
+columns wrap by the window's width, like the outer ones.
+
+<ComponentPreview name="row-nested" />
+
+### Screen only, print only
+
+Like any element, a row can carry `data-print`: `"hide"` keeps it off the printed poster, `"only"`
+keeps it off the screen. The preview is a screen, so the print-only block is hidden.
+
+<ComponentPreview name="row-print" />
+
+## API reference
+
+### `Row`
+
+<TypeTable
+  type={{
+    class: { type: 'string', description: 'Added to div.posuta-row, for your own CSS or Tailwind.' },
+    '...attributes': { type: 'any', description: 'Any other attribute (id, style, data-print, data-*) goes on the element.' },
+  }}
+/>
+
+### `Col`
+
+<TypeTable
+  type={{
+    span: { type: 'number', description: 'Width relative to the other columns in the row (sets --span).', default: '1' },
+    class: { type: 'string', description: 'Added to div.posuta-col.' },
+    style: { type: 'string', description: 'Added after --span in the style attribute. Use a string, not an object.' },
+    '...attributes': { type: 'any', description: 'Any other attribute goes on the element.' },
+  }}
+/>
+
+### Markup and class hooks
+
+```html
+<div class="posuta-row">
+  <div class="posuta-col" style="--span:1">…</div>
+  <div class="posuta-col" style="--span:2">…</div>
+</div>
+```
+
+| Hook | What it is |
+| --- | --- |
+| `.posuta-row` | A flex row, `align-items: flex-start`, column gap `var(--posuta-gap, 2rem)`. |
+| `.posuta-col` | `flex: var(--span) 1 0`, `min-width: 0`. |
+| `--span` | Set by `span` on each column. |
+| `--posuta-gap` | Yours to set, on `:root` or on one row. |
+
+`base.css` adds only this layout and the narrow-screen wrapping (two to a line up to 1100px, one
+up to 700px, screen only). There is no colour, border or padding: style the hooks in your theme.
+
+## See also
+
+- [Rows, columns and grids](/docs/writing/layout): sections, screen and print, the gap, `data-print`.
+- [Grid and Cell](/docs/components/grid), when blocks must line up across rows.

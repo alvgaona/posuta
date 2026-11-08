@@ -1,0 +1,138 @@
+---
+title: CSS, Tailwind and hooks
+description: What posuta's own CSS does, how your CSS wins, and the classes to style.
+icon: Paintbrush
+---
+
+You can style every part of a poster with plain CSS or Tailwind. posuta's own CSS is small and
+sits under yours, so you never need `!important`. Each component has stable class names to
+target.
+
+## What posuta's CSS does
+
+`<Canvas>` loads `posuta/base.css`. It holds only what the components need to work: no colours,
+fonts, borders or spacing.
+
+- **The printed sheet.** In print, `div.posuta-canvas` is exactly the paper's width and height,
+  and anything outside it is cut off (which is why the
+  [overflow check](/docs/print/pdf#the-overflow-check) exists). Colours print as they are.
+- **The type scale.** In print, the root font size follows the paper: 24 pt at A0, scaled by the
+  paper's area, never below 12 pt, then multiplied by `scale` from `print:`. Size things in
+  `rem` and they scale with the sheet.
+- **Rows and grids.** `Row` and `Col` are a flexbox row; `Grid` and `Cell` a CSS grid. On screen
+  they narrow to two columns below 1100 px and one below 700 px; in print they keep the columns
+  as written. `--posuta-gap` sets the space between columns (default `2rem`).
+- **Screen-only and print-only.** `data-print="only"` hides an element on screen;
+  `data-print="hide"` hides it in print.
+- **Figures and charts.** Their SVGs and images fill the width of their container.
+- **Live charts.** The tooltip is positioned above the point.
+- **Equations.** A numbered equation puts its number beside it, and scrolls sideways if too wide.
+- **KaTeX's stylesheet**, for the maths.
+
+## Layer order
+
+CSS has **cascade layers**: named groups of rules. A rule in a later layer beats one in an
+earlier layer, and a rule outside any layer beats them all, whatever order the files load in.
+`<Canvas>` declares this order before any stylesheet loads:
+
+```css
+@layer theme, base, posuta.base, posuta.theme, components, utilities;
+/* then any CSS outside a layer, which beats everything above */
+```
+
+| Layer | What is in it |
+| --- | --- |
+| `theme`, `base` | Tailwind's tokens and its reset, when Tailwind is installed |
+| `posuta.base` | `posuta/base.css` |
+| `posuta.theme` | The template's `src/styles/theme.css` |
+| `components`, `utilities` | Tailwind's component classes and utilities |
+| no layer | Your own CSS, frontmatter `theme:` tokens, a lab theme package |
+
+Without Tailwind, the Tailwind layers are empty. So:
+
+- Your own CSS, written normally (outside a layer), beats posuta's CSS and the template's theme.
+- Tailwind's reset sits under posuta, so it doesn't undo the theme.
+- Tailwind's utilities sit over both, so `class="text-red-600"` on any component wins.
+
+To put your own styles in the theme's place, wrap them in `@layer posuta.theme { … }`, as the
+template's `theme.css` does.
+
+## Tailwind
+
+Tailwind v4 works without extra setup. Add it with Astro's command:
+
+```sh title="Terminal"
+npx astro add tailwind
+```
+
+Then import its stylesheet in your layout, after the theme:
+
+```astro title="src/layouts/Poster.astro"
+---
+import Canvas from "posuta/Canvas.astro";
+import "../styles/theme.css";
+import "../styles/global.css"; // the file with @import "tailwindcss" /* [!code highlight] */
+---
+```
+
+Tailwind finds the classes you write in `.mdx` files like any other source. Every component and
+part takes `class`:
+
+```mdx title="src/pages/index.mdx"
+<Grid cols={3} class="gap-y-6">
+<Cell>
+<Figure src={photo} alt="…" caption="…" class="mt-6 max-w-60" />
+</Cell>
+</Grid>
+```
+
+## Class hooks
+
+Every component passes `class` and other attributes to its outer element (for `Figure.Media`,
+to the image, SVG or video). The elements also carry fixed `posuta-*` classes you can target
+from your CSS:
+
+| Component | Markup and classes |
+| --- | --- |
+| `Canvas` | `div.posuta-canvas`; in print, `:root` gets `--paper-w`, `--paper-h`, `--print-scale`, `--print-text` |
+| `Row`, `Col` | `div.posuta-row`; `div.posuta-col` with `--span` |
+| `Grid`, `Cell` | `div.posuta-grid` with `--cols`; `div.posuta-cell` with `--span`, `--rows` |
+| `Chart` | `figure.posuta-figure.posuta-chart` › `div.posuta-plot` (the SVG), `figcaption`; with a slider, `label.posuta-slider`; when interactive, `div.posuta-tip` (the tooltip) |
+| `Figure` | `figure.posuta-figure` › the media, `figcaption.posuta-caption` |
+| `Figure.Root` | `figure.posuta-figure` (another element with `as`) |
+| `Figure.Media` | `img`, `svg` or `video` with `.posuta-media`; a video adds its print frame, an `img.posuta-media` |
+| `Figure.Caption` | `figcaption.posuta-caption` (another element with `as`) |
+| `Equation` | `div.posuta-eq` › KaTeX, `span.posuta-eq-n` (the number) |
+| `<References />` | `ol.posuta-refs` › `li#ref-<key>` |
+| `References.Root` | `ol.posuta-refs` (another element with `as`) |
+| `References.Item` | `li.posuta-ref#ref-<key>` (another element with `as`) |
+| `[@key]` | `span.posuta-cite` › `a[href="#ref-<key>"]` |
+| `QR` | `svg.posuta-qr` |
+
+The template's own `<Section>` renders `section.posuta-section` (plus `.panel` with `panel`);
+it lives in your project, so you can change it.
+
+```css title="src/styles/theme.css"
+.posuta-caption { font-style: italic; }
+.posuta-cite a { color: var(--muted); }
+```
+
+## Change the print type scale
+
+To make all printed text smaller or larger, set `scale` on the paper:
+
+```yaml title="src/pages/index.mdx"
+print: { size: A0, scale: 0.8 }
+```
+
+To replace the scale outright, set the root font size in print yourself:
+
+```css title="src/styles/theme.css"
+@media print {
+  :root { font-size: 20pt; } /* [!code highlight] */
+}
+```
+
+Everything sized in `rem` follows. Inside your own rules, `--print-scale` (the paper's area
+relative to A0, as a factor) and `--print-text` (the `scale` you set) are available if you want
+to build a different formula.

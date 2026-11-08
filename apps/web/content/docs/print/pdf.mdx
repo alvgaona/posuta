@@ -1,0 +1,183 @@
+---
+title: Print size and PDF
+description: Pick the paper, preview the print, and export a vector PDF.
+icon: Printer
+---
+
+You get one PDF page at the exact paper size, with text, charts and equations as vectors and the
+fonts embedded. If anything runs off the page, the export stops and tells you which block, so
+nothing is cut without you knowing.
+
+## Choose the paper
+
+Set `print:` in the poster's frontmatter. Without it, the poster prints on A0 portrait.
+
+```yaml title="src/pages/index.mdx"
+print: A1                                     # a named size, portrait
+print: A1 landscape
+print: { size: A0, orientation: landscape }
+print: { width: 900mm, height: 1200mm }       # your own size: mm, cm or in
+print: { size: A0, scale: 0.8 }               # smaller printed text
+```
+
+The named sizes are `A0`, `A1`, `A2`, `A3`, `24x36in`, `36x48in`, `42x56in` and `48x72in`. A
+custom size needs both `width` and `height`, each a number with a unit. The full syntax is on the
+[frontmatter page](/docs/writing/frontmatter).
+
+## How type scales with the paper
+
+The type is designed at A0, where body text is 24 pt. On other sheets it follows the paper's
+area (not its width), so a sheet reads the same in either orientation. It never goes below
+12 pt.
+
+| Paper | Body text |
+| --- | --- |
+| A0 | 24 pt |
+| A1, 24×36 in | about 17–18 pt |
+| A2, A3 | 12 pt (the floor) |
+| 36×48 in | about 25 pt |
+| 48×72 in | about 36 pt |
+
+`scale` multiplies the result, after the floor: `scale: 0.8` on A0 gives 19.2 pt. Use it when a
+poster has more to say than fits.
+
+This works because, in print, posuta sets the page's root font size from the paper. Anything
+sized in `rem` (the root font size) grows and shrinks with the sheet. The template's theme is
+sized this way. To change the scale itself, see [CSS, Tailwind and hooks](/docs/customize/css).
+
+## Export the PDF
+
+<Steps>
+<Step>
+
+### Install the browser, once
+
+`posuta pdf` prints the page with Chromium, a headless browser, through Playwright. Download it
+once per machine:
+
+```sh title="Terminal"
+pnpm exec posuta install
+```
+
+On a fresh Linux machine (a CI runner, for example), add `--with-deps` to also install the
+system libraries Chromium needs.
+
+</Step>
+<Step>
+
+### Build and export
+
+```sh title="Terminal"
+pnpm pdf
+```
+
+In the template, `pnpm pdf` runs `astro build`, then `posuta pdf --handout`. It writes:
+
+- `dist/poster.pdf`: one page at the paper size, fonts embedded. The PDF is tagged, so screen
+  readers and text search work, and its outline (bookmarks) lists the headings.
+- `dist/handout.pdf`: the same page shrunk onto one A4 sheet, still vector, for people to take
+  away.
+- `dist/og.png`: a 1200×630 px picture of the top of the screen layout. Link previews show it
+  when someone shares the page (see [Publish](/docs/print/publish)).
+
+</Step>
+</Steps>
+
+`posuta pdf` reads the built site in `dist/`; it does not build it. Run `astro build` first, or
+use `pnpm pdf`.
+
+## Options
+
+```sh title="Terminal"
+posuta pdf [--dist dist] [--page /] [--out <dist>/<page>/poster.pdf] [--print "A1 landscape"] [--base /] [--no-png] [--handout]
+```
+
+| Option | What it does | Default |
+| --- | --- | --- |
+| `--print "A1 landscape"` | Print at another size without editing the frontmatter. Takes the string forms above. | the page's `print:` |
+| `--out file.pdf` | Where to write the PDF. | `poster.pdf` next to the page |
+| `--dist dir` | The built site to read. | `dist` |
+| `--page /path` | Which page of the site to export. `og.png` goes next to it. | `/` |
+| `--base /repo/` | The base path the site was built with, so its links resolve. | `BASE_PATH`, else `/` |
+| `--no-png` | Don't write `og.png`. | |
+| `--handout` | Also write `handout.pdf`, on A4, next to the PDF. | off |
+
+`--print` is a quick way to see whether a poster fits a smaller sheet:
+
+```sh title="Terminal"
+pnpm build
+pnpm exec posuta pdf --print A1 --out a1.pdf
+```
+
+## The overflow check
+
+Before it prints, `posuta pdf` lays the page out at the paper size and checks that everything
+fits. If something doesn't, it writes no PDF, exits with an error, and names the block:
+
+```txt title="Terminal"
+posuta pdf: content does not fit on the 594mm × 420mm canvas:
+  "Results" runs 38 mm past the bottom
+Shorten it, change the column spans, or pick a larger print size.
+```
+
+A block has a name when it is either:
+
+- an element whose first child is a heading (`h1` to `h4`), named by the heading's text, as a
+  template `<Section>` is; or
+- an element with a `data-name` attribute, named by its value.
+
+It names the innermost block that overflows, not the column or section around it. Use
+`data-name` to give a figure or a box its own name:
+
+```mdx title="src/pages/index.mdx"
+<div data-name="logo strip">…</div>
+```
+
+A block can also be too wide (`"logo strip" is 12 mm too wide`). If no named block overflows but
+the poster still does, it reports the whole poster: `the poster runs 20 mm past the bottom`.
+
+## Preview the print while you write
+
+With `pnpm dev` running, add `?print` to the page address:
+`http://localhost:4321/?print`.
+
+The page shows as it will print: at the paper size, scaled to fit the window, with the print
+styles applied and light colours, as in the PDF. The same overflow check runs. Blocks that don't
+fit get a red outline, and a banner in the corner lists them. When everything fits, the banner
+turns green and shows the paper size. The preview updates as you edit.
+
+<Callout type="info">
+CSS rules that depend only on the window width (not on `print` or `screen`) still follow the
+window in the preview, not the paper. The PDF is the final word.
+</Callout>
+
+## Troubleshooting
+
+<Accordions>
+<Accordion title="could not open http://127.0.0.1:…/ (404); did you run astro build?">
+`posuta pdf` found no page at that address in `dist/`. Run `pnpm build` first (or `pnpm pdf`).
+If the site was built with a base path, pass the same `--base`, or set `BASE_PATH` as you did
+for the build. If you are exporting a page other than the home page, check `--page`.
+</Accordion>
+<Accordion title="… has no print size (--paper-w): wrap it in <Canvas>, or pass --print">
+The page has no print size, which `<Canvas>` sets. The template's layout uses `<Canvas>`; if
+you wrote your own layout, build it on [`<Canvas>`](/docs/customize/canvas).
+</Accordion>
+<Accordion title="… is not a posuta page: wrap it in <Canvas>">
+The page has a print size but no canvas element to measure. `posuta pdf` only exports pages
+built on `<Canvas>`.
+</Accordion>
+<Accordion title="content does not fit on the … canvas">
+See [the overflow check](#the-overflow-check). Shorten the named block, give its column a
+larger `span`, set a smaller `scale` in `print:`, or choose a larger paper. Open `?print` in
+`pnpm dev` to watch the red outlines go away as you edit.
+</Accordion>
+<Accordion title="posuta: unknown print size, or a custom print size needs both width and height">
+The `print:` value is not one posuta knows. Use a named size from the list above, or
+`{ width, height }` with units, such as `{ width: 36in, height: 48in }`. Orientation must be
+`portrait` or `landscape`, and `scale` a number above 0.
+</Accordion>
+<Accordion title="Chromium is missing">
+Run `pnpm exec posuta install` once. On Linux CI, use `pnpm exec posuta install --with-deps`.
+</Accordion>
+</Accordions>

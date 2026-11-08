@@ -1,0 +1,135 @@
+---
+title: Figure
+description: An SVG, an image or a video with a caption, on screen and in print.
+icon: Image
+---
+
+`<Figure>` places a picture with a caption: an SVG from matplotlib or a diagram tool, a photo, or
+a video that prints as a still frame.
+
+<ComponentPreview name="figure-svg" />
+
+## Usage
+
+Import the file at the top of the MDX page, then pass it as `src`:
+
+```mdx title="src/pages/index.mdx"
+import poles from "../../figures/poles.svg";
+
+<Figure src={poles} alt="The s-plane, with the poles of two systems." caption="Poles on a circle of radius ωn." />
+```
+
+The import path is relative to the page. `alt` is required: the build stops without it.
+
+## Examples
+
+### SVG
+
+An imported SVG is written into the page rather than linked. Its text uses the poster's fonts,
+it prints as vectors, and anything drawn in `currentColor` follows the page between light and
+dark. It keeps its own attributes and classes, and `$…$` in its text is typeset with KaTeX. This
+is how matplotlib figures and diagrams from Graphviz, Mermaid or draw.io reach the poster.
+
+<ComponentPreview name="figure-diagram" />
+
+### Image
+
+An imported image (`.png`, `.jpg`, …), or a path to a file in `public/` such as `"/photo.jpg"`,
+becomes a plain `<img>`. posuta does not resize or compress it, so use a file with enough pixels
+for the printed size.
+
+<ComponentPreview name="figure-image" />
+
+### Video
+
+A video (`.mp4`, `.webm`, `.mov`, `.m4v` or `.ogv`) needs `poster`, the still frame that
+prints; the build stops without it. On screen the video has controls, plays inline on phones and
+loads only its metadata until the reader presses play. In print, and in the PDF, the `poster`
+image takes its place.
+
+To add `muted`, `loop` or `autoplay`, use the parts and put them on `Figure.Media`. On the
+one-line `<Figure>`, extra attributes go on the outer `<figure>`, not on the video.
+
+<ComponentPreview name="figure-video" />
+
+A printed poster can't play the video. To point readers elsewhere, add a line that shows only in
+print, such as `<p data-print="only">Scan the QR code to watch it.</p>`.
+
+### Parts
+
+`<Figure>` is built from three parts: `Figure.Root`, `Figure.Media` and `Figure.Caption`. Use
+them directly to put the caption above, wrap the picture in a link, or add a credit line. Put
+them in any order, with any markup between them.
+
+<ComponentPreview name="figure-parts" />
+
+`Figure.Root` and `Figure.Caption` take `as` to render another element, such as
+`<Figure.Root as="div">`.
+
+## API reference
+
+### Figure
+
+<TypeTable
+  type={{
+    src: { type: 'imported file | string', description: 'An imported SVG or image, a path, or a video.', required: true },
+    alt: { type: 'string', description: 'What the figure shows, for screen readers. The build stops without it.', required: true },
+    caption: { type: 'string', description: 'The caption, in a figcaption. Leave it out for none.' },
+    poster: { type: 'imported image | string', description: 'For a video: the still frame shown in print. Required for a video.' },
+    class: { type: 'string', description: 'Classes for the figure. Any other attribute goes on the figure too.' },
+  }}
+/>
+
+### Figure.Root
+
+<TypeTable
+  type={{
+    as: { type: 'string', description: 'The element to render.', default: '"figure"' },
+    class: { type: 'string', description: 'Classes for the element. Any other attribute goes on it too.' },
+  }}
+/>
+
+### Figure.Media
+
+<TypeTable
+  type={{
+    src: { type: 'imported file | string', description: 'An imported SVG or image, a path, or a video.', required: true },
+    alt: { type: 'string', description: 'What it shows, for screen readers. The build stops without it.', required: true },
+    poster: { type: 'imported image | string', description: 'For a video: the still frame shown in print. Required for a video.' },
+    class: { type: 'string', description: 'Classes for the SVG, image or video, and for a video\'s print frame. Any other attribute, such as muted or loop, goes on the SVG, image or video.' },
+  }}
+/>
+
+### Figure.Caption
+
+<TypeTable
+  type={{
+    as: { type: 'string', description: 'The element to render.', default: '"figcaption"' },
+    class: { type: 'string', description: 'Classes for the element. Any other attribute goes on it too.' },
+  }}
+/>
+
+### Markup and class hooks
+
+```html
+<figure class="posuta-figure">
+  <!-- an SVG -->
+  <svg class="posuta-media" role="img" aria-label="…">…</svg>
+  <!-- or an image -->
+  <img class="posuta-media" src="…" alt="…" />
+  <!-- or a video, and its print frame -->
+  <video class="posuta-media" data-print="hide" controls playsinline preload="metadata" …></video>
+  <img class="posuta-media" data-print="only" src="…" alt="…" />
+  <figcaption class="posuta-caption">…</figcaption>
+</figure>
+```
+
+posuta's CSS only makes `.posuta-media` fill the width of its container, keeping its proportions.
+Margins, the caption's size and colour, and any border are yours; see
+[CSS, Tailwind and hooks](/docs/customize/css).
+
+## See also
+
+- [Figures from matplotlib](/docs/writing/figures): the matplotlib style, exporting SVG.
+- [Diagrams](/docs/writing/diagrams): SVG from Graphviz, Mermaid and other tools.
+- [Print size and PDF](/docs/print/pdf): the print preview and the PDF export.

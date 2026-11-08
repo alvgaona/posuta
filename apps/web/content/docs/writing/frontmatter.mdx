@@ -1,0 +1,185 @@
+---
+title: Frontmatter
+description: Every key a poster page can set at the top of its MDX file.
+icon: FileCode
+---
+
+The frontmatter is the block between the two `---` lines at the top of `src/pages/index.mdx`.
+It holds the title, the headline numbers, the print size and the colours. The body below it holds
+the sections.
+
+```mdx title="src/pages/index.mdx"
+---
+layout: ../layouts/Poster.astro
+eyebrow: Conference · City · Month Year
+title: The Title of Your Poster,
+highlight: with the Key Idea Highlighted
+lede: >-
+  One paragraph that says what the work does and why it matters.
+stats:
+  - { value: "3.2×", label: "the headline result", accent: true }
+  - { value: "105", label: "runs behind it" }
+footer: Your Name · your-lab.org
+cite: { authors: [Your Name, Coauthor Name], event: Conference Month Year, year: 2026 }
+print: { size: A0, orientation: portrait }
+bibliography: refs.bib
+---
+```
+
+The keys come from two places. posuta itself reads `bibliography`, and fills in `references`.
+Everything else is read by the template's layout, `src/layouts/Poster.astro`, which is a file in
+your project. If you write your own layout, you decide which keys it reads (see
+[Canvas](/docs/customize/canvas)).
+
+## All keys
+
+<TypeTable
+  type={{
+    layout: {
+      type: 'string',
+      description: 'The layout file that draws the page around the body. The template uses ../layouts/Poster.astro.',
+      required: true,
+    },
+    title: {
+      type: 'string',
+      description: 'The poster title. Shown as the heading, and used for the browser tab and link previews.',
+      required: true,
+    },
+    highlight: {
+      type: 'string',
+      description: 'Words added after the title and set apart (in the accent colour in the template). Part of the full title.',
+    },
+    eyebrow: {
+      type: 'string',
+      description: 'A short line above the title, such as the conference, city and date.',
+    },
+    lede: {
+      type: 'string',
+      description: 'The opening paragraph under the title. Takes inline Markdown, $maths$ and [@key] citations. Also the page description in search results and link previews (citations removed).',
+    },
+    stats: {
+      type: '{ value: string; label: string; accent?: boolean }[]',
+      description: 'Headline numbers next to the title. label takes inline Markdown and citations; accent sets the number apart.',
+      default: '[]',
+    },
+    footer: {
+      type: 'string',
+      description: 'A line at the bottom of the poster, such as names and a lab URL. Takes inline Markdown and citations.',
+    },
+    print: {
+      type: 'string | { size?, orientation?, width?, height?, scale? }',
+      description: 'The paper size and orientation, and a factor on the printed type size. See below.',
+      default: 'A0 portrait',
+    },
+    theme: {
+      type: '"light" | "dark" | Record<string, string>',
+      description: 'Fix the colour scheme, or override theme tokens such as { accent: "#0a7" }.',
+    },
+    qr: {
+      type: 'string | false',
+      description: 'Where the QR code on the printed poster points. Defaults to the page URL when site is set in astro.config.mjs; false removes it.',
+    },
+    cite: {
+      type: '{ authors: string[]; event?: string; year: number; doi?: string }',
+      description: 'How to cite the poster: a BibTeX entry on the page (screen only) and Google Scholar tags in its head.',
+    },
+    bibliography: {
+      type: 'string',
+      description: 'A BibTeX file, relative to the page, that [@key] citations come from.',
+    },
+    references: {
+      type: '{ key: string; n: number; text: string; doi?: string }[]',
+      description: 'Set by posuta, not by you: the entries cited on the page, in order. Read it to build your own reference list.',
+    },
+  }}
+/>
+
+The template has no separate `authors` or `affiliations` key. Put names in the `eyebrow`, the
+`footer` or a section, and list authors for citation in `cite.authors`. If you want an author
+line under the title, add the key yourself and render it in `src/layouts/Poster.astro`.
+
+## Text that takes Markdown
+
+`lede`, each stat `label` and `footer` accept inline Markdown: `**bold**`, `*italic*`,
+`[links](https://…)`, `` `code` ``, `$maths$` and `[@key]` citations. Citations here are numbered
+before the ones in the body, because they come first on the poster.
+
+```yaml title="src/pages/index.mdx"
+lede: The step response of a **second-order system** with $\zeta = 0.2$ [@ogata2010modern].
+```
+
+The template does this with `md()` from `posuta/md`. Other keys, such as `title`, are shown as
+plain text. YAML treats some characters specially; if a value starts with a quote, a `[` or a
+`{`, or contains `: `, wrap it in quotes or use `>-` and put the text on the next lines, as the
+`lede` above does.
+
+## Print size
+
+`print` sets the paper. The PDF that `posuta pdf` writes uses it, and so does the browser's print
+dialog.
+
+```yaml title="src/pages/index.mdx"
+print: A1                                    # a named size, portrait
+print: A1 landscape                          # size and orientation in one string
+print: { size: A0, orientation: landscape }
+print: { width: 900mm, height: 1200mm }      # any size, in mm, cm or in
+print: { size: A0, scale: 0.8 }              # printed text at 80 %
+```
+
+<TypeTable
+  type={{
+    size: {
+      type: 'string',
+      description: 'A0, A1, A2, A3, 24x36in, 36x48in, 42x56in or 48x72in.',
+      default: 'A0',
+    },
+    orientation: {
+      type: '"portrait" | "landscape"',
+      description: 'Turns the sheet. Also works with a custom width and height.',
+      default: 'portrait',
+    },
+    width: {
+      type: 'string',
+      description: 'A custom width with its unit: mm, cm or in, such as 900mm or 36in. Needs height too.',
+    },
+    height: {
+      type: 'string',
+      description: 'A custom height with its unit. Needs width too.',
+    },
+    scale: {
+      type: 'number',
+      description: 'Multiplies the printed type size. Below 1 for smaller text, above 1 for larger.',
+      default: '1',
+    },
+  }}
+/>
+
+Text is sized for A0 and follows the area of the sheet, so a smaller sheet gets smaller type. An
+unknown size, a width without a height, or a size without a unit stops the build with an error
+that says what to fix. More on printing in [PDF](/docs/print/pdf).
+
+## Theme
+
+```yaml title="src/pages/index.mdx"
+theme: dark                                  # or light: one scheme, whatever the reader's setting
+theme: { accent: "#0a7d55", font-display: "Georgia, serif" }
+```
+
+A string fixes the colour scheme. An object sets CSS custom properties on the page: each key
+becomes `--key`. Which tokens exist depends on your theme; the template's are in
+`src/styles/theme.css`. See [Themes](/docs/customize/themes).
+
+## QR code and citing the poster
+
+When `site` is set in `astro.config.mjs`, the printed poster carries a QR code to its live page.
+`qr: https://…` points it somewhere else, and `qr: false` removes it. The code shows in print
+only.
+
+`cite` adds a "Cite this poster" box with a BibTeX entry (screen only) and the `citation_*` tags
+Google Scholar reads. The entry's URL is the page's, when `site` is set. For a DOI, upload the
+poster PDF to [Zenodo](https://zenodo.org) and add `doi`. See [Publish](/docs/print/publish).
+
+## Bibliography
+
+`bibliography: refs.bib` names a BibTeX file next to the page. Every `[@key]` on the page is
+looked up there. See [Citations](/docs/writing/citations).

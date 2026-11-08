@@ -1,0 +1,76 @@
+---
+title: Equation
+description: A display equation in LaTeX, typeset with KaTeX at build time, with an optional number.
+icon: Sigma
+---
+
+`<Equation>` shows an equation on its own line, with a number at the side if you give one. It
+needs no JavaScript in the browser and prints as text at any size.
+
+<ComponentPreview name="equation" />
+
+## Usage
+
+```mdx title="src/pages/index.mdx"
+<Equation n={1} tex="\ddot y + 2\zeta\omega_n \dot y + \omega_n^2 y = \omega_n^2 u" />
+```
+
+Inside `tex="…"` a backslash is just a backslash: write `\frac`, not `\\frac`. If the equation
+contains a double quote, put single quotes around it: `tex='…'`.
+
+## Examples
+
+### Numbered
+
+`n` is the label shown in brackets, as in the example at the top. It is text you choose:
+posuta does not count equations for you, so `n="2a"` works as well as `n={2}`. To refer to an
+equation, write "Eq. 2" in the text.
+
+### Unnumbered
+
+Leave out `n` for no number.
+
+<ComponentPreview name="equation-unnumbered" />
+
+### Long equations
+
+An equation wider than its column scrolls sideways instead of spilling out. The preview below is
+narrowed to show it.
+
+<ComponentPreview name="equation-long" />
+
+On a printed poster nothing scrolls, so check long equations in the
+[print preview](/docs/print/pdf), or split them over two `<Equation>`s.
+
+## Errors
+
+A mistake in the LaTeX, such as an unknown command or a missing brace, stops the build with
+KaTeX's error, so a broken equation never reaches the poster.
+
+## API reference
+
+<TypeTable
+  type={{
+    tex: { type: 'string', description: 'The equation in LaTeX, without dollar signs.', required: true },
+    n: { type: 'number | string', description: 'The label shown in brackets at the side, such as 1 for (1). Leave it out for no number.' },
+    class: { type: 'string', description: 'Classes for the div. Any other attribute goes on it too.' },
+  }}
+/>
+
+### Markup and class hooks
+
+```html
+<div class="posuta-eq">
+  <span class="katex-display">…</span>  <!-- KaTeX's output -->
+  <span class="posuta-eq-n">(1)</span>  <!-- only with n -->
+</div>
+```
+
+posuta's CSS puts the number beside the equation (`.posuta-eq` is a flex row) and lets a wide
+equation scroll. Its size, alignment and the space around it are yours; see
+[CSS, Tailwind and hooks](/docs/customize/css).
+
+## See also
+
+- [Maths](/docs/writing/maths): inline maths in the text, and display maths without a number.
+- [Print size and PDF](/docs/print/pdf): checking the printed page.

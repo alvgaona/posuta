@@ -1,0 +1,70 @@
+---
+title: QR
+description: A QR code as an SVG, made at build time, that prints as vectors.
+icon: QrCode
+---
+
+`<QR>` draws a QR code to a web address, so readers of the printed poster can open the page, a
+video or a paper on their phone.
+
+<ComponentPreview name="qr-url" />
+
+## Usage
+
+```mdx title="src/pages/index.mdx"
+<QR url="https://lab.example/poster/" />
+```
+
+Without `url`, it points at the current page, when `site` is set in `astro.config.mjs`. With
+neither, it renders nothing.
+
+## Examples
+
+### A link of your own
+
+Give `url` to point at anything else: a video, a data set, the paper. Add
+`data-print="only"` to show it only on the printed poster; on screen the reader can click a link
+instead.
+
+```mdx title="src/pages/index.mdx"
+<QR url="https://lab.example/flight.mp4" data-print="only" />
+```
+
+### Sized with CSS
+
+The SVG has no width or height of its own. Size it with a class, from your stylesheet or with
+Tailwind utilities:
+
+<ComponentPreview name="qr-sized" />
+
+In print, size it in `rem` so it scales with the paper, like the rest of the poster. Keep it
+large enough to scan from a step away: a few centimetres across at the least.
+
+## API reference
+
+<TypeTable
+  type={{
+    url: { type: 'string', description: 'The address the code points at. Leave it out to use the current page\'s URL, which needs site set in astro.config.mjs.' },
+    class: { type: 'string', description: 'Classes for the svg, added after posuta-qr. Any other attribute, such as data-print, goes on the svg too.' },
+  }}
+/>
+
+### Markup and class hooks
+
+```html
+<svg class="posuta-qr" role="img" aria-label="QR code: https://…" viewBox="0 0 N N" …>
+  <path fill="#ffffff" …/>  <!-- the light background -->
+  <path stroke="#000000" …/> <!-- the modules -->
+</svg>
+```
+
+The code is black on white, with no quiet zone around it, in both light and dark mode, since
+scanners need the contrast. Leave some space around it in your layout.
+
+For a QR code inside your own markup, `qrSvg()` from `posuta/qr` returns the same SVG as text;
+see [Tools](/docs/reference/tools).
+
+## See also
+
+- [Publish](/docs/print/publish#the-qr-code): the template's QR code in the footer, and the
+  `qr` frontmatter field.

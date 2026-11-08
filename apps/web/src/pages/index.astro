@@ -1,0 +1,8 @@
+---
+import Layout from '@/layouts/Layout.astro';
+import { Readme } from '@/components/readme';
+---
+
+<Layout title="posuta" description="Research posters for the web and for print.">
+  <Readme client:load pathname={Astro.url.pathname} params={Astro.params} />
+</Layout>

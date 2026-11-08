@@ -5,8 +5,9 @@ Researchers write MDX; the output is a static site for any free host plus a vect
 It grew out of two hand-written HTML posters (ft-tilt, dq-formation) that were hard to read and edit.
 
 ## Repo
-pnpm workspace. `packages/posuta` (Astro integration, components, theme) and `template` (the
-starter poster that `create-posuta` copies; `pnpm dev` / `pnpm build` run it). Project posters
+pnpm workspace. `packages/posuta` (Astro integration, components, theme), `template` (the
+starter poster that `create-posuta` copies; `pnpm dev` / `pnpm build` run it) and `apps/web`
+(the Fumadocs docs site on Astro; `pnpm docs`). Project posters
 (ft-tilt, dq-formation) live in their own repos, not here.
 
 ## Decisions (agreed; change them only with the user)
@@ -35,6 +36,11 @@ starter poster that `create-posuta` copies; `pnpm dev` / `pnpm build` run it). P
   `theme, base, posuta.base, posuta.theme, components, utilities`; unlayered CSS beats all.
 - **No diagram builder in posuta.** Diagrams come from outside tools as SVG through `<Figure>`,
   or through the author's own remark/rehype plugins (`posuta({ rehypePlugins })`).
+- **Docs: Fumadocs on Astro** (`apps/web`), static like everything else, so the docs can render
+  real posuta components. `@fumadocs/astro` is 0.x: keep it pinned to an exact version.
+  `apps/web` pins `astro` to 7.4.6: 7.4.7 moved to Sätteri 0.11 while `@fumadocs/astro` 0.2.1 is
+  on 0.10, and the mismatch drops code highlighting and boxes every block twice. Unpin once
+  `@fumadocs/astro` moves to Sätteri 0.11.
 - **MDX without imports**: posuta's components and the poster's `src/components/` are available
   in MDX without import lines.
 

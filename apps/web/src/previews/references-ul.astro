@@ -1,0 +1,19 @@
+---
+import References from 'posuta/References';
+// What posuta's citation plugin puts on frontmatter.references for three [@key] citations
+// (template/src/pages/refs.bib, Vancouver style). The plugin doesn't run in the docs app.
+const frontmatter = {
+  references: [
+    { key: 'ogata2010modern', n: 1, text: 'Ogata K. Modern Control Engineering. 5th ed. Prentice Hall; 2010.' },
+    { key: 'knuth1984tex', n: 2, text: 'Knuth DE. The TeXbook. Addison-Wesley; 1984.' },
+    { key: 'bostock2011d3', n: 3, text: 'Bostock M, Ogievetsky V, Heer J. D³: Data-Driven Documents. IEEE Transactions on Visualization and Computer Graphics. 2011;17(12):2301–9.', doi: '10.1109/TVCG.2011.185' },
+  ],
+};
+---
+<References.Root as="ul" class="refs">
+  {frontmatter.references.map((e) => <References.Item entry={e}><b>[{e.n}]</b> {e.text}</References.Item>)}
+</References.Root>
+<style is:global>
+  .refs { list-style: none; padding-left: 0; }
+  .refs li + li { margin-top: 0.25rem; }
+</style>

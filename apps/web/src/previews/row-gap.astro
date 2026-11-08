@@ -1,0 +1,15 @@
+---
+import Col from 'posuta/Col.astro';
+import Row from 'posuta/Row.astro';
+---
+<Row style="--posuta-gap: 0.5rem">
+  <Col><p class="box">gap 0.5rem</p></Col>
+  <Col><p class="box">gap 0.5rem</p></Col>
+</Row>
+<Row class="wide-gap">
+  <Col><p class="box">gap 5rem</p></Col>
+  <Col><p class="box">gap 5rem</p></Col>
+</Row>
+<style is:global>
+  .wide-gap { --posuta-gap: 5rem; }
+</style>

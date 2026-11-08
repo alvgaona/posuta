@@ -1,0 +1,16 @@
+---
+import Chart from 'posuta/Chart.astro';
+---
+<Chart
+  data={[
+    { mass: 0.5, error: 2.1 }, { mass: 1.0, error: 2.4 }, { mass: 1.5, error: 1.9 },
+    { mass: 2.0, error: 2.6 }, { mass: 2.5, error: 2.2 }, { mass: 3.0, error: 2.5 },
+  ]}
+  plot={(d, Plot) => ({
+    height: 240,
+    x: { label: "payload (kg)" },
+    y: { label: "tracking error (cm)", domain: [0, 3], grid: true },
+    marks: [Plot.dot(d, { x: "mass", y: "error", r: 4 })],
+  })}
+  alt="Tracking error against payload mass for six runs; it stays between 2 and 2.6 cm."
+/>

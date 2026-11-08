@@ -1,0 +1,1 @@
+{ "title": "Customize", "icon": "Palette", "defaultOpen": true, "pages": ["themes", "canvas", "css", "plugins"] }

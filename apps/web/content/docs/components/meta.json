@@ -1,0 +1,1 @@
+{ "title": "Components", "icon": "Component", "defaultOpen": true, "pages": ["chart", "figure", "equation", "row", "grid", "references", "qr", "canvas"] }

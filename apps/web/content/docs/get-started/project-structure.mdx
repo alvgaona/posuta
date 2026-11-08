@@ -1,0 +1,131 @@
+---
+title: Project structure
+description: What each file in a new poster is for, and which ones you edit.
+icon: FolderTree
+---
+
+This is what `pnpm create posuta` puts in your folder. Every file is yours: posuta itself lives
+in `node_modules`, and nothing in the project is overwritten when you update it.
+
+<Files>
+  <Folder name="my-poster" defaultOpen>
+    <Folder name=".devcontainer">
+      <File name="devcontainer.json" />
+    </Folder>
+    <Folder name=".github">
+      <Folder name="workflows">
+        <File name="deploy.yaml" />
+      </Folder>
+    </Folder>
+    <Folder name="charts" defaultOpen>
+      <File name="step.js" />
+    </Folder>
+    <Folder name="data" defaultOpen>
+      <File name="step.csv" />
+    </Folder>
+    <Folder name="figures" defaultOpen>
+      <File name="loop.dot" />
+      <File name="loop.svg" />
+      <File name="poles.py" />
+      <File name="poles.svg" />
+    </Folder>
+    <Folder name="src" defaultOpen>
+      <Folder name="components" defaultOpen>
+        <File name="Section.astro" />
+      </Folder>
+      <Folder name="layouts" defaultOpen>
+        <File name="Poster.astro" />
+      </Folder>
+      <Folder name="media">
+        <File name="oscillator.jpg" />
+        <File name="oscillator.mp4" />
+      </Folder>
+      <Folder name="pages" defaultOpen>
+        <File name="index.mdx" />
+        <File name="refs.bib" />
+      </Folder>
+      <Folder name="styles" defaultOpen>
+        <File name="theme.css" />
+      </Folder>
+    </Folder>
+    <File name=".gitignore" />
+    <File name="astro.config.mjs" />
+    <File name="package.json" />
+    <File name="README.md" />
+  </Folder>
+</Files>
+
+## What you edit
+
+These hold the poster's content. Expect to change them for every poster.
+
+- **`src/pages/index.mdx`**: the poster. Frontmatter at the top (title, lede, stats, footer,
+  print size, how to cite it), then the sections in Markdown. See
+  [frontmatter](/docs/writing/frontmatter).
+- **`src/pages/refs.bib`**: your references in BibTeX, cited in the text as `[@key]`. See
+  [citations](/docs/writing/citations).
+- **`charts/`**: one JavaScript file per chart, turning rows of data into a Plot chart. `step.js`
+  is the example. See [charts](/docs/writing/charts).
+- **`data/`**: the data the charts read, as CSV or JSON.
+- **`figures/`**: SVG figures and the sources that make them. `poles.py` draws `poles.svg` with
+  matplotlib and posuta's style; `loop.dot` is the Graphviz source of `loop.svg`. See
+  [figures](/docs/writing/figures) and [diagrams](/docs/writing/diagrams).
+- **`src/media/`**: images and video. The template's video has a still image, which is what
+  prints.
+
+## What you may edit
+
+These set the poster's look. They work as they are; change them when you want a different
+design.
+
+- **`src/layouts/Poster.astro`**: the page around your sections: the header (eyebrow, title,
+  highlight, lede), the stats, the footer, the QR code and the "cite this poster" block. It is
+  built on posuta's `<Canvas>`. See [your own canvas](/docs/customize/canvas).
+- **`src/components/Section.astro`**: the numbered section block, `<Section n title sub panel>`.
+  Any component you add to `src/components/` can be used in the MDX without an import line.
+- **`src/styles/theme.css`**: colours, fonts and spacing, as CSS custom properties for light and
+  dark mode, plus the styles of the layout and sections. See [themes](/docs/customize/themes)
+  and [CSS](/docs/customize/css).
+- **`README.md`**: the repository's front page. It has editing notes and the StackBlitz and
+  Codespaces buttons; replace `OWNER/REPO` in their links.
+
+## What you rarely touch
+
+- **`astro.config.mjs`**: the site configuration (explained below).
+- **`package.json`**: the dependencies (Astro, posuta, the IBM Plex fonts) and the commands:
+  `pnpm dev` for the live preview, `pnpm build` for the static site in `dist/`, `pnpm preview`
+  to serve the built site, and `pnpm pdf` to build and export `poster.pdf` and `handout.pdf`.
+- **`.github/workflows/deploy.yaml`**: builds the page and the PDF and publishes both to GitHub
+  Pages on every push to `main`. See [publish](/docs/print/publish).
+- **`.devcontainer/devcontainer.json`**: sets up GitHub Codespaces: Node, the dependencies,
+  the browser for the PDF, and the Astro and MDX editor extensions.
+- **`.gitignore`**: keeps `node_modules/`, `dist/`, `.astro/` and PDFs out of git.
+
+Running the project also creates `node_modules/`, `.astro/` (Astro's cache) and `dist/` (the
+built site and PDFs). Don't edit them; they are rebuilt.
+
+## `astro.config.mjs`
+
+```js title="astro.config.mjs"
+import { defineConfig } from "astro/config";
+import posuta from "posuta";
+
+export default defineConfig({
+  site: process.env.SITE,
+  base: process.env.BASE_PATH,
+  integrations: [posuta()], // [!code highlight]
+});
+```
+
+- `integrations: [posuta()]` turns posuta on: the components, MDX, KaTeX, charts and
+  citations. Options go inside the brackets, such as a citation style or a lab theme; see
+  [integration options](/docs/reference/integration).
+- `site` is the full address where the poster will live, such as `https://you.github.io`. With
+  it set, the printed poster gets a QR code to the live page, and the page gets link-preview
+  tags.
+- `base` is the path under that address, such as `/my-poster/` for a GitHub Pages project
+  site.
+
+Both are read from the `SITE` and `BASE_PATH` environment variables, which the GitHub Pages
+workflow fills in. For another host, set those variables in its build settings, or write the
+values into this file.

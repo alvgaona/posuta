@@ -1,0 +1,128 @@
+---
+title: Publish
+description: Put the poster online, with its PDF, a QR code and link previews.
+icon: Globe
+---
+
+You get a public web page for the poster, the PDF next to it, a QR code on the printed sheet
+that leads to the page, and a preview card when someone shares the link. The output is a folder
+of static files, so any static host works. There is no server and no account to keep.
+
+## GitHub Pages
+
+The template comes with a workflow, `.github/workflows/deploy.yaml`, that builds and publishes
+the poster on every push to `main`.
+
+<Steps>
+<Step>
+
+### Push the poster to GitHub
+
+Create a repository and push your poster to its `main` branch.
+
+</Step>
+<Step>
+
+### Turn on Pages, once
+
+In the repository, open **Settings → Pages** and set **Source** to **GitHub Actions**.
+
+</Step>
+<Step>
+
+### Push
+
+Each push to `main` (or a manual run from the **Actions** tab) does this:
+
+1. Installs the dependencies and Chromium (`pnpm exec posuta install --with-deps`).
+2. Asks GitHub for the page's address and base path, and passes them to the build as `SITE`
+   and `BASE_PATH`.
+3. Runs `pnpm pdf`: builds the site, then writes `dist/poster.pdf`, `dist/handout.pdf` and
+   `dist/og.png`.
+4. Attaches `poster.pdf` to the workflow run as a download named `poster`.
+5. Publishes the whole `dist/` folder to Pages.
+
+</Step>
+</Steps>
+
+Because the PDF is inside `dist/`, it is published with the page: if the poster lives at
+`https://you.github.io/my-poster/`, the PDF is at `https://you.github.io/my-poster/poster.pdf`.
+Link to it from the poster if you like.
+
+If the overflow check fails, so does the workflow, and nothing is published. The run's log names
+the block that doesn't fit (see [the overflow check](/docs/print/pdf#the-overflow-check)).
+
+## The site address
+
+The template's `astro.config.mjs` reads the address from the environment:
+
+```js title="astro.config.mjs"
+export default defineConfig({
+  site: process.env.SITE,      // the address the page is served at /* [!code highlight] */
+  base: process.env.BASE_PATH, // the path under it, e.g. /my-poster/
+  integrations: [posuta()],
+});
+```
+
+- `site` is the page's origin, such as `https://you.github.io`. posuta uses it to build the
+  page's full URL for the QR code, the link-preview tags and the citation entry. Without it,
+  the poster has no QR code and no preview image.
+- `base` is the path the site sits under, when it is not at the root of the domain. A GitHub
+  project site sits under `/<repository>/`.
+
+The GitHub workflow fills both in. On another host, set `SITE` (and `BASE_PATH` if needed) as
+environment variables in the host's settings, or write the values into `astro.config.mjs`.
+
+## The QR code
+
+When `site` is set, the template's footer prints a QR code to the live page, with the address
+next to it. It shows only in print; on screen the reader is already on the page.
+
+Point it somewhere else, or remove it, in the frontmatter:
+
+```yaml title="src/pages/index.mdx"
+qr: https://lab.example/poster-video/   # a different address
+qr: false                               # no QR code
+```
+
+To place a QR code yourself, use the `<QR>` component. With no `url`, it points at the current
+page (when `site` is set); otherwise at the address you give. It renders an `svg.posuta-qr` with
+no size, so size it with CSS. It renders nothing when there is no address.
+
+```mdx title="src/pages/index.mdx"
+<QR url="https://lab.example/flight.mp4" data-print="only" class="video-qr" />
+```
+
+`data-print="only"` hides it on screen. For QR codes in your own markup, `qrSvg()` from
+`posuta/qr` returns the SVG text; see [tools](/docs/reference/tools).
+
+## Link previews
+
+When someone shares the page in a chat or on social media, the app shows a card. `<Canvas>`
+adds the tags that card reads: the title, the description (in the template, the `lede`), the
+page's URL, and an image.
+
+The image is `og.png`, which `posuta pdf` writes next to the page: the top 1200×630 px of the
+poster as it looks on screen. Two things must be true for the card to show it:
+
+- `site` is set, so the tags carry full URLs.
+- `og.png` was published with the page. `pnpm pdf` makes it; `pnpm build` alone does not.
+
+## Other static hosts
+
+Cloudflare Pages, Netlify, Vercel and similar hosts serve the same folder. In the host's
+settings:
+
+| Setting | Value |
+| --- | --- |
+| Build command | `pnpm build` |
+| Output directory | `dist` |
+| Environment variable | `SITE`, the address the host gives you, e.g. `https://my-poster.pages.dev` |
+
+Set `BASE_PATH` only if the poster is served under a sub-path.
+
+<Callout type="warn">
+`pnpm build` makes the web page only. The PDF and `og.png` come from `pnpm pdf`, which needs
+Chromium on the build machine. If your host can't run it, export the PDF on your own computer
+with `pnpm pdf`, or publish through the GitHub Pages workflow, which installs Chromium for you.
+</Callout>
