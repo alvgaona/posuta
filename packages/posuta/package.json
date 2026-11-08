@@ -1,0 +1,19 @@
+{
+  "name": "posuta",
+  "version": "0.0.0",
+  "description": "Research posters for the web and for print, built with Astro",
+  "license": "MIT",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./Poster.astro": "./src/Poster.astro",
+    "./Section.astro": "./src/Section.astro",
+    "./theme.css": "./src/theme.css"
+  },
+  "peerDependencies": {
+    "astro": "^7.4.0"
+  },
+  "dependencies": {
+    "@astrojs/mdx": "^8.1.3"
+  }
+}

@@ -1,0 +1,38 @@
+---
+// Page layout for a poster. Used from MDX frontmatter: `layout: posuta/Poster.astro`.
+import "./theme.css";
+
+interface Stat { value: string; label: string; accent?: boolean }
+interface Frontmatter { title: string; highlight?: string; eyebrow?: string; lede?: string; stats?: Stat[]; footer?: string }
+const { frontmatter } = Astro.props as { frontmatter: Frontmatter };
+const { title, highlight, eyebrow, lede, stats = [], footer } = frontmatter;
+---
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{title}{highlight ? ` ${highlight}` : ""}</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&family=IBM+Plex+Serif:wght@500;600&display=swap">
+</head>
+<body>
+  <div class="poster">
+    <header class="hero">
+      <div>
+        {eyebrow && <div class="eyebrow">{eyebrow}</div>}
+        <h1>{title}{highlight && <> <em>{highlight}</em></>}</h1>
+        {lede && <p class="lede">{lede}</p>}
+      </div>
+      {stats.length > 0 && (
+        <div class="stats">
+          {stats.map((s) => <div class="stat"><b class:list={{ acc: s.accent }}>{s.value}</b><span>{s.label}</span></div>)}
+        </div>
+      )}
+    </header>
+    <main><slot /></main>
+    {footer && <footer>{footer}</footer>}
+  </div>
+</body>
+</html>

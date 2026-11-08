@@ -1,0 +1,26 @@
+---
+layout: posuta/Poster.astro
+eyebrow: Conference · City · Month Year
+title: The Title of Your Poster,
+highlight: with the Key Idea Highlighted
+lede: >-
+  One paragraph that says what the work does and why it matters. Readers decide here whether to
+  stop, so give them the result, not the background.
+stats:
+  - { value: "3.2×", label: "the headline result, with what it is measured against", accent: true }
+  - { value: "105", label: "runs, subjects or samples behind it" }
+footer: Your Name · your-lab.org
+---
+import Section from "posuta/Section.astro";
+
+<Section n={1} title="The problem" sub="One line of context under the heading.">
+
+Write in plain **Markdown**. Each section is a numbered block of the poster.
+
+</Section>
+
+<Section n={2} title="The idea" panel>
+
+Use `panel` to set a section apart, for the method or the main result.
+
+</Section>

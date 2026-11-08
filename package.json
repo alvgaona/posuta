@@ -1,0 +1,15 @@
+{
+  "name": "posuta-monorepo",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "pnpm --filter posuta-template dev",
+    "build": "pnpm --filter posuta-template build"
+  },
+  "devDependencies": {
+    "@commitlint/cli": "21.2.4",
+    "@commitlint/config-conventional": "21.2.4",
+    "lefthook": "^2.2.2"
+  },
+  "packageManager": "pnpm@12.16.1"
+}
