@@ -102,8 +102,10 @@ Then `.github/workflows/release.yaml` runs these steps.
 
 1. Fails unless both packages' versions equal the tag.
 2. Runs the tests.
-3. Publishes both packages to npm.
-4. Creates a GitHub release with notes generated from the commits.
+3. Writes the release notes from the commits since the last tag with git-cliff, set up in
+   `cliff.toml`.
+4. Publishes both packages to npm.
+5. Creates a GitHub release with those notes.
 
 <Callout type="warn" title="npm token">
   Publishing needs an npm access token stored as the repository secret `NPM_TOKEN`.
