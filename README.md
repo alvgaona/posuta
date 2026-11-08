@@ -1,5 +1,5 @@
 <p align="center">
-  <img src=".github/banner.png" alt="posuta (ポスター): research posters for the web and for print" width="100%">
+  <img src=".github/banner.png" alt="posuta (ポスター), research posters for the web and for print" width="100%">
 </p>
 
 <p align="center">
@@ -49,18 +49,18 @@ Plain **Markdown**, maths like $\omega_n = 4\ \mathrm{rad/s}$ and citations [@og
 </Section>
 ```
 
-No import lines: posuta's components and your own `src/components/` are available in MDX.
+No import lines needed, since posuta's components and your own `src/components/` are available in MDX.
 
 ## What you get
 
 - **A web page and a PDF from one source.** A static site for GitHub Pages, Cloudflare, Netlify
   or Vercel, and one vector PDF page at A0, A1, 36×48 in or your own size.
 - **Nothing silently cut.** The PDF export fails if anything runs past the page, and names the block.
-- **Charts that print.** Observable Plot drawn to SVG at build time; tooltips and sliders in the browser.
+- **Charts that print.** Observable Plot drawn to SVG at build time, with tooltips and sliders in the browser.
 - **Maths with KaTeX**, rendered at build time in text, equations and chart labels.
-- **Citations.** BibTeX in; numbered citations and a reference list in any CSL style out.
-- **Figures and video.** Matplotlib and other SVGs inline; videos print their poster frame.
-- **Your look.** Components are unstyled with `posuta-*` class hooks; Tailwind and plain CSS both work.
+- **Citations.** BibTeX in, numbered citations and a reference list in any CSL style out.
+- **Figures and video.** Matplotlib and other SVGs inline, and videos print their poster frame.
+- **Your look.** Components are unstyled with `posuta-*` class hooks. Tailwind and plain CSS both work.
 - **QR code and cite-this-poster**, linking the printed poster to its live page.
 
 ## Packages
@@ -68,7 +68,7 @@ No import lines: posuta's components and your own `src/components/` are availabl
 | Package | |
 | --- | --- |
 | [`@posuta/posuta`](packages/posuta) | The Astro integration, components, tools (`@posuta/posuta/plot`, `/print`, `/tex`…) and the `posuta` CLI. |
-| [`create-posuta`](packages/create-posuta) | `pnpm create posuta`: copies the [starter poster](template). |
+| [`create-posuta`](packages/create-posuta) | `pnpm create posuta`, which copies the [starter poster](template). |
 
 ## Develop
 

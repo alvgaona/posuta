@@ -1,6 +1,6 @@
 # My poster
 
-A research poster made with [posuta](https://github.com/alvgaona/posuta): a web page and a
+A research poster made with [posuta](https://github.com/alvgaona/posuta), as a web page and a
 printable PDF from one MDX file.
 
 [![Open in StackBlitz](https://developer.stackblitz.com/img/open_in_stackblitz.svg)](https://stackblitz.com/github/OWNER/REPO)
@@ -10,13 +10,14 @@ Replace `OWNER/REPO` in the two links above with this repository's.
 
 ## Edit
 
-- Text, sections and frontmatter: `src/pages/index.mdx`
-- Header, footer and QR code: `src/layouts/Poster.astro`; the look: `src/styles/theme.css`
-- Your components: `src/components/` (used in the MDX without import lines, like `<Section>`)
-- References: `src/pages/refs.bib`
-- Charts: `charts/` (one file per chart), their data in `data/`
-- Figures: `figures/` (`poles.py` makes `poles.svg` with matplotlib; `loop.dot` is the Graphviz
-  source of `loop.svg`). Images and video: `src/media/`
+- Text, sections and frontmatter are in `src/pages/index.mdx`.
+- Header, footer and QR code are in `src/layouts/Poster.astro`, and the look in
+  `src/styles/theme.css`.
+- Your components go in `src/components/` (used in the MDX without import lines, like `<Section>`).
+- References are in `src/pages/refs.bib`.
+- Charts are in `charts/` (one file per chart), their data in `data/`.
+- Figures are in `figures/` (`poles.py` makes `poles.svg` with matplotlib, and `loop.dot` is the
+  Graphviz source of `loop.svg`). Images and video are in `src/media/`.
 
 ```sh
 pnpm install
@@ -26,6 +27,6 @@ pnpm pdf     # dist/poster.pdf at the print size (run `pnpm exec posuta install`
 
 ## Publish
 
-Push to GitHub and turn on Pages (Settings → Pages → Source: GitHub Actions). Every push to
+Push to GitHub and turn on Pages (Settings → Pages, then set Source to GitHub Actions). Every push to
 `main` builds the page, exports the PDF to `<your page>/poster.pdf`, and attaches it to the
 workflow run. The printed poster carries a QR code to the live page.

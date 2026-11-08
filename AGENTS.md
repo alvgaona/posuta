@@ -52,3 +52,6 @@ tools and unstyled components is planned in `.agents/plans/primitives.md`.
 - Conventional Commits, `type(scope): subject`.
 - Keep the theme as CSS custom properties on `:root`, light and dark.
 - Every component must render without client JS, and must look right in print.
+- Documentation prose (docs, READMEs, site copy) has no semicolons, no colons and no inline code
+  with parentheses. Write `qrSvg`, not `qrSvg()`. Split the sentence, or end it with a full stop
+  before a list or code block. Code, frontmatter keys and component props are exempt.

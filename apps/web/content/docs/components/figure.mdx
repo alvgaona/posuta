@@ -4,14 +4,14 @@ description: An SVG, an image or a video with a caption, on screen and in print.
 icon: Image
 ---
 
-`<Figure>` places a picture with a caption: an SVG from matplotlib or a diagram tool, a photo, or
-a video that prints as a still frame.
+`<Figure>` places a picture with a caption, whether an SVG from matplotlib or a diagram tool, a
+photo, or a video that prints as a still frame.
 
 <ComponentPreview name="figure-svg" />
 
 ## Usage
 
-Import the file at the top of the MDX page, then pass it as `src`:
+Import the file at the top of the MDX page, then pass it as `src`.
 
 ```mdx title="src/pages/index.mdx"
 import poles from "../../figures/poles.svg";
@@ -19,7 +19,7 @@ import poles from "../../figures/poles.svg";
 <Figure src={poles} alt="The s-plane, with the poles of two systems." caption="Poles on a circle of radius ωn." />
 ```
 
-The import path is relative to the page. `alt` is required: the build stops without it.
+The import path is relative to the page. `alt` is required. The build stops without it.
 
 ## Examples
 
@@ -43,7 +43,7 @@ for the printed size.
 ### Video
 
 A video (`.mp4`, `.webm`, `.mov`, `.m4v` or `.ogv`) needs `poster`, the still frame that
-prints; the build stops without it. On screen the video has controls, plays inline on phones and
+prints. The build stops without it. On screen the video has controls, plays inline on phones and
 loads only its metadata until the reader presses play. In print, and in the PDF, the `poster`
 image takes its place.
 
@@ -57,7 +57,7 @@ print, such as `<p data-print="only">Scan the QR code to watch it.</p>`.
 
 ### Parts
 
-`<Figure>` is built from three parts: `Figure.Root`, `Figure.Media` and `Figure.Caption`. Use
+`<Figure>` is built from three parts, `Figure.Root`, `Figure.Media` and `Figure.Caption`. Use
 them directly to put the caption above, wrap the picture in a link, or add a credit line. Put
 them in any order, with any markup between them.
 
@@ -75,7 +75,7 @@ them in any order, with any markup between them.
     src: { type: 'imported file | string', description: 'An imported SVG or image, a path, or a video.', required: true },
     alt: { type: 'string', description: 'What the figure shows, for screen readers. The build stops without it.', required: true },
     caption: { type: 'string', description: 'The caption, in a figcaption. Leave it out for none.' },
-    poster: { type: 'imported image | string', description: 'For a video: the still frame shown in print. Required for a video.' },
+    poster: { type: 'imported image | string', description: 'For a video, the still frame shown in print. Required for a video.' },
     class: { type: 'string', description: 'Classes for the figure. Any other attribute goes on the figure too.' },
   }}
 />
@@ -95,7 +95,7 @@ them in any order, with any markup between them.
   type={{
     src: { type: 'imported file | string', description: 'An imported SVG or image, a path, or a video.', required: true },
     alt: { type: 'string', description: 'What it shows, for screen readers. The build stops without it.', required: true },
-    poster: { type: 'imported image | string', description: 'For a video: the still frame shown in print. Required for a video.' },
+    poster: { type: 'imported image | string', description: 'For a video, the still frame shown in print. Required for a video.' },
     class: { type: 'string', description: 'Classes for the SVG, image or video, and for a video\'s print frame. Any other attribute, such as muted or loop, goes on the SVG, image or video.' },
   }}
 />
@@ -125,11 +125,11 @@ them in any order, with any markup between them.
 ```
 
 posuta's CSS only makes `.posuta-media` fill the width of its container, keeping its proportions.
-Margins, the caption's size and colour, and any border are yours; see
+Margins, the caption's size and colour, and any border are yours. See
 [CSS, Tailwind and hooks](/docs/customize/css).
 
 ## See also
 
-- [Figures from matplotlib](/docs/writing/figures): the matplotlib style, exporting SVG.
-- [Diagrams](/docs/writing/diagrams): SVG from Graphviz, Mermaid and other tools.
-- [Print size and PDF](/docs/print/pdf): the print preview and the PDF export.
+- [Figures from matplotlib](/docs/writing/figures) covers the matplotlib style and exporting SVG.
+- [Diagrams](/docs/writing/diagrams) covers SVG from Graphviz, Mermaid and other tools.
+- [Print size and PDF](/docs/print/pdf) covers the print preview and the PDF export.

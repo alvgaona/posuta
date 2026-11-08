@@ -34,15 +34,15 @@ export default (d, Plot) => ({
 });
 ```
 
-The chart file exports one function: it gets the rows, Plot and the slider state, and returns
-[Plot options](https://observablehq.com/plot/features/plots). `alt` is required; the build stops
+The chart file exports one function. It gets the rows, Plot and the slider state, and returns
+[Plot options](https://observablehq.com/plot/features/plots). `alt` is required. The build stops
 without it.
 
 ## Examples
 
 ### Static, from a file
 
-`data` names a `.csv` or `.json` file in `data/`; `plot` names a file in `charts/`, without `.js`.
+`data` names a `.csv` or `.json` file in `data/`, and `plot` names a file in `charts/`, without `.js`.
 The page holds the finished SVG and no script.
 
 <ComponentPreview name="chart-file" />
@@ -63,12 +63,12 @@ needed.
 
 ### Slider
 
-`slider` adds a range input; its value reaches the chart function as `state[name]`, and the chart
+`slider` adds a range input. Its value reaches the chart function as `state[name]`, and the chart
 is redrawn as the reader drags. The chart prints at the slider's starting `value`.
 
 <ComponentPreview name="chart-slider" />
 
-The chart file reads the value from its third argument:
+The chart file reads the value from its third argument.
 
 ```js title="charts/step.js"
 export default (d, Plot, { t }) => ({
@@ -81,9 +81,9 @@ export default (d, Plot, { t }) => ({
 
 ### Maths in labels
 
-Write `$…$` in any text the chart draws: axis labels, text marks, or values in your data such as
-legend entries. KaTeX renders it at build time. In a JavaScript string, double the backslash:
-`"$\\omega$"`.
+Write `$…$` in any text the chart draws, whether axis labels, text marks, or values in your data
+such as legend entries. KaTeX renders it at build time. In a JavaScript string, double the
+backslash, as in `"$\\omega$"`.
 
 <ComponentPreview name="chart-math" />
 
@@ -103,7 +103,7 @@ legend entries. KaTeX renders it at build time. In a JavaScript string, double t
     caption: { type: 'string', description: 'Text for a `<figcaption>` under the chart.' },
     max: { type: 'number', description: 'Thin a data file longer than this many rows, keeping evenly spaced rows. `0` keeps every row. Rows passed inline are never thinned.', default: '2000' },
     interactive: { type: 'boolean', description: 'Crosshair and tooltip in the browser. Needs a chart file.', default: 'false' },
-    slider: { type: '{ name, min, max, value, step?, label? }', description: 'A range input that passes `state[name]` to the chart function. `value` is the starting value and the one that prints; `step` defaults to `1`, `label` to `name`. Needs a chart file.' },
+    slider: { type: '{ name, min, max, value, step?, label? }', description: 'A range input that passes `state[name]` to the chart function. `value` is the starting value and the one that prints. `step` defaults to `1`, `label` to `name`. Needs a chart file.' },
     class: { type: 'string', description: 'Classes for the `<figure>`. Any other attribute goes on the `<figure>` too.' },
   }}
 />
@@ -132,14 +132,14 @@ legend entries. KaTeX renders it at build time. In a JavaScript string, double t
 - A live chart (`interactive` or `slider`) also carries `data-chart`, `data-alt`,
   `data-interactive` and `data-slider` on the `<figure>`. In the browser its `.posuta-plot` is
   redrawn and marked `data-print="hide"`, and a copy of the build-time drawing is added after it,
-  marked `data-print="only"`: that copy is what prints.
-- The tooltip is `div.posuta-tip` inside the live `.posuta-plot`; the highlighted point has the
+  marked `data-print="only"`. That copy is what prints.
+- The tooltip is `div.posuta-tip` inside the live `.posuta-plot`, and the highlighted point has the
   class `posuta-pointer`.
 
 `base.css` only positions the tooltip and scales the SVG to its container. Colours, fonts and
-spacing are yours; see [CSS](/docs/customize/css).
+spacing are yours. See [CSS](/docs/customize/css).
 
 ## See also
 
-- [Charts](/docs/writing/charts): data files, thinning, slider state, what prints, and your own island.
-- [`@posuta/posuta/plot`](/docs/reference/tools#posutaposutaplot): the tools `<Chart>` is built on.
+- [Charts](/docs/writing/charts) covers data files, thinning, slider state, what prints, and your own island.
+- [`@posuta/posuta/plot`](/docs/reference/tools#posutaposutaplot) has the tools `<Chart>` is built on.

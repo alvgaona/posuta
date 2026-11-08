@@ -8,14 +8,14 @@ This page is for working on posuta itself, not on a poster. It covers how the re
 out, the commands you run, the commit rules, and how a release is made.
 
 Before you change behaviour, read the
-[agreed decisions in AGENTS.md](https://github.com/alvgaona/posuta/blob/main/AGENTS.md): static
-output only, MDX authoring, Plot and KaTeX at build time, tools before components, components
-without styling. Change them only after discussing it.
+[agreed decisions in AGENTS.md](https://github.com/alvgaona/posuta/blob/main/AGENTS.md), which
+include static output only, MDX authoring, Plot and KaTeX at build time, tools before
+components, and components without styling. Change them only after discussing it.
 
 ## Repository layout
 
-The repository is a [pnpm workspace](https://pnpm.io/workspaces): several packages in one
-repository, installed together.
+The repository is a [pnpm workspace](https://pnpm.io/workspaces), which means several
+packages in one repository, installed together.
 
 <Files>
   <Folder name="posuta" defaultOpen>
@@ -30,14 +30,14 @@ repository, installed together.
   </Folder>
 </Files>
 
-- **`packages/posuta`** (published as `@posuta/posuta`): the Astro integration, the components, `base.css`, the tools
+- **`packages/posuta`** (published as `@posuta/posuta`) holds the Astro integration, the components, `base.css`, the tools
   (`@posuta/posuta/plot`, `@posuta/posuta/tex`, `@posuta/posuta/print` and the rest) and the `posuta` command line
   (`posuta pdf`, `posuta install`). Its tests are in `packages/posuta/test`.
-- **`packages/create-posuta`**: the scaffolder behind `pnpm create posuta`. When the package is
-  packed for publishing, it bundles a copy of `template/`; inside the repository it reads
+- **`packages/create-posuta`** is the scaffolder behind `pnpm create posuta`. When the package is
+  packed for publishing, it bundles a copy of `template/`, but inside the repository it reads
   `template/` directly.
-- **`template`**: the starter poster that `create-posuta` copies, and what `pnpm dev` runs.
-- **`apps/web`**: this documentation site (Fumadocs on Astro). Pages are MDX files in
+- **`template`** is the starter poster that `create-posuta` copies, and what `pnpm dev` runs.
+- **`apps/web`** is this documentation site (Fumadocs on Astro). Pages are MDX files in
   `apps/web/content/docs/`.
 
 ## Commands
@@ -53,7 +53,7 @@ Run these from the repository root after `pnpm install`.
 | `pnpm docs` | Runs this documentation site. |
 | `pnpm docs:build` | Builds this documentation site. |
 
-The PDF export and some tests need Playwright's Chromium. Install it once:
+The PDF export and some tests need Playwright's Chromium. Install it once.
 
 ```sh title="Terminal"
 pnpm --filter posuta-template exec posuta install
@@ -61,7 +61,8 @@ pnpm --filter posuta-template exec posuta install
 
 ## Commit messages
 
-Commits follow [Conventional Commits](https://www.conventionalcommits.org), `type(scope): subject`:
+Commits follow [Conventional Commits](https://www.conventionalcommits.org). Each message starts
+with a type, a scope in parentheses, a colon and the subject.
 
 ```text title="Terminal"
 feat(posuta): print scale, a factor on the printed type size
@@ -76,12 +77,12 @@ begin with a proper noun. [lefthook](https://lefthook.dev) installs a `commit-ms
 ## Continuous integration
 
 `.github/workflows/ci.yaml` runs on every push to `main` and on every pull request. It has three
-jobs:
+jobs.
 
-- **commitlint**: checks the messages of the commits in the push or pull request.
-- **build**: installs Playwright's Chromium, builds the template, runs `pnpm test`, exports the
+- **commitlint** checks the messages of the commits in the push or pull request.
+- **build** installs Playwright's Chromium, builds the template, runs `pnpm test`, exports the
   template to PDF and uploads `poster.pdf` as an artifact of the run.
-- **docs**: builds the documentation site.
+- **docs** builds the documentation site.
 
 ## Releases
 
@@ -90,14 +91,14 @@ jobs:
 
 1. Set the same version in `packages/posuta/package.json` and
    `packages/create-posuta/package.json`, and commit.
-2. Push a tag named after it, with a `v` in front:
+2. Push a tag named after it, with a `v` in front.
 
    ```sh title="Terminal"
    git tag v0.2.0
    git push origin v0.2.0
    ```
 
-`.github/workflows/release.yaml` then:
+Then `.github/workflows/release.yaml` runs these steps.
 
 1. Fails unless both packages' versions equal the tag.
 2. Runs the tests.

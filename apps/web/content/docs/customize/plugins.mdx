@@ -11,7 +11,7 @@ pipeline that turns your MDX into HTML.
 ## Your own components
 
 Put a component in `src/components/` and use it in the poster by its file name.
-`src/components/Takeaway.astro` becomes `<Takeaway>`:
+`src/components/Takeaway.astro` becomes `<Takeaway>`.
 
 ```astro title="src/components/Takeaway.astro"
 ---
@@ -29,9 +29,9 @@ The tilt stays under 1.5° with any one motor off.
 </Takeaway>
 ```
 
-The template's `<Section>` works the same way: it is `src/components/Section.astro`.
+The template's `<Section>` is `src/components/Section.astro` and works the same way.
 
-The rules:
+These are the rules.
 
 - The file name must start with a capital letter, and is the component's name.
 - Only files directly in `src/components/` count, not those in subfolders. Import those
@@ -44,13 +44,13 @@ The rules:
 
 ## posuta's components
 
-posuta's components are also available without imports: `Canvas`, `Row`, `Col`, `Grid`,
-`Cell`, `Chart`, `Equation`, `Figure` (with `Figure.Root`, `Figure.Media` and
+posuta's components are also available without imports. They are `Canvas`, `Row`, `Col`,
+`Grid`, `Cell`, `Chart`, `Equation`, `Figure` (with `Figure.Root`, `Figure.Media` and
 `Figure.Caption`), `QR`, and the parts `References.Root` and `References.Item`.
 `<References />` itself is handled by the citation step. See
 [components](/docs/components/chart) for their props.
 
-In an Astro layout (a `.astro` file rather than MDX), import them as usual:
+In an Astro layout (a `.astro` file rather than MDX), import them as usual.
 
 ```astro title="src/layouts/Mine.astro"
 ---
@@ -61,12 +61,12 @@ import QR from "@posuta/posuta/QR.astro";
 
 ## Markdown plugins
 
-MDX goes through two kinds of plugins on its way to HTML:
+MDX goes through two kinds of plugins on its way to HTML.
 
 - **remark** plugins work on the Markdown, before it becomes HTML.
 - **rehype** plugins work on the HTML.
 
-Pass your own to the integration in `astro.config.mjs`:
+Pass your own to the integration in `astro.config.mjs`.
 
 ```js title="astro.config.mjs"
 import { defineConfig } from "astro/config";
@@ -78,12 +78,12 @@ export default defineConfig({
 });
 ```
 
-`remarkPlugins` takes a list the same way. To give a plugin options, pass a pair:
+`remarkPlugins` takes a list the same way. To give a plugin options, pass a pair,
 `[plugin, { …options }]`.
 
 ### Order
 
-Your plugins run after posuta's:
+Your plugins run after posuta's.
 
 | Step | remark (Markdown) | rehype (HTML) |
 | --- | --- | --- |

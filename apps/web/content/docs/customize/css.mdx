@@ -10,20 +10,20 @@ target.
 
 ## What posuta's CSS does
 
-`<Canvas>` loads `@posuta/posuta/base.css`. It holds only what the components need to work: no colours,
-fonts, borders or spacing.
+`<Canvas>` loads `@posuta/posuta/base.css`. It holds only what the components need to work, with no
+colours, fonts, borders or spacing.
 
 - **The printed sheet.** In print, `div.posuta-canvas` is exactly the paper's width and height,
   and anything outside it is cut off (which is why the
   [overflow check](/docs/print/pdf#the-overflow-check) exists). Colours print as they are.
-- **The type scale.** In print, the root font size follows the paper: 24 pt at A0, scaled by the
+- **The type scale.** In print, the root font size follows the paper. It is 24 pt at A0, scaled by the
   paper's area, never below 12 pt, then multiplied by `scale` from `print:`. Size things in
   `rem` and they scale with the sheet.
-- **Rows and grids.** `Row` and `Col` are a flexbox row; `Grid` and `Cell` a CSS grid. On screen
-  they narrow to two columns below 1100 px and one below 700 px; in print they keep the columns
+- **Rows and grids.** `Row` and `Col` are a flexbox row, and `Grid` and `Cell` a CSS grid. On screen
+  they narrow to two columns below 1100 px and one below 700 px, but in print they keep the columns
   as written. `--posuta-gap` sets the space between columns (default `2rem`).
-- **Screen-only and print-only.** `data-print="only"` hides an element on screen;
-  `data-print="hide"` hides it in print.
+- **Screen-only and print-only.** `data-print="only"` hides an element on screen,
+  and `data-print="hide"` hides it in print.
 - **Figures and charts.** Their SVGs and images fill the width of their container.
 - **Live charts.** The tooltip is positioned above the point.
 - **Equations.** A numbered equation puts its number beside it, and scrolls sideways if too wide.
@@ -31,9 +31,9 @@ fonts, borders or spacing.
 
 ## Layer order
 
-CSS has **cascade layers**: named groups of rules. A rule in a later layer beats one in an
+CSS has **cascade layers**, which are named groups of rules. A rule in a later layer beats one in an
 earlier layer, and a rule outside any layer beats them all, whatever order the files load in.
-`<Canvas>` declares this order before any stylesheet loads:
+`<Canvas>` declares this order before any stylesheet loads.
 
 ```css
 @layer theme, base, posuta.base, posuta.theme, components, utilities;
@@ -48,7 +48,7 @@ earlier layer, and a rule outside any layer beats them all, whatever order the f
 | `components`, `utilities` | Tailwind's component classes and utilities |
 | no layer | Your own CSS, frontmatter `theme:` tokens, a lab theme package |
 
-Without Tailwind, the Tailwind layers are empty. So:
+Without Tailwind, the Tailwind layers are empty. This means three things.
 
 - Your own CSS, written normally (outside a layer), beats posuta's CSS and the template's theme.
 - Tailwind's reset sits under posuta, so it doesn't undo the theme.
@@ -59,13 +59,13 @@ template's `theme.css` does.
 
 ## Tailwind
 
-Tailwind v4 works without extra setup. Add it with Astro's command:
+Tailwind v4 works without extra setup. Add it with Astro's command.
 
 ```sh title="Terminal"
 npx astro add tailwind
 ```
 
-Then import its stylesheet in your layout, after the theme:
+Then import its stylesheet in your layout, after the theme.
 
 ```astro title="src/layouts/Poster.astro"
 ---
@@ -76,7 +76,7 @@ import "../styles/global.css"; // the file with @import "tailwindcss" /* [!code 
 ```
 
 Tailwind finds the classes you write in `.mdx` files like any other source. Every component and
-part takes `class`:
+part takes `class`.
 
 ```mdx title="src/pages/index.mdx"
 <Grid cols={3} class="gap-y-6">
@@ -90,17 +90,17 @@ part takes `class`:
 
 Every component passes `class` and other attributes to its outer element (for `Figure.Media`,
 to the image, SVG or video). The elements also carry fixed `posuta-*` classes you can target
-from your CSS:
+from your CSS.
 
 | Component | Markup and classes |
 | --- | --- |
-| `Canvas` | `div.posuta-canvas`; in print, `:root` gets `--paper-w`, `--paper-h`, `--print-scale`, `--print-text` |
-| `Row`, `Col` | `div.posuta-row`; `div.posuta-col` with `--span` |
-| `Grid`, `Cell` | `div.posuta-grid` with `--cols`; `div.posuta-cell` with `--span`, `--rows` |
-| `Chart` | `figure.posuta-figure.posuta-chart` › `div.posuta-plot` (the SVG), `figcaption`; with a slider, `label.posuta-slider`; when interactive, `div.posuta-tip` (the tooltip) |
+| `Canvas` | `div.posuta-canvas`, and in print `:root` gets `--paper-w`, `--paper-h`, `--print-scale`, `--print-text` |
+| `Row`, `Col` | `div.posuta-row` and `div.posuta-col` with `--span` |
+| `Grid`, `Cell` | `div.posuta-grid` with `--cols`, and `div.posuta-cell` with `--span` and `--rows` |
+| `Chart` | `figure.posuta-figure.posuta-chart` › `div.posuta-plot` (the SVG), `figcaption`, plus `label.posuta-slider` with a slider and `div.posuta-tip` (the tooltip) when interactive |
 | `Figure` | `figure.posuta-figure` › the media, `figcaption.posuta-caption` |
 | `Figure.Root` | `figure.posuta-figure` (another element with `as`) |
-| `Figure.Media` | `img`, `svg` or `video` with `.posuta-media`; a video adds its print frame, an `img.posuta-media` |
+| `Figure.Media` | `img`, `svg` or `video` with `.posuta-media`, and a video adds its print frame, an `img.posuta-media` |
 | `Figure.Caption` | `figcaption.posuta-caption` (another element with `as`) |
 | `Equation` | `div.posuta-eq` › KaTeX, `span.posuta-eq-n` (the number) |
 | `<References />` | `ol.posuta-refs` › `li#ref-<key>` |
@@ -109,8 +109,8 @@ from your CSS:
 | `[@key]` | `span.posuta-cite` › `a[href="#ref-<key>"]` |
 | `QR` | `svg.posuta-qr` |
 
-The template's own `<Section>` renders `section.posuta-section` (plus `.panel` with `panel`);
-it lives in your project, so you can change it.
+The template's own `<Section>` renders `section.posuta-section` (plus `.panel` with `panel`).
+It lives in your project, so you can change it.
 
 ```css title="src/styles/theme.css"
 .posuta-caption { font-style: italic; }
@@ -119,13 +119,13 @@ it lives in your project, so you can change it.
 
 ## Change the print type scale
 
-To make all printed text smaller or larger, set `scale` on the paper:
+To make all printed text smaller or larger, set `scale` on the paper.
 
 ```yaml title="src/pages/index.mdx"
 print: { size: A0, scale: 0.8 }
 ```
 
-To replace the scale outright, set the root font size in print yourself:
+To replace the scale outright, set the root font size in print yourself.
 
 ```css title="src/styles/theme.css"
 @media print {

@@ -4,13 +4,13 @@ description: Put blocks side by side in columns that stay as written in print.
 icon: Columns3
 ---
 
-`<Row>` puts its `<Col>`s side by side; each column takes a share of the width and stacks its
+`<Row>` puts its `<Col>`s side by side. Each column takes a share of the width and stacks its
 blocks independently of the others.
 
 <ComponentPreview name="row-demo" />
 
 <Callout>
-The previews on this page are narrower than 1100px, so they show the narrow-screen layout: the
+The previews on this page are narrower than 1100px, so they show the narrow-screen layout, where the
 columns wrap two to a line and share the width equally. Wide screens, print and the PDF keep the
 columns and widths as written. See [On screen and in print](/docs/writing/layout#on-screen-and-in-print).
 </Callout>
@@ -39,7 +39,7 @@ when it holds Markdown or sections.
 
 ### Column widths
 
-`span` is a column's weight against its siblings: here the second column is three times as wide
+`span` is a column's weight against its siblings. Here the second column is three times as wide
 as the first. On a narrow screen the weights give way to two equal columns.
 
 <ComponentPreview name="row-span" />
@@ -47,7 +47,7 @@ as the first. On a narrow screen the weights give way to two equal columns.
 ### Three columns
 
 The usual poster layout. On a narrow screen the third column wraps to its own line and takes the
-full width; below 700px every column does.
+full width, and below 700px every column does.
 
 <ComponentPreview name="row-three" />
 
@@ -67,8 +67,8 @@ columns wrap by the window's width, like the outer ones.
 
 ### Screen only, print only
 
-Like any element, a row can carry `data-print`: `"hide"` keeps it off the printed poster, `"only"`
-keeps it off the screen. The preview is a screen, so the print-only block is hidden.
+Like any element, a row can carry `data-print`. `"hide"` keeps it off the printed poster, and
+`"only"` keeps it off the screen. The preview is a screen, so the print-only block is hidden.
 
 <ComponentPreview name="row-print" />
 
@@ -105,15 +105,15 @@ keeps it off the screen. The preview is a screen, so the print-only block is hid
 
 | Hook | What it is |
 | --- | --- |
-| `.posuta-row` | A flex row, `align-items: flex-start`, column gap `var(--posuta-gap, 2rem)`. |
-| `.posuta-col` | `flex: var(--span) 1 0`, `min-width: 0`. |
+| `.posuta-row` | A flex row, `align-items: flex-start`, column gap `--posuta-gap`, `2rem` by default. |
+| `.posuta-col` | Grows by `--span`, with `flex-shrink: 1`, `flex-basis: 0` and `min-width: 0`. |
 | `--span` | Set by `span` on each column. |
 | `--posuta-gap` | Yours to set, on `:root` or on one row. |
 
 `base.css` adds only this layout and the narrow-screen wrapping (two to a line up to 1100px, one
-up to 700px, screen only). There is no colour, border or padding: style the hooks in your theme.
+up to 700px, screen only). There is no colour, border or padding, so style the hooks in your theme.
 
 ## See also
 
-- [Rows, columns and grids](/docs/writing/layout): sections, screen and print, the gap, `data-print`.
+- [Rows, columns and grids](/docs/writing/layout) covers sections, screen and print, the gap and `data-print`.
 - [Grid and Cell](/docs/components/grid), when blocks must line up across rows.

@@ -25,7 +25,7 @@ const install = [
 const features: { title: string; text: string; chips: string[] }[] = [
   {
     title: 'One MDX file.',
-    text: 'Title, authors and stats in frontmatter; Markdown and components in the body.',
+    text: 'Title, authors and stats in frontmatter, and Markdown and components in the body.',
     chips: ['frontmatter', '<Section>', '<Row>', '<Grid>'],
   },
   {
@@ -40,7 +40,7 @@ const features: { title: string; text: string; chips: string[] }[] = [
   },
   {
     title: 'Charts that print.',
-    text: 'Observable Plot drawn to SVG at build time; live charts redraw in the browser.',
+    text: 'Observable Plot drawn to SVG at build time, and live charts redraw in the browser.',
     chips: ['interactive', 'slider', 'CSV', 'JSON'],
   },
   {
@@ -50,12 +50,12 @@ const features: { title: string; text: string; chips: string[] }[] = [
   },
   {
     title: 'Citations.',
-    text: 'BibTeX in; numbered citations and a reference list in any CSL style out.',
+    text: 'BibTeX in, numbered citations and a reference list in any CSL style out.',
     chips: ['[@key]', 'vancouver', 'apa', '.csl'],
   },
   {
     title: 'Figures and video.',
-    text: 'Inline SVG keeps your fonts; videos play on screen and print their poster frame.',
+    text: 'Inline SVG keeps your fonts. Videos play on screen and print their poster frame.',
     chips: ['svg', 'matplotlib', 'mp4'],
   },
   {
@@ -65,7 +65,7 @@ const features: { title: string; text: string; chips: string[] }[] = [
   },
   {
     title: 'QR code and previews.',
-    text: 'The printed poster links to its live page; link previews get their own image.',
+    text: 'The printed poster links to its live page, and link previews get their own image.',
     chips: ['qr', 'og.png', 'site'],
   },
 ];

@@ -4,15 +4,15 @@ description: Line blocks up across rows, with cells that cover several columns o
 icon: LayoutGrid
 ---
 
-`<Grid>` lays its `<Cell>`s out in equal columns that line up across rows; a cell can be wider or
+`<Grid>` lays its `<Cell>`s out in equal columns that line up across rows, and a cell can be wider or
 taller than its neighbours.
 
 <ComponentPreview name="grid" />
 
 <Callout>
-The previews on this page are narrower than 1100px, so they show the narrow-screen layout: at
-most two columns, wide cells cut to two, tall cells one row high. Wide screens, print and the PDF
-keep the grid as written. See [On screen and in print](/docs/writing/layout#on-screen-and-in-print).
+The previews on this page are narrower than 1100px, so they show the narrow-screen layout, with
+at most two columns, wide cells cut to two and tall cells one row high. Wide screens, print and
+the PDF keep the grid as written. See [On screen and in print](/docs/writing/layout#on-screen-and-in-print).
 </Callout>
 
 ## Usage
@@ -36,7 +36,7 @@ Use a grid when blocks must line up across rows. When each column can run to its
 
 ### Number of columns
 
-`cols` sets the number of equal columns. This grid has four; on a narrow screen it shows two.
+`cols` sets the number of equal columns. This grid has four, but on a narrow screen it shows two.
 
 <ComponentPreview name="grid-cols" />
 
@@ -49,7 +49,7 @@ Use a grid when blocks must line up across rows. When each column can run to its
 ### Tall cells
 
 `rows` is the number of rows a cell covers, for a figure beside two blocks of text. On a narrow
-screen tall cells become one row high, so this preview shows five cells in order; in print the
+screen tall cells become one row high, so this preview shows five cells in order. In print the
 first cell runs down beside the next two rows.
 
 <ComponentPreview name="grid-rows" />
@@ -90,15 +90,15 @@ first cell runs down beside the next two rows.
 
 | Hook | What it is |
 | --- | --- |
-| `.posuta-grid` | A CSS grid of `--cols` equal columns, `align-items: start`, column gap `var(--posuta-gap, 2rem)`. |
-| `.posuta-cell` | `grid-column: span var(--span)`, `grid-row: span var(--rows)`, `min-width: 0`. |
+| `.posuta-grid` | A CSS grid of `--cols` equal columns, `align-items: start`, column gap `--posuta-gap`, `2rem` by default. |
+| `.posuta-cell` | Spans `--span` columns and `--rows` rows, with `min-width: 0`. |
 | `--cols`, `--span`, `--rows` | Set by the props above. |
 | `--posuta-gap` | Yours to set, on `:root` or on one grid. |
 
-There is no row gap, colour, border or padding: style the hooks in your theme. Cells align to the
+There is no row gap, colour, border or padding, so style the hooks in your theme. Cells align to the
 top of their area, so a tall cell's content does not stretch to fill it.
 
 ## See also
 
-- [Rows, columns and grids](/docs/writing/layout): sections, screen and print, the gap, `data-print`.
+- [Rows, columns and grids](/docs/writing/layout) covers sections, screen and print, the gap and `data-print`.
 - [Row and Col](/docs/components/row).

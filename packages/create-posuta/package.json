@@ -13,7 +13,7 @@
   ],
   "scripts": {
     "prepack": "node index.mjs --copy-template",
-    "test": "node --test test/"
+    "test": "node --test \"test/*.test.mjs\""
   },
   "engines": {
     "node": ">=22"

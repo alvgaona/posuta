@@ -8,7 +8,7 @@ Draw your diagram in the tool you already use, export it as SVG, and place it wi
 It comes out as a vector drawing in the poster's fonts, it prints sharply, and it can follow the
 page into dark mode.
 
-posuta has no diagram builder of its own, on purpose: good diagram tools already exist, and an
+posuta has no diagram builder of its own, on purpose. Good diagram tools already exist, and an
 SVG from any of them works the same way.
 
 ## An example with Graphviz
@@ -21,7 +21,7 @@ and arrows in a text file and Graphviz lays them out.
 
 ### Describe the diagram
 
-A shortened version of the template's file:
+A shortened version of the template's file.
 
 ```txt title="figures/loop.dot"
 digraph loop {
@@ -49,7 +49,7 @@ poster's body font, so Graphviz sizes the boxes for the text the reader will see
 
 ### Export it as SVG
 
-With Graphviz installed, run from the project folder:
+With Graphviz installed, run this from the project folder.
 
 ```sh title="Terminal"
 dot -Tsvg figures/loop.dot | sed -e 's/"black"/"currentColor"/g' -e 's/<text /<text fill="currentColor" /g' > figures/loop.svg
@@ -81,8 +81,8 @@ See [Figure](/docs/components/figure) for everything `<Figure>` takes.
 
 ## Other tools
 
-Any tool that exports SVG works the same way: export the file, put it in `figures/`, place it with
-`<Figure>`.
+Any tool that exports SVG works the same way. Export the file, put it in `figures/`, and place it
+with `<Figure>`.
 
 | Tool | Good for | How to get an SVG |
 | --- | --- | --- |
@@ -95,10 +95,10 @@ Any tool that exports SVG works the same way: export the file, put it in `figure
 
 ## Make it fit the poster
 
-Two things decide whether a diagram looks like part of the poster:
+Two things decide whether a diagram looks like part of the poster.
 
 - **Text as text.** If the SVG keeps its labels as `<text>`, they are drawn in the poster's fonts,
-  print as text and can be searched. Some exports turn letters into shapes; look for an option
+  print as text and can be searched. Some exports turn letters into shapes, so look for an option
   that keeps text, and set the font to the poster's.
 - **`currentColor` for dark mode.** A colour of `currentColor` takes the colour of the text around
   the figure, so the diagram turns light when the page does. Fixed black stays black on a dark
@@ -112,7 +112,7 @@ are.
 
 Some diagram tools run as Markdown plugins instead, turning a code block in your text into an
 SVG during the build. `rehype-mermaid` is one. Pass such plugins to posuta in
-`astro.config.mjs`:
+`astro.config.mjs`.
 
 ```js title="astro.config.mjs"
 import { defineConfig } from "astro/config";
@@ -124,12 +124,12 @@ export default defineConfig({
 });
 ```
 
-`remarkPlugins` takes remark plugins the same way. Both run after posuta's own: maths and
+`remarkPlugins` takes remark plugins the same way. Both run after posuta's own, so maths and
 citations are handled first. Follow the plugin's own documentation for what it needs installed.
 
 <Callout type="warn">
 posuta adds its plugins, and yours, through Astro's default Markdown processor. If you set
-`markdown.processor` yourself, posuta warns and adds none of them; add them to your processor
+`markdown.processor` yourself, posuta warns and adds none of them, so add them to your processor
 instead.
 </Callout>
 

@@ -15,14 +15,14 @@ needs no JavaScript in the browser and prints as text at any size.
 <Equation n={1} tex="\ddot y + 2\zeta\omega_n \dot y + \omega_n^2 y = \omega_n^2 u" />
 ```
 
-Inside `tex="…"` a backslash is just a backslash: write `\frac`, not `\\frac`. If the equation
-contains a double quote, put single quotes around it: `tex='…'`.
+Inside `tex="…"` a backslash is just a backslash, so write `\frac`, not `\\frac`. If the equation
+contains a double quote, put single quotes around it, as in `tex='…'`.
 
 ## Examples
 
 ### Numbered
 
-`n` is the label shown in brackets, as in the example at the top. It is text you choose:
+`n` is the label shown in brackets, as in the example at the top. It is text you choose.
 posuta does not count equations for you, so `n="2a"` works as well as `n={2}`. To refer to an
 equation, write "Eq. 2" in the text.
 
@@ -67,10 +67,10 @@ KaTeX's error, so a broken equation never reaches the poster.
 ```
 
 posuta's CSS puts the number beside the equation (`.posuta-eq` is a flex row) and lets a wide
-equation scroll. Its size, alignment and the space around it are yours; see
+equation scroll. Its size, alignment and the space around it are yours. See
 [CSS, Tailwind and hooks](/docs/customize/css).
 
 ## See also
 
-- [Maths](/docs/writing/maths): inline maths in the text, and display maths without a number.
-- [Print size and PDF](/docs/print/pdf): checking the printed page.
+- [Maths](/docs/writing/maths) covers inline maths in the text, and display maths without a number.
+- [Print size and PDF](/docs/print/pdf) covers checking the printed page.

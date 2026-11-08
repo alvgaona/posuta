@@ -46,18 +46,18 @@ bun create posuta my-poster
 </Tab>
 </Tabs>
 
-This copies the starter poster into a new folder, `my-poster`. It asks for anything you leave
-out: the folder, the poster's title, and the print size (A0, A1, A2, A3, 24x36in, 36x48in,
-42x56in or 48x72in, then `portrait` or `landscape`; the default is `A0 portrait`). The folder
-must be new or empty.
+This copies the starter poster into a new folder, `my-poster`. It asks for the folder, the poster's
+title and the print size if you leave them out (A0, A1, A2, A3, 24x36in, 36x48in, 42x56in or
+48x72in, then `portrait` or `landscape`, with `A0 portrait` as the default). The folder must be
+new or empty.
 
-To skip the questions, pass the answers as flags:
+To skip the questions, pass the answers as flags.
 
 ```sh title="Terminal"
 pnpm create posuta my-poster --title "Fast Rotor Fault Recovery" --print "A1 landscape"
 ```
 
-With npm, put `--` before the flags: `npm create posuta@latest my-poster -- --title "…"`.
+With npm, put `--` before the flags, as in `npm create posuta@latest my-poster -- --title "…"`.
 
 </Step>
 <Step>
@@ -78,9 +78,9 @@ Open [http://localhost:4321](http://localhost:4321). The page reloads each time 
 ### Edit the poster
 
 The whole poster is one file, `src/pages/index.mdx`. The block between the `---` lines at the
-top is the frontmatter: the title, the highlighted phrase, the lede, the headline stats, the
-footer and the print size. Below it, each `<Section>` is a numbered block of the poster, and the
-text inside is plain Markdown.
+top is the frontmatter, which holds the title, the highlighted phrase, the lede, the headline
+stats, the footer and the print size. Below it, each `<Section>` is a numbered block of the
+poster, and the text inside is plain Markdown.
 
 ```mdx title="src/pages/index.mdx"
 ---
@@ -97,7 +97,7 @@ Write in plain **Markdown**. Inline maths goes between dollar signs, $\omega_n$.
 </Section>
 ```
 
-The template is full of examples to copy: columns, a chart with a slider, an equation, a
+The template is full of examples to copy. It has columns, a chart with a slider, an equation, a
 matplotlib figure, a diagram, a video and a reference list. See
 [project structure](/docs/get-started/project-structure) for where each one lives, and
 [frontmatter](/docs/writing/frontmatter) for every setting.
@@ -107,8 +107,8 @@ matplotlib figure, a diagram, a video and a reference list. See
 
 ### Preview the print version
 
-Add `?print` to the address: [http://localhost:4321/?print](http://localhost:4321/?print). The
-page now shows as it will print: at the paper's shape, scaled to fit the window, in light
+Add `?print` to the address, as in [http://localhost:4321/?print](http://localhost:4321/?print). The
+page now shows as it will print, at the paper's shape, scaled to fit the window, in light
 colours. Any block that runs past the edge of the paper gets a red outline, and a banner says by
 how much. It updates as you edit.
 
@@ -117,23 +117,23 @@ how much. It updates as you edit.
 
 ### Export the PDF
 
-The PDF is printed by a headless Chromium browser. Download it once:
+The PDF is printed by a headless Chromium browser. Download it once.
 
 ```sh title="Terminal"
 pnpm exec posuta install
 ```
 
-Then, each time you want a PDF:
+Then run this each time you want a PDF.
 
 ```sh title="Terminal"
 pnpm pdf
 ```
 
-This builds the site into `dist/` and writes:
+This builds the site into `dist/` and writes three files.
 
-- `dist/poster.pdf`: one vector page at the print size, fonts embedded.
-- `dist/handout.pdf`: the same poster shrunk onto one A4 sheet, for people to take away.
-- `dist/og.png`: the image shown when someone shares a link to the page.
+- `dist/poster.pdf` is one vector page at the print size, fonts embedded.
+- `dist/handout.pdf` is the same poster shrunk onto one A4 sheet, for people to take away.
+- `dist/og.png` is the image shown when someone shares a link to the page.
 
 If anything runs past the edge of the paper, the export fails and names the block, so nothing is
 cut off without you knowing. See [PDF export](/docs/print/pdf) for the options.
@@ -143,7 +143,8 @@ cut off without you knowing. See [PDF export](/docs/print/pdf) for the options.
 
 ### Publish
 
-The template includes a GitHub Actions workflow, `.github/workflows/deploy.yaml`. To use it:
+The template includes a GitHub Actions workflow, `.github/workflows/deploy.yaml`. To use it, follow
+these two steps.
 
 1. Push the folder to a new GitHub repository.
 2. In the repository, go to **Settings → Pages** and set **Source** to **GitHub Actions**.

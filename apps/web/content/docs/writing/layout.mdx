@@ -4,7 +4,7 @@ description: Place sections side by side, and keep the columns in print.
 icon: LayoutGrid
 ---
 
-A poster is a set of blocks in columns. `<Row>` and `<Col>` put blocks side by side;
+A poster is a set of blocks in columns. `<Row>` and `<Col>` put blocks side by side, and
 `<Grid>` and `<Cell>` line them up across rows. On a phone or a narrow window they stack, so the
 page stays readable. In print they keep the columns exactly as you wrote them.
 
@@ -13,8 +13,8 @@ The props and markup of each are on [Row and Col](/docs/components/row) and
 
 ## Sections
 
-`<Section>` is one numbered block of the poster: a heading, an optional line under it, and your
-text.
+`<Section>` is one numbered block of the poster, with a heading, an optional line under it, and
+your text.
 
 ```mdx title="src/pages/index.mdx"
 <Section n={1} title="The problem" sub="One line of context under the heading.">
@@ -36,7 +36,7 @@ as Markdown.
   }}
 />
 
-`<Section>` is not part of posuta: it is `src/components/Section.astro` in your project, and you
+`<Section>` is not part of posuta. It is `src/components/Section.astro` in your project, and you
 can change it like any other file. It renders a `<section class="posuta-section">` with an `<h2>`.
 Its title also names the block when `posuta pdf` reports that something does not fit on the
 page.
@@ -70,14 +70,14 @@ When sections must line up across rows, or one should be taller than its neighbo
 
 <Preview name="row" />
 
-The box above is narrower than 1100px, so you see the row as a small window would: the columns
+The box above is narrower than 1100px, so you see the row as a small window would. The columns
 wrap and share the width equally. In print and on wide screens the second column is twice as
 wide.
 
 | Width | Rows and columns | Grids |
 | --- | --- | --- |
 | Wider than 1100 px | As written | As written |
-| 701 to 1100 px | Columns wrap, two to a line | At most two columns; wider cells shrink to two, tall cells become one row |
+| 701 to 1100 px | Columns wrap, two to a line | At most two columns. Wider cells shrink to two, and tall cells become one row |
 | 700 px or narrower | One column | One column |
 | Print and PDF | As written | As written |
 
@@ -88,7 +88,7 @@ sheet while you write, open the page with `?print` in `pnpm dev` (see [PDF](/doc
 ## The gap between columns
 
 `--posuta-gap` sets the space between columns, in rows and grids alike. It defaults to `2rem`.
-The template sets it in `src/styles/theme.css`:
+The template sets it in `src/styles/theme.css`.
 
 ```css title="src/styles/theme.css"
 :root { --posuta-gap: 2.1rem; }
@@ -99,7 +99,7 @@ Spacing between blocks in the same column is up to your theme.
 
 ## Screen only, print only
 
-Any element can carry `data-print`:
+Any element can carry `data-print`.
 
 - `data-print="only"` shows it in print and hides it on screen.
 - `data-print="hide"` shows it on screen and hides it in print.
@@ -113,5 +113,5 @@ The template uses this for the QR code (print only) and the "Cite this poster" b
 ## Your own layout
 
 Rows and grids are plain flex and CSS grid with a few class names (`posuta-row`, `posuta-col`,
-`posuta-grid`, `posuta-cell`). You don't have to use them: any HTML and CSS works in a poster.
+`posuta-grid`, `posuta-cell`). You don't have to use them, because any HTML and CSS works in a poster.
 See [Your own CSS](/docs/customize/css).

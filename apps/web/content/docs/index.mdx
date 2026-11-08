@@ -4,7 +4,7 @@ description: One MDX file becomes a research poster web page and a vector PDF fo
 icon: BookOpen
 ---
 
-posuta turns one MDX file into two things: a web page you can host for free, and a vector PDF
+posuta turns one MDX file into two things, a web page you can host for free and a vector PDF
 at the exact paper size your conference asks for. The page and the PDF come from the same
 source, so they never drift apart.
 
@@ -13,14 +13,14 @@ The name is ポスター (*posutā*), Japanese for "poster".
 ## Who it is for
 
 Researchers who make conference posters and want them to live on the web too. You write text in
-Markdown and a short block of settings at the top of the file; you do not need to know HTML to
+Markdown and a short block of settings at the top of the file. You do not need to know HTML to
 change the words. If you do know HTML and CSS, every part of the look is yours to change.
 
 ## The problem it solves
 
 A printed poster is usually a slide-software file that nobody can read on a phone. A poster
 written as a web page is easy to share but hard to print well. posuta gives you both from one
-file:
+file.
 
 - **On screen**, the poster is a static web page. Columns reflow on a narrow screen, charts can
   have tooltips and sliders, and videos play.
@@ -37,8 +37,8 @@ file:
    the overflow check. Everything inside it is your own markup and CSS. posuta's components
    carry no colours, fonts or spacing, so they fit any design. See
    [your own canvas](/docs/customize/canvas).
-3. **Tools.** The functions under the components: Plot to SVG, KaTeX, citations, data loading,
-   QR codes. Use them to draw anything the components don't. See
+3. **Tools.** The functions under the components cover Plot to SVG, KaTeX, citations, data
+   loading and QR codes. Use them to draw anything the components don't. See
    [tools](/docs/reference/tools).
 
 ## How it works
@@ -48,7 +48,7 @@ files. You write the poster in MDX (Markdown that can also hold components such 
 `<Section>` or `<Chart>`). At build time, charts are drawn with
 [Observable Plot](https://observablehq.com/plot/) to SVG and maths is rendered with
 [KaTeX](https://katex.org), so both work without JavaScript and print sharply. The output is a
-folder of static files that any host can serve: GitHub Pages, Cloudflare, Netlify, Vercel.
+folder of static files that any host can serve, such as GitHub Pages, Cloudflare, Netlify or Vercel.
 For the PDF, `posuta pdf` opens the built page in a headless Chromium browser (through
 Playwright) and prints it.
 

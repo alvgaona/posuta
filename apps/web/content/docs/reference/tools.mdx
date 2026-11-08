@@ -5,7 +5,7 @@ icon: Wrench
 ---
 
 The components are thin wrappers over these functions. Use them in your own layout, components
-and islands to draw what the components don't. They run at build time in Node; the ones marked
+and islands to draw what the components don't. They run at build time in Node, and the ones marked
 for the browser also run in client scripts.
 
 ## `@posuta/posuta/print`
@@ -18,7 +18,7 @@ Paper sizes and the print scale, shared by `<Canvas>` and `posuta pdf`.
 const PAPER: Record<string, [width: number, height: number]>
 ```
 
-Portrait sizes in mm: `A0` `[841, 1189]`, `A1` `[594, 841]`, `A2` `[420, 594]`, `A3`
+The portrait sizes in mm are `A0` `[841, 1189]`, `A1` `[594, 841]`, `A2` `[420, 594]`, `A3`
 `[297, 420]`, `24x36in` `[609.6, 914.4]`, `36x48in` `[914.4, 1219.2]`, `42x56in`
 `[1066.8, 1422.4]`, `48x72in` `[1219.2, 1828.8]`.
 
@@ -60,9 +60,9 @@ paper({ width: "900mm", height: "36in" });
 function printCss(print?: Parameters<typeof paper>[0]): string
 ```
 
-The CSS for that paper: the `@page` size with no margin, and the custom properties `--paper-w`,
-`--paper-h`, `--print-scale` and `--print-text` on `:root`. `<Canvas>` puts it inside
-`@media print`.
+The CSS for that paper. It sets the `@page` size with no margin, and the custom properties
+`--paper-w`, `--paper-h`, `--print-scale` and `--print-text` on `:root`. `<Canvas>` puts it
+inside `@media print`.
 
 ```js
 import { printCss } from "@posuta/posuta/print";
@@ -80,7 +80,7 @@ function load(file: string, opts?: { max?: number }): Promise<object[]>
 ```
 
 Reads `data/<file>` from the project root (or an absolute path) as an array of rows. CSV is parsed
-with d3's `autoType` (numbers and dates converted); JSON must hold an array. Series longer than
+with d3's `autoType` (numbers and dates converted). JSON must hold an array. Series longer than
 `max` rows (default `2000`) are thinned with `downsample`. Throws on any other extension or a JSON
 file that isn't an array. `<Chart data="…">` uses it.
 
@@ -96,8 +96,8 @@ const rows = await load("flight.csv", { max: 5000 });
 function downsample<T>(rows: T[], max: number): T[]
 ```
 
-Returns `rows` unchanged if `max` is falsy or there are at most `max` rows; otherwise `max` rows
-spaced evenly, first and last kept. Narrow peaks between kept rows can be lost.
+Returns `rows` unchanged if `max` is falsy or there are at most `max` rows. Otherwise it returns
+`max` rows spaced evenly, first and last kept. Narrow peaks between kept rows can be lost.
 
 ```js
 import { downsample } from "@posuta/posuta/data";
@@ -107,7 +107,7 @@ downsample([1, 2, 3, 4, 5, 6, 7, 8, 9, 10], 4); // [1, 4, 7, 10]
 
 ## `@posuta/posuta/plot`
 
-Observable Plot with posuta's defaults (transparent background, `font-family: var(--font-body)`)
+Observable Plot with posuta's defaults (transparent background, the `--font-body` font)
 and `$…$` in chart text rendered with KaTeX. Works at build time and in the browser.
 
 ### `Plot`
@@ -135,7 +135,7 @@ const svg = renderPlot({ marks: [Plot.lineY(rows, { x: "t", y: "y" })], y: { lab
 function plot(options: PlotOptions): Element
 ```
 
-Like `renderPlot`, but returns the element. At build time maths is rendered; in the browser it
+Like `renderPlot`, but returns the element. At build time maths is rendered. In the browser it
 isn't (KaTeX isn't loaded), so use `plotLive` there.
 
 ### `plotLive`
@@ -144,7 +144,7 @@ isn't (KaTeX isn't loaded), so use `plotLive` there.
 function plotLive(options: PlotOptions): Promise<Element>
 ```
 
-For the browser: draws the chart and, the first time a chart has `$…$` in it, loads KaTeX and
+Draws the chart in the browser and, the first time a chart has `$…$` in it, loads KaTeX and
 renders the maths.
 
 ### `withPointer`
@@ -163,9 +163,9 @@ so print and no-JS output are unchanged. Returns the options as they were if no 
 function attachTip(el: Element, options: PlotOptions, box: HTMLElement): void
 ```
 
-For the browser: shows an HTML tooltip (`div.posuta-tip`, appended to `box`) on the pointer dot of
+In the browser, shows an HTML tooltip (`div.posuta-tip`, appended to `box`) on the pointer dot of
 a chart drawn with `withPointer`. Its rows come from `tipRows`, with maths rendered once KaTeX is
-loaded. `box` must be positioned; `.posuta-plot` is, in `base.css`.
+loaded. `box` must be positioned. `base.css` positions `.posuta-plot`.
 
 ### `tipRows`
 
@@ -173,7 +173,7 @@ loaded. `box` must be positioned; `.posuta-plot` is, in `base.css`.
 function tipRows(options: PlotOptions, d: object): [label: string, value: string][]
 ```
 
-The tooltip's rows for datum `d`: one per channel of the pointer mark (series first, then `x`,
+The tooltip's rows for datum `d`, one per channel of the pointer mark (series first, then `x`,
 `y`), labelled from the scale labels (`x.label`, `y.label`, `color.label`) or the field name, with
 arrows stripped and `$…$` kept. Non-integer numbers are shown to 4 significant figures.
 
@@ -188,8 +188,8 @@ tipRows({ marks: [Plot.lineY(rows, { x: "t", y: "y" })], y: { label: "↑ $y(t)$
 function mathify(root: Element, katex: KaTeX): number
 ```
 
-Renders `$…$` in place inside any SVG or HTML: SVG `<text>` becomes a `foreignObject` at the same
-position and alignment; HTML text nodes get the KaTeX markup. Returns how many it changed.
+Renders `$…$` in place inside any SVG or HTML. SVG `<text>` becomes a `foreignObject` at the same
+position and alignment, and HTML text nodes get the KaTeX markup. Returns how many it changed.
 
 ```js
 import katex from "katex";
@@ -204,8 +204,8 @@ mathify(document.querySelector("#my-chart"), katex);
 function withDefaults(options: PlotOptions): PlotOptions
 ```
 
-Fills in posuta's `style` defaults (`background: transparent`, `fontFamily: var(--font-body)`);
-your `style` keys win. `plot` and `renderPlot` call it.
+Fills in posuta's `style` defaults (`background: transparent`, and `fontFamily` set to the
+`--font-body` variable). Your `style` keys win. `plot` and `renderPlot` call it.
 
 ### Write your own island
 
@@ -239,9 +239,9 @@ const svg = renderPlot({ marks: [Plot.lineY(rows, { x: "t", y: "y" })], y: { lab
 </script>
 ```
 
-Components in `src/components/` are available in MDX without imports: `<LiveStep />`. The same
+Components in `src/components/` are available in MDX without imports, as `<LiveStep />`. The same
 works with any framework island Astro supports. For an animation, also check
-`matchMedia("print").matches` and leave the frame still.
+whether the `print` media query matches (with `matchMedia`) and leave the frame still.
 
 ## `@posuta/posuta/tex`
 
@@ -251,8 +251,8 @@ works with any framework island Astro supports. For an animation, also check
 function tex(s: string, katex?: KaTeX): string
 ```
 
-Text with `$…$` to HTML: each `$…$` rendered with KaTeX, the rest HTML-escaped. Invalid TeX
-throws. At build time KaTeX is built in; in the browser pass it, or it throws.
+Turns text with `$…$` into HTML, each `$…$` rendered with KaTeX and the rest HTML-escaped.
+Invalid TeX throws. At build time KaTeX is built in. In the browser pass it, or it throws.
 
 ```js
 import { tex } from "@posuta/posuta/tex";
@@ -269,7 +269,7 @@ function texSvg(s: string, x: number, y: number,
 ```
 
 An SVG label with its baseline at (`x`, `y`). Plain text becomes a `<text fill="currentColor">`
-(with `font-size` if `size` is set); text with `$…$` becomes KaTeX in a `foreignObject`, taking
+(with `font-size` if `size` is set). Text with `$…$` becomes KaTeX in a `foreignObject`, taking
 the SVG's font size and colour. `anchor` defaults to `"start"`. `katex` is as for `tex`.
 
 ```js
@@ -312,10 +312,10 @@ The module's default export is the remark plugin the integration runs for `[@key
 function md(text: string | undefined, references?: { key: string; n: number }[]): Promise<string>
 ```
 
-Inline Markdown in frontmatter text (a lede, a stat label) to HTML: emphasis, links, `code`, `$…$`
-maths, and `[@key]` citations numbered as on the page (pass `frontmatter.references`). A single
-paragraph comes back without its `<p>`. Returns `""` for `undefined`. A key not in `references`
-throws.
+Turns inline Markdown in frontmatter text (a lede, a stat label) into HTML, with emphasis, links,
+`code`, `$…$` maths, and `[@key]` citations numbered as on the page (pass
+`frontmatter.references`). A single paragraph comes back without its `<p>`. Returns `""` for
+`undefined`. A key not in `references` throws.
 
 ```astro title="src/layouts/Poster.astro"
 ---
@@ -335,7 +335,7 @@ function bibtex(c: { title: string; authors: string[]; year: number | string;
   event?: string; doi?: string; url?: string; key?: string }): string
 ```
 
-A BibTeX `@misc` entry for the poster itself. `authors` as `"First Last"` or `"Last, First"`;
+A BibTeX `@misc` entry for the poster itself. Give `authors` as `"First Last"` or `"Last, First"`.
 `event` is where it was presented (`howpublished = {Poster, <event>}`). The key defaults to the
 first author's last name, the year and the first title word longer than three letters. Throws
 without `title`, `authors` or `year`.
@@ -355,8 +355,8 @@ bibtex({ title: "Tilted Rotors & Faults", authors: ["Álvaro Gaona", "Giribet, J
 function qrSvg(url: string): Promise<string>
 ```
 
-A QR code for `url` as SVG markup: black on transparent, no quiet zone, error correction level M.
-`<QR>` wraps it.
+A QR code for `url` as SVG markup, black on transparent, with no quiet zone and error correction
+level M. `<QR>` wraps it.
 
 ```js
 import { qrSvg } from "@posuta/posuta/qr";

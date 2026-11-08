@@ -14,7 +14,7 @@ poster never goes to print with a broken citation.
 ### Add a BibTeX file
 
 Put a `.bib` file next to the page, such as `src/pages/refs.bib`. Export it from Zotero, Mendeley,
-JabRef or Google Scholar, or write it by hand:
+JabRef or Google Scholar, or write it by hand.
 
 ```bibtex title="src/pages/refs.bib"
 @book{ogata2010modern,
@@ -46,7 +46,7 @@ A second-order system [@ogata2010modern] rendered with KaTeX [@knuth1984tex].
 Several at once: [@ogata2010modern; @knuth1984tex].
 ```
 
-Each citation becomes a number linked to its entry in the list: `[1]`, and `[1, 2]` for several.
+Each citation becomes a number linked to its entry in the list, `[1]`, and `[1, 2]` for several.
 
 </Step>
 <Step>
@@ -67,8 +67,8 @@ Each citation becomes a number linked to its entry in the list: `[1]`, and `[1, 
 ## How numbering works
 
 References are numbered in the order they are first cited. Citations in the frontmatter text
-(the `lede`, stat labels, `footer`) count first, because they sit at the top of the poster; then
-the body, top to bottom. Citing the same key again reuses its number. Entries in the BibTeX file
+(the `lede`, stat labels, `footer`) count first, because they sit at the top of the poster, and
+then the body, top to bottom. Citing the same key again reuses its number. Entries in the BibTeX file
 that you never cite are left out of the list.
 
 ## What stops the build
@@ -79,7 +79,7 @@ that you never cite are left out of the list.
 
 ## Citation style
 
-The list is formatted in Vancouver style by default. Choose another in `astro.config.mjs`:
+The list is formatted in Vancouver style by default. Choose another in `astro.config.mjs`.
 
 ```js title="astro.config.mjs"
 export default defineConfig({
@@ -108,8 +108,8 @@ is a `<span class="posuta-cite">`. To arrange the list differently, build it fro
 
 ## Citations in your own layout
 
-The template renders the `lede`, stat labels and `footer` with `md()` from `@posuta/posuta/md`, which
-turns `[@key]` into the same numbered links. In a layout of your own, do the same:
+The template renders the `lede`, stat labels and `footer` with `md` from `@posuta/posuta/md`, which
+turns `[@key]` into the same numbered links. In a layout of your own, do the same.
 
 ```astro title="src/layouts/Poster.astro"
 ---

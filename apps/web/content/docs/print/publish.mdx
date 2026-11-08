@@ -32,12 +32,12 @@ In the repository, open **Settings → Pages** and set **Source** to **GitHub Ac
 
 ### Push
 
-Each push to `main` (or a manual run from the **Actions** tab) does this:
+Each push to `main` (or a manual run from the **Actions** tab) does the following.
 
 1. Installs the dependencies and Chromium (`pnpm exec posuta install --with-deps`).
 2. Asks GitHub for the page's address and base path, and passes them to the build as `SITE`
    and `BASE_PATH`.
-3. Runs `pnpm pdf`: builds the site, then writes `dist/poster.pdf`, `dist/handout.pdf` and
+3. Runs `pnpm pdf`, which builds the site, then writes `dist/poster.pdf`, `dist/handout.pdf` and
    `dist/og.png`.
 4. Attaches `poster.pdf` to the workflow run as a download named `poster`.
 5. Publishes the whole `dist/` folder to Pages.
@@ -45,7 +45,7 @@ Each push to `main` (or a manual run from the **Actions** tab) does this:
 </Step>
 </Steps>
 
-Because the PDF is inside `dist/`, it is published with the page: if the poster lives at
+Because the PDF is inside `dist/`, it is published with the page. If the poster lives at
 `https://you.github.io/my-poster/`, the PDF is at `https://you.github.io/my-poster/poster.pdf`.
 Link to it from the poster if you like.
 
@@ -54,7 +54,7 @@ the block that doesn't fit (see [the overflow check](/docs/print/pdf#the-overflo
 
 ## The site address
 
-The template's `astro.config.mjs` reads the address from the environment:
+The template's `astro.config.mjs` reads the address from the environment.
 
 ```js title="astro.config.mjs"
 export default defineConfig({
@@ -76,9 +76,9 @@ environment variables in the host's settings, or write the values into `astro.co
 ## The QR code
 
 When `site` is set, the template's footer prints a QR code to the live page, with the address
-next to it. It shows only in print; on screen the reader is already on the page.
+next to it. It shows only in print, because on screen the reader is already on the page.
 
-Point it somewhere else, or remove it, in the frontmatter:
+Point it somewhere else, or remove it, in the frontmatter.
 
 ```yaml title="src/pages/index.mdx"
 qr: https://lab.example/poster-video/   # a different address
@@ -86,32 +86,32 @@ qr: false                               # no QR code
 ```
 
 To place a QR code yourself, use the `<QR>` component. With no `url`, it points at the current
-page (when `site` is set); otherwise at the address you give. It renders an `svg.posuta-qr` with
+page (when `site` is set), and otherwise at the address you give. It renders an `svg.posuta-qr` with
 no size, so size it with CSS. It renders nothing when there is no address.
 
 ```mdx title="src/pages/index.mdx"
 <QR url="https://lab.example/flight.mp4" data-print="only" class="video-qr" />
 ```
 
-`data-print="only"` hides it on screen. For QR codes in your own markup, `qrSvg()` from
-`@posuta/posuta/qr` returns the SVG text; see [tools](/docs/reference/tools).
+`data-print="only"` hides it on screen. For QR codes in your own markup, `qrSvg` from
+`@posuta/posuta/qr` returns the SVG text. See [tools](/docs/reference/tools).
 
 ## Link previews
 
 When someone shares the page in a chat or on social media, the app shows a card. `<Canvas>`
-adds the tags that card reads: the title, the description (in the template, the `lede`), the
+adds the tags that card reads, which are the title, the description (in the template, the `lede`), the
 page's URL, and an image.
 
-The image is `og.png`, which `posuta pdf` writes next to the page: the top 1200×630 px of the
-poster as it looks on screen. Two things must be true for the card to show it:
+The image is `og.png`, the top 1200×630 px of the poster as it looks on screen, which
+`posuta pdf` writes next to the page. Two things must be true for the card to show it.
 
 - `site` is set, so the tags carry full URLs.
-- `og.png` was published with the page. `pnpm pdf` makes it; `pnpm build` alone does not.
+- `og.png` was published with the page. `pnpm pdf` makes it, but `pnpm build` alone does not.
 
 ## Other static hosts
 
-Cloudflare Pages, Netlify, Vercel and similar hosts serve the same folder. In the host's
-settings:
+Cloudflare Pages, Netlify, Vercel and similar hosts serve the same folder. Set these in the host's
+settings.
 
 | Setting | Value |
 | --- | --- |

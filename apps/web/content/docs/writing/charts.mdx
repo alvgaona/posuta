@@ -4,10 +4,10 @@ description: Plots from your data, drawn at build time and printed as vectors.
 icon: ChartLine
 ---
 
-A chart is two files and one line of MDX: your data in `data/`, a short chart file in `charts/`,
-and a `<Chart>` on the page. posuta draws it with [Observable Plot](https://observablehq.com/plot/)
+A chart is two files and one line of MDX. Your data goes in `data/`, a short chart file in
+`charts/`, and a `<Chart>` on the page. posuta draws it with [Observable Plot](https://observablehq.com/plot/)
 when the site is built, so the page holds a finished SVG drawing. It prints as sharp vectors and
-shows even when JavaScript is off. Add one word and it gets a tooltip; add a slider and readers
+shows even when JavaScript is off. Add one word and it gets a tooltip. Add a slider and readers
 can move through your data.
 
 ## Your first chart
@@ -18,7 +18,7 @@ can move through your data.
 ### Put the data in `data/`
 
 A CSV file with a header row, or a JSON file holding an array of rows. The template ships with a
-step response:
+step response.
 
 ```csv title="data/step.csv"
 t,system,y
@@ -35,7 +35,7 @@ Numbers in a CSV are read as numbers, so you don't need to convert them.
 ### Write a chart file in `charts/`
 
 A chart file exports one function. It gets the rows (`d`) and Plot, and returns
-[Plot options](https://observablehq.com/plot/features/plots): the marks to draw, the axes, the size.
+[Plot options](https://observablehq.com/plot/features/plots), meaning the marks to draw, the axes and the size.
 
 ```js title="charts/step.js"
 export default (d, Plot) => ({
@@ -66,24 +66,24 @@ Anything in the Plot documentation works here.
 />
 ```
 
-`data` names the file in `data/`; `plot` names the chart file in `charts/`, without `.js`.
+`data` names the file in `data/`, and `plot` names the chart file in `charts/`, without `.js`.
 
 </Step>
 </Steps>
 
-`alt` is required: the build stops without it. Describe what the chart shows, not how it looks,
+`alt` is required, and the build stops without it. Describe what the chart shows, not how it looks,
 for readers who use a screen reader. It also becomes the SVG's label.
 
 ## Data
 
-`data` takes:
+`data` takes one of two things.
 
-- a file name under `data/`, ending in `.csv` or `.json`. A JSON file must hold an array of rows;
-  any other extension stops the build.
-- the rows themselves, as an array: `data={[{ x: 1, y: 2 }, { x: 2, y: 3 }]}`.
+- a file name under `data/`, ending in `.csv` or `.json`. A JSON file must hold an array of rows,
+  and any other extension stops the build.
+- the rows themselves, as an array, such as `data={[{ x: 1, y: 2 }, { x: 2, y: 3 }]}`.
 
-Long series are thinned to keep the page light: a file with more than 2000 rows keeps 2000 of
-them, evenly spaced, plus the last. Set `max` to change the limit:
+Long series are thinned to keep the page light. A file with more than 2000 rows keeps 2000 of
+them, evenly spaced, plus the last. Set `max` to change the limit.
 
 ```mdx title="src/pages/index.mdx"
 <Chart data="flight.csv" plot="flight" max={5000} alt="…" />
@@ -96,7 +96,7 @@ chart must show it, raise `max` or thin the data yourself before saving it.
 
 ## A one-off chart, inline
 
-For a small static chart you can skip the chart file and write the function in the page:
+For a small static chart you can skip the chart file and write the function in the page.
 
 ```mdx title="src/pages/index.mdx"
 <Chart
@@ -106,14 +106,14 @@ For a small static chart you can skip the chart file and write the function in t
 />
 ```
 
-An inline chart cannot be interactive or have a slider: those need the chart in a file, because
+An inline chart cannot be interactive or have a slider. Those need the chart in a file, because
 the browser redraws it from that file.
 
 ## Maths in chart text
 
-Write `$…$` in any text the chart draws: axis labels, legend entries that come from your data,
-`Plot.text` marks. KaTeX turns it into typeset maths at build time, so it prints as vectors too.
-The template does all three: `label: "output $y(t)$"` in the chart file, `$\zeta = 0.7$` in the
+Write `$…$` in any text the chart draws, such as axis labels, legend entries that come from your
+data and `Plot.text` marks. KaTeX turns it into typeset maths at build time, so it prints as vectors too.
+The template does all three, with the `y` label in the chart file, `$\zeta = 0.7$` in the
 CSV's `system` column, and a text mark showing `$y = 0.85$` next to the marker.
 
 See [Maths](/docs/writing/maths) for the maths in the rest of the poster.
@@ -145,7 +145,7 @@ maths included.
 
 `slider` adds a range input above the chart. Its current value reaches the chart function as the
 third argument, `state`, under the slider's `name`. The chart is redrawn as the reader drags.
-The template's chart uses it to place a marker at time `t`:
+The template's chart uses it to place a marker at time `t`.
 
 ```js title="charts/step.js"
 export default (d, Plot, { t }) => { // [!code highlight]
@@ -167,11 +167,11 @@ export default (d, Plot, { t }) => { // [!code highlight]
 
 ### What prints
 
-The printed poster, and the page with JavaScript off, show the drawing made at build time: the
+The printed poster, and the page with JavaScript off, show the drawing made at build time, which is the
 chart at the slider's starting `value`, with no tooltip. Whatever a reader does on screen, the
 print stays the same. The slider itself is hidden in print and without JavaScript.
 
-So pick `value` for the paper: the template prints its marker at 0.8 s, near the overshoot.
+So pick `value` for the paper. The template prints its marker at 0.8 s, near the overshoot.
 
 ### What it costs the page
 
@@ -188,11 +188,11 @@ Every prop, the rendered markup and its class hooks, with live examples, are on 
 ## Your own island
 
 For anything `<Chart>` doesn't do, such as two charts linked to one slider or an animation, write
-your own island: a `<script>` in a component, or any framework Astro supports. The same tools
-`<Chart>` uses are in `@posuta/posuta/plot`: `renderPlot` draws Plot options to SVG at build time, and
+your own island, either a `<script>` in a component or any framework Astro supports. The same tools
+`<Chart>` uses are in `@posuta/posuta/plot`. `renderPlot` draws Plot options to SVG at build time, and
 `plotLive`, `withPointer` and `attachTip` redraw it in the browser with maths and a tooltip. See
 [Tools](/docs/reference/tools).
 
-Give your island a static frame for print: draw it at build time with `renderPlot`, then redraw
+Give your island a static frame for print. Draw it at build time with `renderPlot`, then redraw
 in the browser. `posuta pdf` prints the page as your scripts leave it, so mark the build-time
 drawing `data-print="only"` and the live one `data-print="hide"`, as `<Chart>` does.

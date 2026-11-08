@@ -1,6 +1,6 @@
 ---
 title: Maths
-description: Write LaTeX in the text and in equations; it prints as vectors.
+description: Write LaTeX in the text and in equations, and it prints as vectors.
 icon: Sigma
 ---
 
@@ -12,7 +12,7 @@ from another server.
 ## Inline maths
 
 Put inline maths between single dollar signs, in the body or in the frontmatter text that takes
-Markdown (the `lede`, stat labels and `footer`):
+Markdown (the `lede`, stat labels and `footer`).
 
 ```mdx title="src/pages/index.mdx"
 The natural frequency is $\omega_n = 4\ \mathrm{rad/s}$ and the damping ratio $\zeta = 0.2$.
@@ -20,7 +20,7 @@ The natural frequency is $\omega_n = 4\ \mathrm{rad/s}$ and the damping ratio $\
 
 ## Display maths
 
-A paragraph that is only `$$…$$` shows as an equation on its own line:
+A paragraph that is only `$$…$$` shows as an equation on its own line.
 
 ```mdx title="src/pages/index.mdx"
 $$
@@ -29,7 +29,7 @@ $$
 ```
 
 For a number at the side, such as (1), or a class to style one equation, use
-[`<Equation>`](/docs/components/equation) instead. It takes the LaTeX as `tex="…"`:
+[`<Equation>`](/docs/components/equation) instead. It takes the LaTeX as `tex="…"`.
 
 ```mdx title="src/pages/index.mdx"
 <Equation n={2} tex="G(s) = \frac{\omega_n^2}{s^2 + 2\zeta\omega_n s + \omega_n^2}" />
@@ -37,8 +37,8 @@ For a number at the side, such as (1), or a class to style one equation, use
 
 ## Writing LaTeX for KaTeX
 
-KaTeX covers most of what papers use: fractions, roots, matrices, `aligned`, accents and the AMS
-symbols. It is not full LaTeX: there are no packages and no `\newcommand` across the page. Check
+KaTeX covers most of what papers use, such as fractions, roots, matrices, `aligned`, accents and
+the AMS symbols. It is not full LaTeX, so there are no packages and no `\newcommand` across the page. Check
 a command against [KaTeX's list](https://katex.org/docs/supported) when one doesn't render.
 
 A mistake in an `<Equation>`, such as an unknown command or a missing brace, stops the build with
@@ -46,8 +46,8 @@ KaTeX's error, so a broken equation never reaches the poster.
 
 ## Maths in charts and figures
 
-Chart labels take `$…$` too, such as an axis label `"output $y(t)$"`. It is rendered at build time
-and prints as vectors; see [Charts](/docs/writing/charts). SVG figures placed with `<Figure>`
-have `$…$` in their text rendered the same way; see [Figure](/docs/components/figure#svg). For your
-own drawings, `tex()` and `texSvg()` from `@posuta/posuta/tex` do the same job; see
+Chart labels take `$…$` too, such as an axis label. It is rendered at build time and prints as
+vectors, as [Charts](/docs/writing/charts) shows. SVG figures placed with `<Figure>` have `$…$` in
+their text rendered the same way (see [Figure](/docs/components/figure#svg)). For your own
+drawings, `tex` and `texSvg` from `@posuta/posuta/tex` do the same job. See
 [Tools](/docs/reference/tools).

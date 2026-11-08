@@ -50,7 +50,7 @@
     "posuta": "./bin/posuta.mjs"
   },
   "scripts": {
-    "test": "node --test test/"
+    "test": "node --test \"test/*.test.mjs\""
   },
   "imports": {
     "#dom": {

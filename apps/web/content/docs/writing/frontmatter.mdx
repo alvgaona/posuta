@@ -59,7 +59,7 @@ your project. If you write your own layout, you decide which keys it reads (see
     },
     stats: {
       type: '{ value: string; label: string; accent?: boolean }[]',
-      description: 'Headline numbers next to the title. label takes inline Markdown and citations; accent sets the number apart.',
+      description: 'Headline numbers next to the title. label takes inline Markdown and citations, and accent sets the number apart.',
       default: '[]',
     },
     footer: {
@@ -77,11 +77,11 @@ your project. If you write your own layout, you decide which keys it reads (see
     },
     qr: {
       type: 'string | false',
-      description: 'Where the QR code on the printed poster points. Defaults to the page URL when site is set in astro.config.mjs; false removes it.',
+      description: 'Where the QR code on the printed poster points. Defaults to the page URL when site is set in astro.config.mjs. Set it to false to remove it.',
     },
     cite: {
       type: '{ authors: string[]; event?: string; year: number; doi?: string }',
-      description: 'How to cite the poster: a BibTeX entry on the page (screen only) and Google Scholar tags in its head.',
+      description: 'How to cite the poster. Adds a BibTeX entry on the page (screen only) and Google Scholar tags in its head.',
     },
     bibliography: {
       type: 'string',
@@ -89,7 +89,7 @@ your project. If you write your own layout, you decide which keys it reads (see
     },
     references: {
       type: '{ key: string; n: number; text: string; doi?: string }[]',
-      description: 'Set by posuta, not by you: the entries cited on the page, in order. Read it to build your own reference list.',
+      description: 'The entries cited on the page, in order, set by posuta and not by you. Read it to build your own reference list.',
     },
   }}
 />
@@ -100,16 +100,16 @@ line under the title, add the key yourself and render it in `src/layouts/Poster.
 
 ## Text that takes Markdown
 
-`lede`, each stat `label` and `footer` accept inline Markdown: `**bold**`, `*italic*`,
-`[links](https://…)`, `` `code` ``, `$maths$` and `[@key]` citations. Citations here are numbered
+`lede`, each stat `label` and `footer` accept inline Markdown, with `**bold**`, `*italic*`,
+links, `` `code` ``, `$maths$` and `[@key]` citations. Citations here are numbered
 before the ones in the body, because they come first on the poster.
 
 ```yaml title="src/pages/index.mdx"
 lede: The step response of a **second-order system** with $\zeta = 0.2$ [@ogata2010modern].
 ```
 
-The template does this with `md()` from `@posuta/posuta/md`. Other keys, such as `title`, are shown as
-plain text. YAML treats some characters specially; if a value starts with a quote, a `[` or a
+The template does this with `md` from `@posuta/posuta/md`. Other keys, such as `title`, are shown as
+plain text. YAML treats some characters specially. If a value starts with a quote, a `[` or a
 `{`, or contains `: `, wrap it in quotes or use `>-` and put the text on the next lines, as the
 `lede` above does.
 
@@ -140,7 +140,7 @@ print: { size: A0, scale: 0.8 }              # printed text at 80 %
     },
     width: {
       type: 'string',
-      description: 'A custom width with its unit: mm, cm or in, such as 900mm or 36in. Needs height too.',
+      description: 'A custom width with its unit (mm, cm or in), such as 900mm or 36in. Needs height too.',
     },
     height: {
       type: 'string',
@@ -165,8 +165,8 @@ theme: dark                                  # or light: one scheme, whatever th
 theme: { accent: "#0a7d55", font-display: "Georgia, serif" }
 ```
 
-A string fixes the colour scheme. An object sets CSS custom properties on the page: each key
-becomes `--key`. Which tokens exist depends on your theme; the template's are in
+A string fixes the colour scheme. An object sets CSS custom properties on the page, and each key
+becomes `--key`. Which tokens exist depends on your theme, and the template's are in
 `src/styles/theme.css`. See [Themes](/docs/customize/themes).
 
 ## QR code and citing the poster

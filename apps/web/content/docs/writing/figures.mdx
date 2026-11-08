@@ -4,16 +4,16 @@ description: Make figures in matplotlib or any tool that exports SVG, and place 
 icon: Image
 ---
 
-A figure reaches the poster as a file: an SVG from matplotlib or a diagram tool, a photo, or a
-video. You place it with [`<Figure>`](/docs/components/figure), which writes an SVG into the page
+A figure reaches the poster as a file, such as an SVG from matplotlib or a diagram tool, a
+photo, or a video. You place it with [`<Figure>`](/docs/components/figure), which writes an SVG into the page
 so it uses the poster's fonts, prints as vectors and follows dark mode. This page covers making
-the files and getting them onto the page; the component page lists every prop and variant.
+the files and getting them onto the page, and the component page lists every prop and variant.
 
 ## Where the files go
 
 Keep figures in the project's `figures/` folder and photos and videos in `src/media/`, as the
 template does. An MDX page imports a file by its path relative to the page, so from
-`src/pages/index.mdx` the `figures/` folder is `../../figures/`:
+`src/pages/index.mdx` the `figures/` folder is `../../figures/`.
 
 ```mdx title="src/pages/index.mdx"
 import loop from "../../figures/loop.svg";
@@ -21,14 +21,14 @@ import clip from "../media/oscillator.mp4";
 import still from "../media/oscillator.jpg";
 ```
 
-Then pass the import to `<Figure src={loop} alt="…" />`. A file in `public/` needs no import:
+Then pass the import to `<Figure src={loop} alt="…" />`. A file in `public/` needs no import, so
 give its path, such as `src="/photo.jpg"`.
 
 ## Figures from matplotlib
 
-posuta ships a matplotlib style that matches the default theme: its fonts and colours, no
+posuta ships a matplotlib style that matches the default theme, with its fonts and colours, no
 background, no top or right axis lines, and text kept as text so it uses the poster's fonts.
-Use it and save as SVG:
+Use it and save as SVG.
 
 ```python title="figures/poles.py"
 from pathlib import Path
@@ -49,23 +49,23 @@ out.write_text(out.read_text().replace("#282a30", "currentColor"))
 
 The last line swaps the style's text colour, `#282a30`, for `currentColor`, so the labels turn
 light in dark mode. Run the script whenever the data change, then place the SVG with `<Figure>`.
-The template's `figures/poles.py` runs with:
+The template's `figures/poles.py` runs with this command.
 
 ```sh title="Terminal"
 uv run --with matplotlib figures/poles.py
 ```
 
-or `python figures/poles.py` with matplotlib installed.
+Or run `python figures/poles.py` with matplotlib installed.
 
 <Callout title="Keep the text as text">
-The style sets `svg.fonttype: none`. Without it, matplotlib turns each letter into a path: the
+The style sets `svg.fonttype: none`. Without it, matplotlib turns each letter into a path, so the
 figure no longer uses the poster's fonts and its text can't be searched or selected.
 </Callout>
 
 ## SVG from other tools
 
-Any tool that exports SVG works the same way: Graphviz, Mermaid, D2, TikZ, draw.io or
-Excalidraw. Two settings make the result fit the poster:
+Any tool that exports SVG works the same way, whether Graphviz, Mermaid, D2, TikZ, draw.io
+or Excalidraw. Two settings make the result fit the poster.
 
 - **Text as text**, not outlines, so it uses the poster's fonts and can be searched.
 - **`currentColor`** for lines and text, so the drawing follows the page between light and dark.
@@ -75,12 +75,12 @@ Excalidraw. Two settings make the result fit the poster:
 ## Photos and video
 
 posuta does not resize or compress images, so export photos with enough pixels for the printed
-size. A video needs a still frame for print, the `poster`; export one from the video at a moment
+size. A video needs a still frame for print, the `poster`. Export one from the video at a moment
 that tells the story on its own. See [Figure](/docs/components/figure#video) for placing both.
 
 ## Plain Markdown images
 
-Markdown's own image syntax works too, without a caption:
+Markdown's own image syntax works too, without a caption.
 
 ```mdx title="src/pages/index.mdx"
 ![A test flight over the lab's netted area](../images/flight.jpg)

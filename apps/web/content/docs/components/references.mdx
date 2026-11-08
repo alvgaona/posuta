@@ -4,13 +4,13 @@ description: The numbered reference list for the papers cited with [@key].
 icon: Quote
 ---
 
-`<References />` marks where the list of cited papers goes; posuta numbers it, formats it and
+`<References />` marks where the list of cited papers goes. posuta numbers it, formats it and
 links each entry to its citations in the text.
 
 <ComponentPreview name="references" />
 
 <Callout>
-On a poster you write `[@key]` in the text and `<References />` once; posuta's citation plugin
+On a poster you write `[@key]` in the text and `<References />` once, and posuta's citation plugin
 replaces it with the list. The plugin does not run in these docs, so the examples build the list
 from its parts, `References.Root` and `References.Item`, from the entries the plugin would put on
 `frontmatter.references`. The Code tab shows what you write to lay the list out yourself.
@@ -40,7 +40,7 @@ and the errors that stop the build.
 
 ### Default items
 
-The preview at the top is the same list as `<References />`, built from its parts: map
+The preview at the top is the same list as `<References />`, built from its parts, by mapping
 `frontmatter.references` to `References.Item`s inside `References.Root`. Without children each
 item shows the formatted reference, with URLs in it and its DOI as links.
 
@@ -54,7 +54,7 @@ text still link to it. Here the DOI link reads "DOI".
 ### Another list element
 
 `as` on `References.Root` renders another element. A `ul` with the number written in each item
-gives `[1]`-style labels; the `refs` class removes the bullets in your CSS.
+gives `[1]`-style labels, and the `refs` class removes the bullets in your CSS.
 
 <ComponentPreview name="references-ul" />
 
@@ -62,7 +62,7 @@ gives `[1]`-style labels; the `refs` class removes the bullets in your CSS.
 
 ### `References`
 
-`<References />` is not a component: the citation plugin replaces it with the list at build time.
+`<References />` is not a component. The citation plugin replaces it with the list at build time.
 It takes no props. A page that cites with `[@key]` must have it, or the parts below, or the build
 stops.
 
@@ -127,12 +127,12 @@ posuta puts the entries cited on the page on `frontmatter.references`, in citati
 | Hook | What it is |
 | --- | --- |
 | `.posuta-refs` | The list. |
-| `.posuta-ref` | Each item built with `References.Item`. Items from `<References />` have no class; select them with `.posuta-refs > li`. |
+| `.posuta-ref` | Each item built with `References.Item`. Items from `<References />` have no class, so select them with `.posuta-refs > li`. |
 | `#ref-<key>` | Each entry, the target of the numbers in the text. |
 | `.posuta-cite` | Each citation in the text, brackets included. |
 
-posuta adds no CSS for the list: numbering, spacing and link colour come from your theme.
+posuta adds no CSS for the list. Numbering, spacing and link colour come from your theme.
 
 ## See also
 
-- [Citations](/docs/writing/citations): BibTeX, `[@key]`, numbering, citation styles, errors.
+- [Citations](/docs/writing/citations) covers BibTeX, `[@key]`, numbering, citation styles and errors.

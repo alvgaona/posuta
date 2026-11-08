@@ -8,7 +8,7 @@ You can throw away the template's header, footer and sections and write the post
 yourself, in plain HTML and CSS. As long as it sits on `<Canvas>`, you keep the print page size,
 the PDF export, the overflow check, the `?print` preview and the link-preview tags.
 
-`<Canvas>` draws nothing you can see: it renders the page's `<html>` and `<head>` and one
+`<Canvas>` draws nothing you can see. It renders the page's `<html>` and `<head>` and one
 `div.posuta-canvas` around your content, the printed sheet. Its props, such as `print` and
 `theme`, and its markup are on the [Canvas component page](/docs/components/canvas).
 
@@ -47,7 +47,7 @@ print: A2 landscape
 `data-name="the banner"` gives the header a name for the
 [overflow check](/docs/print/pdf#the-overflow-check), since it doesn't start with a heading.
 
-To add tags to `<head>`, such as a favicon, give them `slot="head"`; see
+To add tags to `<head>`, such as a favicon, give them `slot="head"`. See
 [Canvas](/docs/components/canvas#tags-in-the-head).
 
 ## Pages without Canvas
@@ -60,18 +60,19 @@ needs `<Canvas>`.
 
 [`test/fixtures/custom`](https://github.com/alvgaona/posuta/tree/main/packages/posuta/test/fixtures/custom)
 in the posuta repository is a poster built without the template. posuta's tests build it and
-export it to PDF, so it stays working. It shows:
+export it to PDF, so it stays working. It shows the following.
 
-- **Its own layout** (`src/layouts/Banner.astro`): a full-width banner and a three-column CSS
-  grid on `<Canvas>`, styled by a plain stylesheet, `src/styles/poster.css`. No template theme,
-  no `Row` or `Col`: the sections are plain `<section>` elements laid out by the grid.
-- **A hand-drawn SVG** (`src/components/Sketch.astro`): two states and an arrow, with maths labels
-  from `texSvg()` in `@posuta/posuta/tex`.
+- **Its own layout** (`src/layouts/Banner.astro`), with a full-width banner and a three-column
+  CSS grid on `<Canvas>`, styled by a plain stylesheet, `src/styles/poster.css`. It uses no
+  template theme and no `Row` or `Col`, and the sections are plain `<section>` elements laid out
+  by the grid.
+- **A hand-drawn SVG** (`src/components/Sketch.astro`) of two states and an arrow, with maths
+  labels from `texSvg` in `@posuta/posuta/tex`.
 - **A chart** with maths in its axis labels, from an inline `plot` function.
-- **Citations** in APA style (`posuta({ citationStyle: "apa" })`) and a `<References />` list.
-- **Your own rehype plugin**, passed through `posuta({ rehypePlugins })`
+- **Citations** in APA style (the `citationStyle: "apa"` option) and a `<References />` list.
+- **Your own rehype plugin**, passed through the `rehypePlugins` option
   ([components and plugins](/docs/customize/plugins)).
-- **Tailwind** (`src/pages/tailwind.mdx`): a small theme in the `posuta.theme` layer, Tailwind
+- **Tailwind** (`src/pages/tailwind.mdx`), with a small theme in the `posuta.theme` layer, Tailwind
   utilities on `Grid`, `Figure` parts and `References` parts, a video with its print frame, and a
   QR code that shows only in print.
-- **The overflow check** (`src/pages/overflow.mdx`): a page that is too tall on purpose.
+- **The overflow check** (`src/pages/overflow.mdx`), with a page that is too tall on purpose.

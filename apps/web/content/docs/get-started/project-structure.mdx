@@ -4,7 +4,7 @@ description: What each file in a new poster is for, and which ones you edit.
 icon: FolderTree
 ---
 
-This is what `pnpm create posuta` puts in your folder. Every file is yours: posuta itself lives
+This is what `pnpm create posuta` puts in your folder. Every file is yours. posuta itself lives
 in `node_modules`, and nothing in the project is overwritten when you update it.
 
 <Files>
@@ -59,50 +59,50 @@ in `node_modules`, and nothing in the project is overwritten when you update it.
 
 These hold the poster's content. Expect to change them for every poster.
 
-- **`src/pages/index.mdx`**: the poster. Frontmatter at the top (title, lede, stats, footer,
+- **`src/pages/index.mdx`** is the poster. Frontmatter at the top (title, lede, stats, footer,
   print size, how to cite it), then the sections in Markdown. See
   [frontmatter](/docs/writing/frontmatter).
-- **`src/pages/refs.bib`**: your references in BibTeX, cited in the text as `[@key]`. See
+- **`src/pages/refs.bib`** holds your references in BibTeX, cited in the text as `[@key]`. See
   [citations](/docs/writing/citations).
-- **`charts/`**: one JavaScript file per chart, turning rows of data into a Plot chart. `step.js`
+- **`charts/`** has one JavaScript file per chart, turning rows of data into a Plot chart. `step.js`
   is the example. See [charts](/docs/writing/charts).
-- **`data/`**: the data the charts read, as CSV or JSON.
-- **`figures/`**: SVG figures and the sources that make them. `poles.py` draws `poles.svg` with
-  matplotlib and posuta's style; `loop.dot` is the Graphviz source of `loop.svg`. See
+- **`data/`** holds the data the charts read, as CSV or JSON.
+- **`figures/`** holds SVG figures and the sources that make them. `poles.py` draws `poles.svg`
+  with matplotlib and posuta's style, and `loop.dot` is the Graphviz source of `loop.svg`. See
   [figures](/docs/writing/figures) and [diagrams](/docs/writing/diagrams).
-- **`src/media/`**: images and video. The template's video has a still image, which is what
+- **`src/media/`** holds images and video. The template's video has a still image, which is what
   prints.
 
 ## What you may edit
 
-These set the poster's look. They work as they are; change them when you want a different
+These set the poster's look. They work as they are, so change them when you want a different
 design.
 
-- **`src/layouts/Poster.astro`**: the page around your sections: the header (eyebrow, title,
+- **`src/layouts/Poster.astro`** is the page around your sections, with the header (eyebrow, title,
   highlight, lede), the stats, the footer, the QR code and the "cite this poster" block. It is
   built on posuta's `<Canvas>`. See [your own canvas](/docs/customize/canvas).
-- **`src/components/Section.astro`**: the numbered section block, `<Section n title sub panel>`.
+- **`src/components/Section.astro`** is the numbered section block, `<Section n title sub panel>`.
   Any component you add to `src/components/` can be used in the MDX without an import line.
-- **`src/styles/theme.css`**: colours, fonts and spacing, as CSS custom properties for light and
+- **`src/styles/theme.css`** holds colours, fonts and spacing, as CSS custom properties for light and
   dark mode, plus the styles of the layout and sections. See [themes](/docs/customize/themes)
   and [CSS](/docs/customize/css).
-- **`README.md`**: the repository's front page. It has editing notes and the StackBlitz and
-  Codespaces buttons; replace `OWNER/REPO` in their links.
+- **`README.md`** is the repository's front page. It has editing notes and the StackBlitz and
+  Codespaces buttons. Replace `OWNER/REPO` in their links.
 
 ## What you rarely touch
 
-- **`astro.config.mjs`**: the site configuration (explained below).
-- **`package.json`**: the dependencies (Astro, posuta, the IBM Plex fonts) and the commands:
+- **`astro.config.mjs`** is the site configuration (explained below).
+- **`package.json`** lists the dependencies (Astro, posuta, the IBM Plex fonts) and the commands,
   `pnpm dev` for the live preview, `pnpm build` for the static site in `dist/`, `pnpm preview`
   to serve the built site, and `pnpm pdf` to build and export `poster.pdf` and `handout.pdf`.
-- **`.github/workflows/deploy.yaml`**: builds the page and the PDF and publishes both to GitHub
+- **`.github/workflows/deploy.yaml`** builds the page and the PDF and publishes both to GitHub
   Pages on every push to `main`. See [publish](/docs/print/publish).
-- **`.devcontainer/devcontainer.json`**: sets up GitHub Codespaces: Node, the dependencies,
+- **`.devcontainer/devcontainer.json`** sets up GitHub Codespaces with Node, the dependencies,
   the browser for the PDF, and the Astro and MDX editor extensions.
-- **`.gitignore`**: keeps `node_modules/`, `dist/`, `.astro/` and PDFs out of git.
+- **`.gitignore`** keeps `node_modules/`, `dist/`, `.astro/` and PDFs out of git.
 
 Running the project also creates `node_modules/`, `.astro/` (Astro's cache) and `dist/` (the
-built site and PDFs). Don't edit them; they are rebuilt.
+built site and PDFs). Don't edit them, because they are rebuilt.
 
 ## `astro.config.mjs`
 
@@ -117,8 +117,8 @@ export default defineConfig({
 });
 ```
 
-- `integrations: [posuta()]` turns posuta on: the components, MDX, KaTeX, charts and
-  citations. Options go inside the brackets, such as a citation style or a lab theme; see
+- The `posuta` entry in `integrations` turns posuta on, with the components, MDX, KaTeX, charts
+  and citations. Options are passed to `posuta`, such as a citation style or a lab theme. See
   [integration options](/docs/reference/integration).
 - `site` is the full address where the poster will live, such as `https://you.github.io`. With
   it set, the printed poster gets a QR code to the live page, and the page gets link-preview

@@ -38,8 +38,8 @@ area (not its width), so a sheet reads the same in either orientation. It never 
 | 36×48 in | about 25 pt |
 | 48×72 in | about 36 pt |
 
-`scale` multiplies the result, after the floor: `scale: 0.8` on A0 gives 19.2 pt. Use it when a
-poster has more to say than fits.
+`scale` multiplies the result, after the floor, so `scale: 0.8` on A0 gives 19.2 pt. Use it when
+a poster has more to say than fits.
 
 This works because, in print, posuta sets the page's root font size from the paper. Anything
 sized in `rem` (the root font size) grows and shrinks with the sheet. The template's theme is
@@ -53,7 +53,7 @@ sized this way. To change the scale itself, see [CSS, Tailwind and hooks](/docs/
 ### Install the browser, once
 
 `posuta pdf` prints the page with Chromium, a headless browser, through Playwright. Download it
-once per machine:
+once per machine.
 
 ```sh title="Terminal"
 pnpm exec posuta install
@@ -71,19 +71,19 @@ system libraries Chromium needs.
 pnpm pdf
 ```
 
-In the template, `pnpm pdf` runs `astro build`, then `posuta pdf --handout`. It writes:
+In the template, `pnpm pdf` runs `astro build`, then `posuta pdf --handout`. It writes three files.
 
-- `dist/poster.pdf`: one page at the paper size, fonts embedded. The PDF is tagged, so screen
+- `dist/poster.pdf` is one page at the paper size, fonts embedded. The PDF is tagged, so screen
   readers and text search work, and its outline (bookmarks) lists the headings.
-- `dist/handout.pdf`: the same page shrunk onto one A4 sheet, still vector, for people to take
+- `dist/handout.pdf` is the same page shrunk onto one A4 sheet, still vector, for people to take
   away.
-- `dist/og.png`: a 1200×630 px picture of the top of the screen layout. Link previews show it
+- `dist/og.png` is a 1200×630 px picture of the top of the screen layout. Link previews show it
   when someone shares the page (see [Publish](/docs/print/publish)).
 
 </Step>
 </Steps>
 
-`posuta pdf` reads the built site in `dist/`; it does not build it. Run `astro build` first, or
+`posuta pdf` reads the built site in `dist/` but does not build it. Run `astro build` first, or
 use `pnpm pdf`.
 
 ## Options
@@ -102,7 +102,7 @@ posuta pdf [--dist dist] [--page /] [--out <dist>/<page>/poster.pdf] [--print "A
 | `--no-png` | Don't write `og.png`. | |
 | `--handout` | Also write `handout.pdf`, on A4, next to the PDF. | off |
 
-`--print` is a quick way to see whether a poster fits a smaller sheet:
+`--print` is a quick way to see whether a poster fits a smaller sheet.
 
 ```sh title="Terminal"
 pnpm build
@@ -112,7 +112,7 @@ pnpm exec posuta pdf --print A1 --out a1.pdf
 ## The overflow check
 
 Before it prints, `posuta pdf` lays the page out at the paper size and checks that everything
-fits. If something doesn't, it writes no PDF, exits with an error, and names the block:
+fits. If something doesn't, it writes no PDF, exits with an error, and names the block.
 
 ```txt title="Terminal"
 posuta pdf: content does not fit on the 594mm × 420mm canvas:
@@ -120,28 +120,28 @@ posuta pdf: content does not fit on the 594mm × 420mm canvas:
 Shorten it, change the column spans, or pick a larger print size.
 ```
 
-A block has a name when it is either:
+A block has a name when it is one of these.
 
 - an element whose first child is a heading (`h1` to `h4`), named by the heading's text, as a
-  template `<Section>` is; or
+  template `<Section>` is, or
 - an element with a `data-name` attribute, named by its value.
 
 It names the innermost block that overflows, not the column or section around it. Use
-`data-name` to give a figure or a box its own name:
+`data-name` to give a figure or a box its own name.
 
 ```mdx title="src/pages/index.mdx"
 <div data-name="logo strip">…</div>
 ```
 
 A block can also be too wide (`"logo strip" is 12 mm too wide`). If no named block overflows but
-the poster still does, it reports the whole poster: `the poster runs 20 mm past the bottom`.
+the poster still does, it reports the whole poster, as in `the poster runs 20 mm past the bottom`.
 
 ## Preview the print while you write
 
-With `pnpm dev` running, add `?print` to the page address:
+With `pnpm dev` running, add `?print` to the page address, as in
 `http://localhost:4321/?print`.
 
-The page shows as it will print: at the paper size, scaled to fit the window, with the print
+The page shows as it will print, at the paper size, scaled to fit the window, with the print
 styles applied and light colours, as in the PDF. The same overflow check runs. Blocks that don't
 fit get a red outline, and a banner in the corner lists them. When everything fits, the banner
 turns green and shows the paper size. The preview updates as you edit.
@@ -160,7 +160,7 @@ If the site was built with a base path, pass the same `--base`, or set `BASE_PAT
 for the build. If you are exporting a page other than the home page, check `--page`.
 </Accordion>
 <Accordion title="… has no print size (--paper-w): wrap it in <Canvas>, or pass --print">
-The page has no print size, which `<Canvas>` sets. The template's layout uses `<Canvas>`; if
+The page has no print size, which `<Canvas>` sets. The template's layout uses `<Canvas>`. If
 you wrote your own layout, build it on [`<Canvas>`](/docs/customize/canvas).
 </Accordion>
 <Accordion title="… is not a posuta page: wrap it in <Canvas>">

@@ -4,24 +4,25 @@ description: Change the poster's colours and fonts, per poster or for a whole la
 icon: Palette
 ---
 
-You can change the poster's colours and fonts in three places: a line of frontmatter for one
-poster, the theme file for a deeper change, or a theme package your whole lab shares.
+You can change the poster's colours and fonts in three places. Use a line of frontmatter for
+one poster, the theme file for a deeper change, or a theme package your whole lab shares.
 
 ## Where the look lives
 
 The template's look is in `src/styles/theme.css`, a file in your project. It starts with
-**tokens**: CSS custom properties (named values such as `--accent`) on `:root`, the top of the
-page. The rest of the file uses only these names, so changing a token changes it everywhere.
+**tokens**, which are CSS custom properties (named values such as `--accent`) on `:root`, the
+top of the page. The rest of the file uses only these names, so changing a token changes it
+everywhere.
 
-There are two sets of values: light, and dark for screens set to dark mode. Print always uses the
-light set.
+There are two sets of values, light and dark. The dark set is for screens set to dark mode. Print
+always uses the light set.
 
 | Token | What it is | Light | Dark |
 | --- | --- | --- | --- |
 | `--bg` | Page background | `#ffffff` | `#16181d` |
 | `--surface` | Background of panels (`<Section panel>`) | `#f9f8f9` | `#1a1d23` |
 | `--fg` | Main text | `#282a30` | `#edeef3` |
-| `--fg-2` | Secondary text: lede, references | `#3c4149` | `#d0d4dc` |
+| `--fg-2` | Secondary text (lede, references) | `#3c4149` | `#d0d4dc` |
 | `--muted` | Captions, labels, footer | `#6f6e77` | `#9aa0ac` |
 | `--border` | Lines and panel borders | `#e9e8ea` | `#2d3139` |
 | `--accent` | Links, the title highlight, section numbers | `#1348dc` | `#6b96ff` |
@@ -33,12 +34,12 @@ light set.
 | `--radius` | Corner rounding | `.4rem` | |
 | `--posuta-gap` | Space between columns in `Row` and `Grid` | `2.1rem` | |
 
-`--posuta-gap` is the one token posuta itself reads; the rest belong to the template. Add your
+`--posuta-gap` is the one token posuta itself reads, and the rest belong to the template. Add your
 own tokens freely.
 
 ## Change a few tokens in the frontmatter
 
-For one poster, set `theme:` in the frontmatter with token names (the leading `--` is optional):
+For one poster, set `theme:` in the frontmatter with token names (the leading `--` is optional).
 
 ```yaml title="src/pages/index.mdx"
 theme: { accent: "#0a7d55", font-display: "Georgia, serif" }
@@ -46,7 +47,7 @@ theme: { accent: "#0a7d55", font-display: "Georgia, serif" }
 
 These values apply in both light and dark mode, and in print.
 
-To fix the colour scheme instead of following the reader's setting:
+To fix the colour scheme instead of following the reader's setting.
 
 ```yaml title="src/pages/index.mdx"
 theme: light   # always light on screen
@@ -59,13 +60,13 @@ background. Use it only if that is what you want on paper.
 </Callout>
 
 `theme:` works because the template's layout passes it to `<Canvas>`. In your own layout, pass it
-the same way: `<Canvas theme={frontmatter.theme}>`.
+the same way, as in `<Canvas theme={frontmatter.theme}>`.
 
 ## Edit the theme file
 
 For anything more, edit `src/styles/theme.css`. Change the token values at the top, or the rules
-below them: heading sizes, the section style, the footer. Dark values are set twice, once for
-readers whose system is in dark mode and once for `theme: dark`; change both.
+below them, such as heading sizes, the section style and the footer. Dark values are set twice,
+once for readers whose system is in dark mode and once for `theme: dark`. Change both.
 
 Fonts load from `@fontsource` packages at the top of the file. To use another font, install its
 package (for example `pnpm add @fontsource/inter`), import it there, and set `--font-body` or
@@ -74,7 +75,7 @@ package (for example `pnpm add @fontsource/inter`), import it there, and set `--
 ## A theme package for your lab
 
 A lab can publish its colours and fonts once and use them in every poster. The package holds one
-CSS file of tokens:
+CSS file of tokens.
 
 ```css title="theme.css"
 :root {
@@ -87,7 +88,7 @@ CSS file of tokens:
 ```
 
 The package's `package.json` points its main entry at that file. Each poster installs the
-package and names it in `astro.config.mjs`:
+package and names it in `astro.config.mjs`.
 
 ```js title="astro.config.mjs"
 export default defineConfig({
@@ -95,7 +96,7 @@ export default defineConfig({
 });
 ```
 
-posuta then loads that CSS on every page. Only `:root` and the dark-mode media query are needed;
+posuta then loads that CSS on every page. Only `:root` and the dark-mode media query are needed,
 no other selectors.
 
 Write the tokens outside any `@layer`. A package token then also beats the template's dark
@@ -105,7 +106,7 @@ dark background.
 ## Why your tokens win
 
 The template's theme sits in a **cascade layer** named `posuta.theme`. A cascade layer is a
-named group of CSS rules; rules outside any layer beat rules inside one, whatever order the files
+named group of CSS rules. Rules outside any layer beat rules inside one, whatever order the files
 load in. Frontmatter tokens and a lab package are written outside a layer, so they override the
 template's values without `!important`. The full layer order is on
 [CSS, Tailwind and hooks](/docs/customize/css#layer-order).
