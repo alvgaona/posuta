@@ -1,0 +1,8 @@
+---
+// A grid of cells: <Grid cols={3}><Cell>…</Cell><Cell span={2} rows={2}>…</Cell></Grid>.
+// Unlike Row/Col, cells line up across rows and can span rows. On screen it narrows to two
+// columns, then one; in print it keeps the grid as written.
+interface Props { cols?: number; class?: string; [attr: string]: unknown }
+const { cols = 3, class: cls, style, ...rest } = Astro.props;
+---
+<div class:list={["posuta-grid", cls]} style={[`--cols:${cols}`, style].filter(Boolean).join(";")} {...rest}><slot /></div>

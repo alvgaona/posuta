@@ -14,6 +14,8 @@
     "./posuta.mplstyle": "./posuta.mplstyle",
     "./Row.astro": "./src/Row.astro",
     "./Col.astro": "./src/Col.astro",
+    "./Grid.astro": "./src/Grid.astro",
+    "./Cell.astro": "./src/Cell.astro",
     "./Chart.astro": "./src/Chart.astro",
     "./Figure.astro": "./src/Figure.astro",
     "./Equation.astro": "./src/Equation.astro",

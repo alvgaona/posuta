@@ -80,6 +80,20 @@ The header, stats, footer and QR code are in `src/layouts/Poster.astro`; the num
 On screen a row reflows by width (three columns, then two, then one on a phone). In print it keeps
 the columns as written.
 
+When blocks should line up across rows, or one block should span two rows, use a grid:
+
+```mdx
+<Grid cols={3}>
+<Cell rows={2}>…tall, two rows…</Cell>
+<Cell span={2}>…wide, two columns…</Cell>
+<Cell>…</Cell>
+<Cell>…</Cell>
+<Cell span={3}>…full width…</Cell>
+</Grid>
+```
+
+It reflows the same way on screen (at most two columns, then one) and keeps the grid in print.
+
 ### Print size
 
 ```yaml
@@ -261,7 +275,7 @@ poster built this way: a banner, a CSS grid, a hand-drawn SVG, a chart and APA r
 
 - In print, the canvas is one page at the paper size, and the root font size follows the paper
   (24 pt at A0, never below 12 pt): size things in `rem` and they scale with the sheet.
-- `Row`/`Col` are flex columns that reflow on screen; `--posuta-gap` sets the gap.
+- `Row`/`Col` (flex) and `Grid`/`Cell` (CSS grid) reflow on screen; `--posuta-gap` sets the gap.
 - `data-print="only"` hides an element on screen; `data-print="hide"` hides it in print.
 - Chart and figure SVGs fill their container; the live-chart tooltip is positioned.
 - KaTeX's stylesheet.
@@ -279,6 +293,7 @@ stable classes to style:
 | --- | --- |
 | `Canvas` | `div.posuta-canvas`; `--paper-w`, `--paper-h`, `--print-scale` in print |
 | `Row`, `Col` | `div.posuta-row`, `div.posuta-col` with `--span` |
+| `Grid`, `Cell` | `div.posuta-grid` with `--cols`, `div.posuta-cell` with `--span`, `--rows` |
 | `Chart` | `figure.posuta-figure.posuta-chart` › `.posuta-plot` (the SVG), `figcaption`, `label.posuta-slider`, `.posuta-tip` |
 | `Figure` | `figure.posuta-figure` › `img` or `svg`, `figcaption` |
 | `Equation` | `div.posuta-eq` › KaTeX, `span.posuta-eq-n` |

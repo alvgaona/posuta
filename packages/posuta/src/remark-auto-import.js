@@ -7,7 +7,7 @@ import { join, parse } from "node:path";
 
 /** posuta's components, by name. */
 export const POSUTA = Object.fromEntries(
-  ["Canvas", "QR", "Row", "Col", "Chart", "Figure", "Equation", "Diagram"].map((n) => [n, `posuta/${n}.astro`]),
+  ["Canvas", "QR", "Row", "Col", "Grid", "Cell", "Chart", "Figure", "Equation", "Diagram"].map((n) => [n, `posuta/${n}.astro`]),
 );
 const EXT = [".astro", ".tsx", ".jsx"]; // first wins when two files share a name
 
